@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Retirement Calculator India – Plan Your Corpus with EPF, NPS & Inflation</title>
+<meta name="description" content="India's most detailed retirement calculator. Enter your salary, EPF, NPS, and expenses. Get your retirement corpus with inflation-adjusted projections. Free, instant, no login.">
+<link rel="canonical" href="https://senecacommons.com/tools/retirement-calculator-india">
+
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --ink:       #1a1a2e;
+  --ink-mid:   #4a4a6a;
+  --ink-light: #8888aa;
+  --page:      #f7f6f2;
+  --panel:     #ffffff;
+  --rule:      #e2e0da;
+  --accent:    #c84b31;       /* terracotta — deliberate: warmth of Indian finance docs */
+  --accent-2:  #2563a8;       /* deep sarkari blue — government forms, pay slips */
+  --good:      #1a7a4a;
+  --mono:      'JetBrains Mono', monospace;
+  --serif:     'DM Serif Display', Georgia, serif;
+  --sans:      'Inter', system-ui, sans-serif;
+}
+
+html { font-size: 16px; scroll-behavior: smooth; }
+body {
+  font-family: var(--sans);
+  background: var(--page);
+  color: var(--ink);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── LAYOUT ─────────────────────────────── */
+.wrap { max-width: 960px; margin: 0 auto; padding: 0 20px; }
+
+header {
+  border-bottom: 1px solid var(--rule);
+  padding: 14px 0;
+  background: var(--panel);
+}
+.header-inner {
+  display: flex; align-items: center; justify-content: space-between;
+}
+.logo {
+  font-family: var(--serif);
+  font-size: 1.15rem;
+  color: var(--ink);
+  text-decoration: none;
+  letter-spacing: -0.01em;
+}
+.logo span { color: var(--accent); }
+nav a {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--ink-mid);
+  text-decoration: none;
+  margin-left: 20px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+nav a:hover { color: var(--accent); }
+
+/* ── HERO ────────────────────────────────── */
+.hero {
+  padding: 52px 0 36px;
+  border-bottom: 1px solid var(--rule);
+}
+.hero-eyebrow {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 12px;
+}
+.hero h1 {
+  font-family: var(--serif);
+  font-size: clamp(1.9rem, 4vw, 2.8rem);
+  line-height: 1.18;
+  color: var(--ink);
+  max-width: 680px;
+  margin-bottom: 16px;
+  letter-spacing: -0.02em;
+}
+.hero-sub {
+  font-size: 1rem;
+  color: var(--ink-mid);
+  max-width: 560px;
+  line-height: 1.7;
+}
+
+/* ── MAIN GRID ──────────────────────────── */
+.calc-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+  padding: 36px 0;
+}
+@media (max-width: 680px) {
+  .calc-grid { grid-template-columns: 1fr; }
+}
+
+/* ── PANELS ─────────────────────────────── */
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 28px;
+}
+.panel-title {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-light);
+  margin-bottom: 22px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--rule);
+}
+
+/* ── INPUTS ─────────────────────────────── */
+.field { margin-bottom: 18px; }
+.field:last-child { margin-bottom: 0; }
+label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--ink-mid);
+  margin-bottom: 6px;
+}
+label .hint {
+  font-weight: 400;
+  color: var(--ink-light);
+  margin-left: 4px;
+}
+.input-wrap {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  background: var(--page);
+  transition: border-color 0.15s;
+}
+.input-wrap:focus-within {
+  border-color: var(--accent-2);
+  background: #fff;
+}
+.input-prefix, .input-suffix {
+  padding: 0 10px;
+  font-size: 0.8rem;
+  font-family: var(--mono);
+  color: var(--ink-light);
+  background: transparent;
+  white-space: nowrap;
+}
+input[type=number], input[type=range] {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-family: var(--mono);
+  font-size: 0.9rem;
+  color: var(--ink);
+  padding: 9px 8px;
+  width: 100%;
+}
+input[type=range] {
+  padding: 0 8px;
+  cursor: pointer;
+  accent-color: var(--accent);
+}
+.range-row {
+  display: flex; align-items: center; gap: 10px;
+}
+.range-val {
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  color: var(--ink);
+  min-width: 48px;
+  text-align: right;
+}
+
+/* ── RESULTS ────────────────────────────── */
+.results-panel {
+  grid-column: 1 / -1;
+  background: var(--ink);
+  color: #fff;
+  border-radius: 4px;
+  padding: 32px;
+}
+.results-panel .panel-title {
+  color: rgba(255,255,255,0.4);
+  border-bottom-color: rgba(255,255,255,0.1);
+}
+.corpus-display {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin: 20px 0 8px;
+}
+.corpus-amount {
+  font-family: var(--serif);
+  font-size: clamp(2.2rem, 5vw, 3.4rem);
+  color: #fff;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+.corpus-label {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.5);
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.corpus-sub {
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 28px;
+}
+
+.metrics-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 16px;
+  margin-bottom: 28px;
+}
+.metric {
+  border-left: 2px solid rgba(255,255,255,0.12);
+  padding-left: 14px;
+}
+.metric-val {
+  font-family: var(--mono);
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #fff;
+  line-height: 1.2;
+}
+.metric-val.good { color: #5dd68a; }
+.metric-val.warn { color: #f0b429; }
+.metric-label {
+  font-size: 0.7rem;
+  color: rgba(255,255,255,0.4);
+  margin-top: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* ── CHART ──────────────────────────────── */
+.chart-wrap {
+  width: 100%;
+  height: 160px;
+  position: relative;
+  margin-top: 4px;
+}
+canvas#projectionChart {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* ── BREAKDOWN TABLE ────────────────────── */
+.breakdown {
+  margin-top: 28px;
+  border-top: 1px solid var(--rule);
+  padding-top: 24px;
+}
+.breakdown-title {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-light);
+  margin-bottom: 16px;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+th {
+  text-align: left;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-light);
+  padding: 6px 0;
+  border-bottom: 1px solid var(--rule);
+}
+th:not(:first-child), td:not(:first-child) { text-align: right; }
+td {
+  padding: 8px 0;
+  border-bottom: 1px solid var(--rule);
+  color: var(--ink-mid);
+  font-family: var(--mono);
+}
+td:first-child { font-family: var(--sans); color: var(--ink); }
+tr:last-child td { border-bottom: none; font-weight: 600; color: var(--ink); }
+
+/* ── DOWNLOAD BUTTON ────────────────────── */
+.btn-row { margin-top: 20px; display: flex; gap: 12px; flex-wrap: wrap; }
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 18px;
+  border-radius: 3px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  border: none;
+  transition: opacity 0.15s;
+  text-decoration: none;
+}
+.btn:hover { opacity: 0.85; }
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-secondary { background: transparent; border: 1px solid var(--rule); color: var(--ink-mid); }
+
+/* ── SEO CONTENT ────────────────────────── */
+.content-section {
+  padding: 40px 0;
+  border-top: 1px solid var(--rule);
+}
+.content-section h2 {
+  font-family: var(--serif);
+  font-size: 1.5rem;
+  color: var(--ink);
+  margin-bottom: 14px;
+  letter-spacing: -0.02em;
+}
+.content-section p {
+  color: var(--ink-mid);
+  line-height: 1.8;
+  margin-bottom: 14px;
+  max-width: 720px;
+  font-size: 0.92rem;
+}
+.faq { margin-top: 32px; }
+.faq-item {
+  border-top: 1px solid var(--rule);
+  padding: 18px 0;
+}
+.faq-item:last-child { border-bottom: 1px solid var(--rule); }
+.faq-q {
+  font-weight: 600;
+  font-size: 0.92rem;
+  color: var(--ink);
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+.faq-a {
+  font-size: 0.88rem;
+  color: var(--ink-mid);
+  line-height: 1.75;
+}
+
+/* ── RELATED TOOLS ──────────────────────── */
+.related {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+.related-card {
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 18px;
+  text-decoration: none;
+  background: var(--panel);
+  transition: border-color 0.15s;
+}
+.related-card:hover { border-color: var(--accent-2); }
+.related-card-title {
+  font-weight: 600;
+  font-size: 0.88rem;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+.related-card-desc {
+  font-size: 0.78rem;
+  color: var(--ink-light);
+}
+
+footer {
+  border-top: 1px solid var(--rule);
+  padding: 24px 0;
+  margin-top: 40px;
+}
+.footer-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.footer-note {
+  font-size: 0.72rem;
+  color: var(--ink-light);
+  max-width: 520px;
+  line-height: 1.6;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap header-inner">
+    <a href="/" class="logo">Seneca<span>Commons</span></a>
+    <nav>
+      <a href="/retirement-calculator-india">Retirement</a>
+      <a href="/salary-calculator-india-excel">Salary</a>
+      <a href="/payroll-calculator-india-excel">Payroll</a>
+      <a href="/gratuity-calculator-central-government">Gratuity</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+
+    <div class="hero">
+      <div class="hero-eyebrow">Free · No login · Updated for FY 2025–26</div>
+      <h1>Retirement Calculator India — Corpus, EPF, NPS & Monthly SIP</h1>
+      <p class="hero-sub">Enter your current salary, savings rate, and retirement age. Get your required corpus, monthly SIP target, and an inflation-adjusted projection curve — instantly.</p>
+    </div>
+
+    <div class="calc-grid">
+
+      <!-- INPUTS LEFT -->
+      <div class="panel">
+        <div class="panel-title">Your Situation</div>
+
+        <div class="field">
+          <label>Current Monthly Salary <span class="hint">(gross CTC / 12)</span></label>
+          <div class="input-wrap">
+            <span class="input-prefix">₹</span>
+            <input type="number" id="salary" value="80000" min="10000" max="10000000" step="1000">
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Current Age</label>
+          <div class="input-wrap range-row">
+            <input type="range" id="currentAge" min="22" max="58" value="30">
+            <span class="range-val" id="currentAgeVal">30</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Retirement Age</label>
+          <div class="input-wrap range-row">
+            <input type="range" id="retirementAge" min="45" max="70" value="60">
+            <span class="range-val" id="retirementAgeVal">60</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Life Expectancy</label>
+          <div class="input-wrap range-row">
+            <input type="range" id="lifeExpectancy" min="65" max="95" value="80">
+            <span class="range-val" id="lifeExpectancyVal">80</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Expected Monthly Expenses at Retirement <span class="hint">(today's ₹)</span></label>
+          <div class="input-wrap">
+            <span class="input-prefix">₹</span>
+            <input type="number" id="expenses" value="50000" min="5000" max="5000000" step="1000">
+          </div>
+        </div>
+      </div>
+
+      <!-- INPUTS RIGHT -->
+      <div class="panel">
+        <div class="panel-title">Savings & Assumptions</div>
+
+        <div class="field">
+          <label>Current Savings / Investments <span class="hint">(EPF + MF + FD total)</span></label>
+          <div class="input-wrap">
+            <span class="input-prefix">₹</span>
+            <input type="number" id="currentSavings" value="500000" min="0" step="10000">
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Monthly SIP / Investment</label>
+          <div class="input-wrap">
+            <span class="input-prefix">₹</span>
+            <input type="number" id="monthlySip" value="15000" min="0" step="500">
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Expected Return on Investments <span class="hint">pre-retirement</span></label>
+          <div class="input-wrap range-row">
+            <input type="range" id="preReturnRate" min="4" max="18" value="12" step="0.5">
+            <span class="range-val" id="preReturnRateVal">12%</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Post-Retirement Return <span class="hint">on corpus</span></label>
+          <div class="input-wrap range-row">
+            <input type="range" id="postReturnRate" min="3" max="10" value="7" step="0.5">
+            <span class="range-val" id="postReturnRateVal">7%</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Inflation Rate</label>
+          <div class="input-wrap range-row">
+            <input type="range" id="inflation" min="3" max="10" value="6" step="0.5">
+            <span class="range-val" id="inflationVal">6%</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Salary Growth Rate <span class="hint">per year</span></label>
+          <div class="input-wrap range-row">
+            <input type="range" id="salaryGrowth" min="3" max="20" value="8" step="0.5">
+            <span class="range-val" id="salaryGrowthVal">8%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- RESULTS -->
+      <div class="panel results-panel">
+        <div class="panel-title">Projection</div>
+
+        <div class="corpus-display">
+          <div class="corpus-amount" id="corpusAmount">₹2.84 Cr</div>
+        </div>
+        <div class="corpus-sub" id="corpusSub">corpus you will accumulate by age 60</div>
+
+        <div class="metrics-row">
+          <div class="metric">
+            <div class="metric-val" id="metricRequired">₹3.12 Cr</div>
+            <div class="metric-label">Corpus Required</div>
+          </div>
+          <div class="metric">
+            <div class="metric-val" id="metricGap">₹0.28 Cr</div>
+            <div class="metric-label">Gap / Surplus</div>
+          </div>
+          <div class="metric">
+            <div class="metric-val" id="metricSipNeeded">₹17,400</div>
+            <div class="metric-label">SIP Needed / Month</div>
+          </div>
+          <div class="metric">
+            <div class="metric-val" id="metricMonthlyIncome">₹42,000</div>
+            <div class="metric-label">Monthly Draw (25 yr)</div>
+          </div>
+          <div class="metric">
+            <div class="metric-val" id="metricYearsLeft">30</div>
+            <div class="metric-label">Years to Retirement</div>
+          </div>
+        </div>
+
+        <div class="chart-wrap">
+          <canvas id="projectionChart"></canvas>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="downloadExcel()">⬇ Download Excel Projection</button>
+          <button class="btn btn-secondary" onclick="window.print()">Print Report</button>
+        </div>
+      </div>
+
+    </div><!-- /calc-grid -->
+
+    <!-- BREAKDOWN TABLE -->
+    <div class="breakdown">
+      <div class="breakdown-title">Year-by-Year Breakdown</div>
+      <table id="breakdownTable">
+        <thead>
+          <tr>
+            <th>Year</th>
+            <th>Age</th>
+            <th>Salary</th>
+            <th>Annual Investment</th>
+            <th>Corpus</th>
+            <th>vs Required</th>
+          </tr>
+        </thead>
+        <tbody id="breakdownBody"></tbody>
+      </table>
+    </div>
+
+    <!-- SEO CONTENT -->
+    <div class="content-section">
+      <h2>How to Calculate Your Retirement Corpus in India</h2>
+      <p>A retirement corpus calculation for India requires four inputs the global calculators miss: EPF contributions, the 7th Pay Commission structure for government employees, India's long-term inflation rate (historically 5.5–7%), and the post-retirement return on a conservative Indian portfolio (Senior Citizen Savings Scheme, debt mutual funds, and annuities).</p>
+      <p>The standard formula compounds your current savings and monthly SIP at your expected pre-retirement return, then calculates the corpus needed to sustain inflation-adjusted monthly withdrawals over your expected retirement period. The gap between the two is the number you need to close.</p>
+      <p>For FY 2025–26: EPF employee contribution remains 12% of basic salary (capped at ₹15,000 basic), NPS Tier 1 contribution qualifies for deduction under Section 80CCD(1B) up to ₹50,000 over the Section 80C limit. Both should run in parallel with equity mutual fund SIPs for anyone targeting retirement before 55.</p>
+
+      <div class="faq">
+        <div class="faq-item">
+          <div class="faq-q">How much corpus do I need to retire in India?</div>
+          <div class="faq-a">A commonly used rule: 25–30 times your annual expenses at retirement (inflation-adjusted to retirement year). At 6% inflation, ₹50,000/month today becomes roughly ₹1.6 lakh/month after 20 years — requiring a corpus of ₹4–5 crore. This calculator runs the precise version of that math for your specific numbers.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">Does this calculator include EPF?</div>
+          <div class="faq-a">Include your current EPF balance in the "Current Savings" field. Your monthly EPF contribution (you + employer) should go into "Monthly SIP / Investment." EPF currently earns 8.25% — if your EPF forms a large share of savings, set your pre-retirement return rate closer to 9–10%.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">What return rate should I use for Indian equity mutual funds?</div>
+          <div class="faq-a">Nifty 50 has delivered approximately 12–13% CAGR over 20-year periods. Use 10–12% for a diversified equity SIP portfolio. Use 7–8% for a balanced (60:40 equity:debt) portfolio. Use 6–7% post-retirement when shifting to capital-preservation instruments.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">How does inflation affect my retirement corpus?</div>
+          <div class="faq-a">At 6% inflation, money loses half its purchasing power every 12 years. ₹1 lakh today buys the same as ₹50,000 will buy in 2037. This calculator inflates your required expenses to retirement year and then compounds the withdrawal need annually through your retirement period — giving you a corpus target in today's rupees and in retirement-year rupees.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RELATED TOOLS -->
+    <div class="content-section">
+      <h2>Related Calculators</h2>
+      <div class="related">
+        <a href="/detailed-retirement-calculator-india" class="related-card">
+          <div class="related-card-title">Detailed Retirement Calculator</div>
+          <div class="related-card-desc">Add NPS, PPF, rental income, and multiple asset classes</div>
+        </a>
+        <a href="/payroll-calculator-india-excel" class="related-card">
+          <div class="related-card-title">Payroll Calculator India</div>
+          <div class="related-card-desc">CTC to in-hand with full statutory breakdown</div>
+        </a>
+        <a href="/salary-bonus-calculator-india" class="related-card">
+          <div class="related-card-title">Salary Bonus Calculator</div>
+          <div class="related-card-desc">Performance bonus, statutory bonus, and tax impact</div>
+        </a>
+        <a href="/gratuity-calculator-central-government" class="related-card">
+          <div class="related-card-title">Gratuity Calculator (Govt)</div>
+          <div class="related-card-desc">DCRG for Central Government employees under 7th CPC</div>
+        </a>
+      </div>
+    </div>
+
+  </div><!-- /wrap -->
+</main>
+
+<footer>
+  <div class="wrap footer-inner">
+    <p class="footer-note">Results are estimates for planning purposes. EPF interest rate (currently 8.25%), tax slabs, and NPS rules change annually. Consult a SEBI-registered financial advisor before major retirement decisions. Updated April 2026 for FY 2025–26.</p>
+    <p class="footer-note" style="text-align:right; max-width:200px;">© 2026 SenecaCommons</p>
+  </div>
+</footer>
+
+<!-- ═══ CALCULATOR ENGINE ══════════════════════════════════════════════ -->
+<script>
+// ── Inputs ──────────────────────────────────────────────────────────────
+const inputs = {
+  salary:         document.getElementById('salary'),
+  currentAge:     document.getElementById('currentAge'),
+  retirementAge:  document.getElementById('retirementAge'),
+  lifeExpectancy: document.getElementById('lifeExpectancy'),
+  expenses:       document.getElementById('expenses'),
+  currentSavings: document.getElementById('currentSavings'),
+  monthlySip:     document.getElementById('monthlySip'),
+  preReturnRate:  document.getElementById('preReturnRate'),
+  postReturnRate: document.getElementById('postReturnRate'),
+  inflation:      document.getElementById('inflation'),
+  salaryGrowth:   document.getElementById('salaryGrowth'),
+};
+
+// Wire range displays
+const rangeDisplays = {
+  currentAge:     document.getElementById('currentAgeVal'),
+  retirementAge:  document.getElementById('retirementAgeVal'),
+  lifeExpectancy: document.getElementById('lifeExpectancyVal'),
+  preReturnRate:  document.getElementById('preReturnRateVal'),
+  postReturnRate: document.getElementById('postReturnRateVal'),
+  inflation:      document.getElementById('inflationVal'),
+  salaryGrowth:   document.getElementById('salaryGrowthVal'),
+};
+
+Object.keys(inputs).forEach(k => {
+  inputs[k].addEventListener('input', () => {
+    if (rangeDisplays[k]) {
+      const v = inputs[k].value;
+      rangeDisplays[k].textContent = ['preReturnRate','postReturnRate','inflation','salaryGrowth'].includes(k)
+        ? v + '%' : v;
+    }
+    calculate();
+  });
+});
+
+// ── Core maths ──────────────────────────────────────────────────────────
+function fmtCr(n) {
+  if (n >= 1e7) return '₹' + (n/1e7).toFixed(2) + ' Cr';
+  if (n >= 1e5) return '₹' + (n/1e5).toFixed(1) + ' L';
+  return '₹' + Math.round(n).toLocaleString('en-IN');
+}
+function fmtLakh(n) {
+  if (n >= 1e7) return '₹' + (n/1e7).toFixed(2) + ' Cr';
+  return '₹' + (n/1e5).toFixed(1) + ' L';
+}
+
+function calculate() {
+  const salary        = +inputs.salary.value         || 0;
+  const curAge        = +inputs.currentAge.value      || 30;
+  const retAge        = +inputs.retirementAge.value   || 60;
+  const lifeExp       = +inputs.lifeExpectancy.value  || 80;
+  const expenses      = +inputs.expenses.value        || 0;
+  const curSavings    = +inputs.currentSavings.value  || 0;
+  const monthlySip    = +inputs.monthlySip.value      || 0;
+  const preReturn     = +inputs.preReturnRate.value   / 100 || 0.12;
+  const postReturn    = +inputs.postReturnRate.value  / 100 || 0.07;
+  const inflation     = +inputs.inflation.value       / 100 || 0.06;
+  const salaryGrowth  = +inputs.salaryGrowth.value    / 100 || 0.08;
+
+  const yearsToRetire   = Math.max(retAge - curAge, 1);
+  const yearsInRetire   = Math.max(lifeExp - retAge, 1);
+
+  // Monthly rates
+  const rPre  = preReturn  / 12;
+  const rPost = postReturn / 12;
+  const rInfl = inflation  / 12;
+
+  // Inflation-adjusted monthly expenses at retirement
+  const expAtRetirement = expenses * Math.pow(1 + inflation, yearsToRetire);
+
+  // Corpus needed to sustain inflation-adjusted withdrawals
+  // Using present-value-of-growing-annuity formula
+  const monthsInRetire = yearsInRetire * 12;
+  let requiredCorpus;
+  if (Math.abs(rPost - rInfl) < 1e-10) {
+    requiredCorpus = expAtRetirement * monthsInRetire;
+  } else {
+    requiredCorpus = expAtRetirement *
+      (1 - Math.pow((1 + rInfl)/(1 + rPost), monthsInRetire)) /
+      (rPost - rInfl);
+  }
+
+  // Future value of current savings
+  const fvSavings = curSavings * Math.pow(1 + preReturn, yearsToRetire);
+
+  // Future value of monthly SIP
+  const nMonths = yearsToRetire * 12;
+  const fvSip   = monthlySip * ((Math.pow(1 + rPre, nMonths) - 1) / rPre) * (1 + rPre);
+
+  const projectedCorpus = fvSavings + fvSip;
+  const gap             = projectedCorpus - requiredCorpus;
+
+  // SIP needed to meet required corpus
+  const fvExistingSavings = fvSavings;
+  const sipNeededCorpus   = Math.max(0, requiredCorpus - fvExistingSavings);
+  const sipNeeded = sipNeededCorpus > 0
+    ? sipNeededCorpus * rPre / ((Math.pow(1 + rPre, nMonths) - 1) / (1 + rPre) * (1 + rPre))
+    : 0;
+
+  // Monthly draw (fixed withdrawal from corpus over retirement)
+  const monthlyDraw = projectedCorpus * rPost /
+    (1 - Math.pow(1 + rPost, -monthsInRetire));
+
+  // ── Update DOM ──────────────────────────────────────────────────────
+  document.getElementById('corpusAmount').textContent = fmtCr(projectedCorpus);
+  document.getElementById('corpusSub').textContent    =
+    `corpus you will accumulate by age ${retAge}`;
+
+  document.getElementById('metricRequired').textContent  = fmtCr(requiredCorpus);
+  document.getElementById('metricYearsLeft').textContent = yearsToRetire;
+  document.getElementById('metricSipNeeded').textContent =
+    '₹' + Math.round(sipNeeded).toLocaleString('en-IN');
+  document.getElementById('metricMonthlyIncome').textContent =
+    '₹' + Math.round(monthlyDraw).toLocaleString('en-IN');
+
+  const gapEl = document.getElementById('metricGap');
+  gapEl.textContent = (gap >= 0 ? '+' : '') + fmtCr(gap);
+  gapEl.className   = 'metric-val ' + (gap >= 0 ? 'good' : 'warn');
+
+  // ── Year-by-year table ──────────────────────────────────────────────
+  const rows     = [];
+  let corpus     = curSavings;
+  let sal        = salary;
+  let annualSip  = monthlySip * 12;
+
+  for (let y = 0; y < yearsToRetire; y++) {
+    const age     = curAge + y + 1;
+    corpus        = corpus * (1 + preReturn) + annualSip;
+    const needed  = requiredCorpus / Math.pow(1 + preReturn, yearsToRetire - y - 1);
+    rows.push({ age, salary: sal * 12, investment: annualSip, corpus, needed });
+    sal      *= (1 + salaryGrowth);
+    annualSip = Math.min(annualSip * 1.1, sal * 0.3); // auto-step SIP with salary, cap 30%
+  }
+
+  const tbody = document.getElementById('breakdownBody');
+  tbody.innerHTML = rows.map((r, i) => {
+    const vs   = r.corpus - r.needed;
+    const vsStr = (vs >= 0 ? '+' : '') + fmtLakh(vs);
+    const vsClass = vs >= 0 ? 'good' : '';
+    return `<tr>
+      <td>${2025 + i + 1}</td>
+      <td style="font-family:var(--mono)">${r.age}</td>
+      <td>${fmtLakh(r.salary)}</td>
+      <td>${fmtLakh(r.investment)}</td>
+      <td>${fmtCr(r.corpus)}</td>
+      <td style="color:${vs>=0?'#1a7a4a':'#c84b31'};font-family:var(--mono)">${vsStr}</td>
+    </tr>`;
+  }).join('');
+
+  // ── Chart ───────────────────────────────────────────────────────────
+  drawChart(rows, requiredCorpus);
+
+  // Store for Excel
+  window._calcData = { rows, projectedCorpus, requiredCorpus, gap, sipNeeded,
+    monthlyDraw, yearsToRetire, yearsInRetire, salary, monthlySip,
+    curAge, retAge, lifeExp, expenses, preReturn, postReturn, inflation };
+}
+
+// ── Projection chart (plain canvas, no library) ────────────────────────
+function drawChart(rows, required) {
+  const canvas = document.getElementById('projectionChart');
+  if (!canvas) return;
+  const ctx    = canvas.getContext('2d');
+  const dpr    = window.devicePixelRatio || 1;
+  const W      = canvas.offsetWidth;
+  const H      = canvas.offsetHeight;
+  canvas.width  = W * dpr;
+  canvas.height = H * dpr;
+  ctx.scale(dpr, dpr);
+
+  const pad   = { top: 10, right: 16, bottom: 28, left: 8 };
+  const cw    = W - pad.left - pad.right;
+  const ch    = H - pad.top  - pad.bottom;
+  const max   = Math.max(rows[rows.length-1]?.corpus || 1, required) * 1.05;
+
+  ctx.clearRect(0, 0, W, H);
+
+  // Grid lines
+  ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+  ctx.lineWidth   = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = pad.top + ch - (i/4)*ch;
+    ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(pad.left+cw, y); ctx.stroke();
+  }
+
+  function xPos(i) { return pad.left + (i / (rows.length - 1 || 1)) * cw; }
+  function yPos(v) { return pad.top + ch - (v / max) * ch; }
+
+  // Required corpus line (dashed)
+  ctx.strokeStyle = 'rgba(240,180,40,0.6)';
+  ctx.lineWidth   = 1.5;
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath();
+  rows.forEach((r, i) => {
+    const rv = required / Math.pow(1 + (+inputs.preReturnRate.value/100), rows.length - 1 - i);
+    i === 0 ? ctx.moveTo(xPos(i), yPos(rv)) : ctx.lineTo(xPos(i), yPos(rv));
+  });
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Projected corpus area
+  const grad = ctx.createLinearGradient(0, pad.top, 0, pad.top+ch);
+  grad.addColorStop(0, 'rgba(93,214,138,0.35)');
+  grad.addColorStop(1, 'rgba(93,214,138,0.02)');
+  ctx.fillStyle   = grad;
+  ctx.strokeStyle = '#5dd68a';
+  ctx.lineWidth   = 2;
+  ctx.beginPath();
+  rows.forEach((r, i) => {
+    i === 0 ? ctx.moveTo(xPos(i), yPos(r.corpus)) : ctx.lineTo(xPos(i), yPos(r.corpus));
+  });
+  // Close area
+  ctx.lineTo(xPos(rows.length-1), pad.top+ch);
+  ctx.lineTo(xPos(0), pad.top+ch);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.beginPath();
+  rows.forEach((r, i) => {
+    i === 0 ? ctx.moveTo(xPos(i), yPos(r.corpus)) : ctx.lineTo(xPos(i), yPos(r.corpus));
+  });
+  ctx.stroke();
+
+  // X axis labels
+  ctx.fillStyle = 'rgba(255,255,255,0.35)';
+  ctx.font      = `${10 * dpr / dpr}px Inter, sans-serif`;
+  ctx.textAlign = 'center';
+  const step    = Math.max(1, Math.floor(rows.length / 6));
+  rows.forEach((r, i) => {
+    if (i % step === 0 || i === rows.length - 1) {
+      ctx.fillText(r.age, xPos(i), H - pad.bottom/4);
+    }
+  });
+}
+
+// ── Excel download (SheetJS via CDN) ──────────────────────────────────
+function downloadExcel() {
+  const d = window._calcData;
+  if (!d) return;
+
+  const script = document.createElement('script');
+  script.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+  script.onload = () => {
+    const wb = XLSX.utils.book_new();
+
+    // Summary sheet
+    const summary = [
+      ['India Retirement Projection', '', '', ''],
+      ['Generated', new Date().toLocaleDateString('en-IN'), '', ''],
+      ['', '', '', ''],
+      ['INPUT', 'VALUE', '', ''],
+      ['Current Age', d.curAge, '', ''],
+      ['Retirement Age', d.retAge, '', ''],
+      ['Life Expectancy', d.lifeExp, '', ''],
+      ['Current Monthly Salary', d.salary, '', ''],
+      ['Current Savings', +inputs.currentSavings.value, '', ''],
+      ['Monthly SIP', d.monthlySip, '', ''],
+      ['Pre-retirement Return', (d.preReturn*100).toFixed(1)+'%', '', ''],
+      ['Post-retirement Return', (d.postReturn*100).toFixed(1)+'%', '', ''],
+      ['Inflation Rate', (d.inflation*100).toFixed(1)+'%', '', ''],
+      ['', '', '', ''],
+      ['RESULT', 'VALUE', '', ''],
+      ['Projected Corpus', d.projectedCorpus, '', ''],
+      ['Required Corpus', d.requiredCorpus, '', ''],
+      ['Gap / Surplus', d.gap, '', ''],
+      ['SIP Needed/Month', d.sipNeeded, '', ''],
+      ['Monthly Draw', d.monthlyDraw, '', ''],
+    ];
+    const ws1 = XLSX.utils.aoa_to_sheet(summary);
+    ws1['!cols'] = [{wch:30},{wch:18},{wch:4},{wch:4}];
+    XLSX.utils.book_append_sheet(wb, ws1, 'Summary');
+
+    // Year-by-year sheet
+    const yby = [['Year','Age','Annual Salary','Annual Investment','Projected Corpus','vs Required']];
+    d.rows.forEach((r, i) => {
+      yby.push([2025+i+1, r.age,
+        Math.round(r.salary), Math.round(r.investment),
+        Math.round(r.corpus), Math.round(r.corpus - r.needed)]);
+    });
+    const ws2 = XLSX.utils.aoa_to_sheet(yby);
+    ws2['!cols'] = [{wch:8},{wch:6},{wch:16},{wch:18},{wch:18},{wch:14}];
+    XLSX.utils.book_append_sheet(wb, ws2, 'Year-by-Year');
+
+    XLSX.writeFile(wb, 'retirement-projection-india.xlsx');
+  };
+  document.head.appendChild(script);
+}
+
+// ── Init ───────────────────────────────────────────────────────────────
+window.addEventListener('resize', () => {
+  if (window._calcData) drawChart(window._calcData.rows, window._calcData.requiredCorpus);
+});
+calculate();
+</script>
+
+<!-- Schema.org structured data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Retirement Calculator India",
+  "url": "https://senecacommons.com/tools/retirement-calculator-india",
+  "description": "Free India retirement calculator with EPF, NPS, inflation adjustment, and Excel download. Calculate your retirement corpus instantly.",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Web",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" }
+}
+</script>
+
+</body>
+</html>
