@@ -10,7 +10,7 @@
       "program": "groww",
       "weight": 1.0,
       "active": true,
-      "pages": ["retirement-calculator-india"]
+      "pages": ["retirement-calculator-india", "payroll-calculator-india-excel", "sip-calculator-india", "salary-bonus-calculator-india"]
     },
     {
       "id": "zerodha-demat",
@@ -21,7 +21,7 @@
       "program": "zerodha",
       "weight": 1.0,
       "active": true,
-      "pages": ["retirement-calculator-india"]
+      "pages": ["retirement-calculator-india", "payroll-calculator-india-excel", "sip-calculator-india", "salary-bonus-calculator-india"]
     },
     {
       "id": "etmoney-nps",
@@ -32,7 +32,7 @@
       "program": "etmoney",
       "weight": 1.0,
       "active": true,
-      "pages": ["retirement-calculator-india"]
+      "pages": ["retirement-calculator-india", "sip-calculator-india"]
     }
   ]
 }
