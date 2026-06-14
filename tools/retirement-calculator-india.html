@@ -1007,7 +1007,7 @@ function trackAffiliateClick(e) {
     ua:        navigator.userAgent.slice(0, 120)
   };
   // Fire-and-forget POST to Board 2 click endpoint
-  fetch('http://172.16.100.11:7070/click', {
+  fetch('/api/click', {
     method:  'POST',
     headers: { 'Content-Type': 'application/json' },
     body:    JSON.stringify(payload),
