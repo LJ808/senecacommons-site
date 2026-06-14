@@ -575,6 +575,22 @@ footer {
 
     </div><!-- /calc-grid -->
 
+    <!-- AFFILIATE BANNER -->
+    <div id="affiliateBanner" style="display:none; margin:32px 0; background:#fff; border:1px solid #e2e0da; border-left:3px solid #2563a8; border-radius:4px; padding:20px 24px;">
+      <div style="font-size:0.68rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:#8888aa; margin-bottom:10px;">Next step</div>
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;">
+        <div>
+          <div id="affiliateLabel" style="font-family:'DM Serif Display',Georgia,serif; font-size:1.15rem; color:#1a1a2e; margin-bottom:4px;"></div>
+          <div id="affiliateSubtext" style="font-size:0.82rem; color:#4a4a6a;"></div>
+        </div>
+        <a id="affiliateLink" href="#" target="_blank" rel="noopener sponsored"
+           style="display:inline-flex; align-items:center; gap:8px; padding:10px 20px; background:#2563a8; color:#fff; border-radius:3px; font-size:0.82rem; font-weight:600; letter-spacing:0.04em; text-decoration:none; white-space:nowrap; flex-shrink:0;"
+           onclick="trackAffiliateClick(event)">
+          Get started →
+        </a>
+      </div>
+    </div>
+
     <!-- BREAKDOWN TABLE -->
     <div class="breakdown">
       <div class="breakdown-title">Year-by-Year Breakdown</div>
@@ -950,6 +966,54 @@ window.addEventListener('resize', () => {
   if (window._calcData) drawChart(window._calcData.rows, window._calcData.requiredCorpus);
 });
 calculate();
+
+// ── Affiliate banner ────────────────────────────────────────────────────
+let _affiliate = null;
+
+(async function loadAffiliate() {
+  try {
+    const res  = await fetch('/affiliates.json');
+    const data = await res.json();
+    const page = 'retirement-calculator-india';
+    const candidates = data.slots.filter(s => s.active && s.pages.includes(page));
+    if (!candidates.length) return;
+
+    // Weighted random selection
+    const totalWeight = candidates.reduce((s, c) => s + c.weight, 0);
+    let rand = Math.random() * totalWeight;
+    let chosen = candidates[candidates.length - 1];
+    for (const c of candidates) {
+      rand -= c.weight;
+      if (rand <= 0) { chosen = c; break; }
+    }
+
+    _affiliate = chosen;
+    document.getElementById('affiliateLabel').textContent   = chosen.label;
+    document.getElementById('affiliateSubtext').textContent = chosen.subtext;
+    document.getElementById('affiliateLink').href           = chosen.url;
+    document.getElementById('affiliateBanner').style.display = 'block';
+  } catch (e) {
+    // Affiliate load failure — silent. Never break the calculator.
+  }
+})();
+
+function trackAffiliateClick(e) {
+  if (!_affiliate) return;
+  const payload = {
+    id:        _affiliate.id,
+    program:   _affiliate.program,
+    page:      'retirement-calculator-india',
+    ts:        Date.now(),
+    ua:        navigator.userAgent.slice(0, 120)
+  };
+  // Fire-and-forget POST to Board 2 click endpoint
+  fetch('http://172.16.100.11:7070/click', {
+    method:  'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body:    JSON.stringify(payload),
+    mode:    'no-cors'
+  }).catch(() => {}); // Never block navigation
+}
 </script>
 
 <!-- Schema.org structured data -->

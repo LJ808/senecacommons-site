@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "slots": [
+    {
+      "id": "groww-sip",
+      "label": "Start your SIP on Groww",
+      "subtext": "Zero commission mutual funds. 5-minute account opening.",
+      "url": "https://groww.in/?ref=PLACEHOLDER_GROWW",
+      "network": "vcommission",
+      "program": "groww",
+      "weight": 1.0,
+      "active": true,
+      "pages": ["retirement-calculator-india"]
+    },
+    {
+      "id": "zerodha-demat",
+      "label": "Open a Zerodha Demat account",
+      "subtext": "India's largest broker. ₹0 equity delivery trades.",
+      "url": "https://zerodha.com/open-account?c=PLACEHOLDER_ZERODHA",
+      "network": "vcommission",
+      "program": "zerodha",
+      "weight": 1.0,
+      "active": true,
+      "pages": ["retirement-calculator-india"]
+    },
+    {
+      "id": "etmoney-nps",
+      "label": "Invest in NPS via ET Money",
+      "subtext": "Tax savings up to ₹50,000 extra under 80CCD(1B).",
+      "url": "https://www.etmoney.com/?ref=PLACEHOLDER_ETM",
+      "network": "vcommission",
+      "program": "etmoney",
+      "weight": 1.0,
+      "active": true,
+      "pages": ["retirement-calculator-india"]
+    }
+  ]
+}
