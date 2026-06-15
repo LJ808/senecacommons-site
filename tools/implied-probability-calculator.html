@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Implied Probability Calculator — Prediction Markets | Seneca Commons</title>
+<meta name="description" content="Convert prediction market prices to implied probability and break-even win rates. Works with Kalshi, Polymarket, and Robinhood event contracts. Free, no login.">
+<link rel="canonical" href="https://senecacommons.com/tools/implied-probability-calculator">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Implied Probability Calculator",
+  "url": "https://senecacommons.com/tools/implied-probability-calculator",
+  "description": "Convert prediction market contract prices to implied probability and break-even win rates.",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --ink: #1a1a2e; --ink-mid: #4a4a6a; --ink-light: #8888aa;
+  --page: #f7f6f2; --panel: #ffffff; --rule: #e2e0da;
+  --accent: #c84b31; --accent-2: #2563a8;
+  --green: #1a7a4a; --green-bg: #f0faf4;
+  --serif: 'DM Serif Display', Georgia, serif;
+  --sans: 'Inter', system-ui, sans-serif;
+}
+html { font-size: 16px; }
+body { font-family: var(--sans); background: var(--page); color: var(--ink); line-height: 1.6; -webkit-font-smoothing: antialiased; min-height: 100vh; display: flex; flex-direction: column; }
+.wrap { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+header { border-bottom: 1px solid var(--rule); padding: 16px 0; background: var(--panel); }
+.header-inner { display: flex; align-items: center; justify-content: space-between; }
+.logo { font-family: var(--serif); font-size: 1.2rem; color: var(--ink); text-decoration: none; letter-spacing: -0.01em; }
+.logo em { color: var(--accent); font-style: normal; }
+nav a { font-size: 0.78rem; font-weight: 500; color: var(--ink-mid); text-decoration: none; margin-left: 24px; letter-spacing: 0.05em; text-transform: uppercase; }
+nav a:hover { color: var(--accent); }
+
+.page-hero { padding: 52px 0 36px; border-bottom: 1px solid var(--rule); }
+.page-eyebrow { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+.page-title { font-family: var(--serif); font-size: clamp(2rem, 4vw, 2.8rem); color: var(--ink); margin-bottom: 14px; letter-spacing: -0.02em; }
+.page-sub { font-size: 0.95rem; color: var(--ink-mid); max-width: 560px; line-height: 1.75; }
+
+.tool-section { padding: 48px 0; flex: 1; }
+.tool-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start; }
+
+/* Calculator panel */
+.calc-panel { background: var(--panel); border: 1px solid var(--rule); border-radius: 4px; padding: 32px; }
+.calc-title { font-family: var(--serif); font-size: 1.2rem; color: var(--ink); margin-bottom: 24px; letter-spacing: -0.01em; }
+
+.field { margin-bottom: 20px; }
+.field label { display: block; font-size: 0.78rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-mid); margin-bottom: 8px; }
+.field-row { display: flex; align-items: center; gap: 8px; }
+.field input[type="number"] {
+  width: 100%; padding: 10px 14px; border: 1px solid var(--rule);
+  border-radius: 3px; font-size: 1rem; font-family: var(--sans);
+  color: var(--ink); background: var(--page);
+  transition: border-color 0.15s;
+  -moz-appearance: textfield;
+}
+.field input[type="number"]::-webkit-outer-spin-button,
+.field input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+.field input[type="number"]:focus { outline: none; border-color: var(--accent-2); background: #fff; }
+.field-unit { font-size: 0.82rem; font-weight: 600; color: var(--ink-light); white-space: nowrap; }
+
+.seg-control { display: flex; gap: 0; border: 1px solid var(--rule); border-radius: 3px; overflow: hidden; }
+.seg-btn {
+  flex: 1; padding: 9px 12px; border: none; background: var(--page);
+  font-size: 0.78rem; font-weight: 600; letter-spacing: 0.04em;
+  text-transform: uppercase; color: var(--ink-mid); cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+.seg-btn + .seg-btn { border-left: 1px solid var(--rule); }
+.seg-btn.active { background: var(--ink); color: #fff; }
+
+.divider { border: none; border-top: 1px solid var(--rule); margin: 24px 0; }
+
+/* Results */
+.result-block { display: flex; flex-direction: column; gap: 12px; }
+.result-row { display: flex; justify-content: space-between; align-items: baseline; padding: 14px 16px; background: var(--page); border-radius: 3px; }
+.result-row.primary { background: var(--green-bg); border: 1px solid #b8e8cc; }
+.result-label { font-size: 0.78rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-mid); }
+.result-row.primary .result-label { color: var(--green); }
+.result-value { font-family: var(--serif); font-size: 1.5rem; color: var(--ink); letter-spacing: -0.02em; }
+.result-row.primary .result-value { color: var(--green); }
+.result-sub { font-size: 0.72rem; color: var(--ink-light); margin-top: 2px; }
+
+/* Explainer panel */
+.explainer { display: flex; flex-direction: column; gap: 24px; }
+.explainer-card { background: var(--panel); border: 1px solid var(--rule); border-radius: 4px; padding: 24px; }
+.explainer-card h3 { font-family: var(--serif); font-size: 1.05rem; color: var(--ink); margin-bottom: 10px; letter-spacing: -0.01em; }
+.explainer-card p { font-size: 0.85rem; color: var(--ink-mid); line-height: 1.7; }
+.explainer-card p + p { margin-top: 8px; }
+.formula { font-family: 'Courier New', monospace; font-size: 0.82rem; background: var(--page); border: 1px solid var(--rule); border-radius: 3px; padding: 10px 14px; margin-top: 10px; color: var(--ink); letter-spacing: 0.02em; }
+
+/* CTA strip */
+.cta-strip { border-top: 1px solid var(--rule); background: var(--panel); padding: 32px 0; }
+.cta-inner { display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+.cta-text h3 { font-family: var(--serif); font-size: 1.15rem; color: var(--ink); margin-bottom: 6px; letter-spacing: -0.01em; }
+.cta-text p { font-size: 0.82rem; color: var(--ink-mid); max-width: 440px; line-height: 1.65; }
+.cta-links { display: flex; gap: 12px; flex-wrap: wrap; }
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 18px; border-radius: 3px; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.04em; text-decoration: none; transition: opacity 0.15s; white-space: nowrap; }
+.btn:hover { opacity: 0.82; }
+.btn-primary { background: var(--accent-2); color: #fff; }
+.btn-outline { background: transparent; border: 1px solid var(--rule); color: var(--ink-mid); }
+
+/* Related tools */
+.related { padding: 40px 0; border-top: 1px solid var(--rule); }
+.related-title { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-light); margin-bottom: 16px; }
+.related-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+.related-card { background: var(--panel); border: 1px solid var(--rule); border-radius: 4px; padding: 20px; text-decoration: none; display: block; transition: border-color 0.15s; position: relative; }
+.related-card:hover { border-color: var(--accent-2); }
+.related-tag { font-size: 0.62rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; display: block; }
+.related-name { font-family: var(--serif); font-size: 1rem; color: var(--ink); letter-spacing: -0.01em; }
+.related-arrow { position: absolute; top: 20px; right: 16px; font-size: 0.9rem; color: var(--ink-light); }
+
+footer { border-top: 1px solid var(--rule); padding: 24px 0; margin-top: auto; }
+.footer-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+.footer-note { font-size: 0.72rem; color: var(--ink-light); }
+
+@media (max-width: 680px) {
+  .tool-layout { grid-template-columns: 1fr; }
+  .cta-inner { flex-direction: column; align-items: flex-start; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap header-inner">
+    <a href="/" class="logo"><img src="/senecacommons-logo.png" alt="Seneca Commons" style="height:36px;width:auto;display:block;"></a>
+    <nav>
+      <a href="/tools">Tools</a>
+      <a href="/signal">Signal</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="page-hero">
+    <div class="wrap">
+      <div class="page-eyebrow">Prediction Markets · Free Calculator</div>
+      <h1 class="page-title">Implied Probability Calculator</h1>
+      <p class="page-sub">Convert a contract price to implied probability and break-even win rate. Works with any prediction market — Kalshi, Robinhood, or Polymarket.</p>
+    </div>
+  </div>
+
+  <div class="tool-section">
+    <div class="wrap">
+      <div class="tool-layout">
+
+        <!-- Calculator -->
+        <div class="calc-panel">
+          <div class="calc-title">Enter a contract price</div>
+
+          <div class="field">
+            <label>Price format</label>
+            <div class="seg-control">
+              <button class="seg-btn active" onclick="setMode('decimal')" id="btn-decimal">Decimal ($0.65)</button>
+              <button class="seg-btn" onclick="setMode('cents')" id="btn-cents">Cents (65¢)</button>
+              <button class="seg-btn" onclick="setMode('percent')" id="btn-percent">Percent (65%)</button>
+            </div>
+          </div>
+
+          <div class="field">
+            <label id="price-label">Contract price (dollars)</label>
+            <div class="field-row">
+              <input type="number" id="price-input" min="0" max="1" step="0.01" value="0.65" oninput="calculate()">
+              <span class="field-unit" id="price-unit">$</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Your stake</label>
+            <div class="field-row">
+              <input type="number" id="stake-input" min="0" step="1" value="100" oninput="calculate()">
+              <span class="field-unit">$</span>
+            </div>
+          </div>
+
+          <hr class="divider">
+
+          <div class="result-block">
+            <div class="result-row primary">
+              <div>
+                <div class="result-label">Implied probability</div>
+                <div class="result-sub">Market's estimated chance of YES</div>
+              </div>
+              <div class="result-value" id="res-prob">65.0%</div>
+            </div>
+            <div class="result-row">
+              <div>
+                <div class="result-label">Break-even win rate</div>
+                <div class="result-sub">You need to win more often than this</div>
+              </div>
+              <div class="result-value" id="res-breakeven">65.0%</div>
+            </div>
+            <div class="result-row">
+              <div>
+                <div class="result-label">Profit if YES resolves</div>
+                <div class="result-sub">On a $<span id="stake-label">100</span> stake</div>
+              </div>
+              <div class="result-value" id="res-profit">$35.00</div>
+            </div>
+            <div class="result-row">
+              <div>
+                <div class="result-label">Max loss</div>
+                <div class="result-sub">If NO resolves</div>
+              </div>
+              <div class="result-value" id="res-loss">$65.00</div>
+            </div>
+            <div class="result-row">
+              <div>
+                <div class="result-label">Payout ratio</div>
+                <div class="result-sub">Profit ÷ stake at risk</div>
+              </div>
+              <div class="result-value" id="res-ratio">0.54 : 1</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Explainer -->
+        <div class="explainer">
+          <div class="explainer-card">
+            <h3>What implied probability means</h3>
+            <p>On prediction markets, contract prices range from $0.01 to $0.99. A YES contract priced at $0.65 means the market collectively estimates a 65% chance the event resolves YES.</p>
+            <p>That price is the implied probability — no conversion needed. The market prices and the probability are the same number.</p>
+          </div>
+          <div class="explainer-card">
+            <h3>Break-even win rate</h3>
+            <p>To profit long-term, your actual win rate must exceed the market's implied probability. If a contract trades at 65¢, you need to win more than 65% of the time on similar bets to show positive expected value.</p>
+            <p>This calculator shows both. If you have genuine information edge — you believe the true probability exceeds the market price — the Kelly criterion calculator helps you size that edge correctly.</p>
+          </div>
+          <div class="explainer-card">
+            <h3>The formula</h3>
+            <div class="formula">Implied prob = contract price ÷ $1.00<br>Profit if YES = ($1.00 − price) × contracts<br>Loss if NO = price × contracts</div>
+          </div>
+          <div class="explainer-card">
+            <h3>How to read this on Kalshi</h3>
+            <p>Kalshi displays YES prices in cents. A market showing <strong>65</strong> means $0.65 per contract. Buy 100 contracts for $65. If it resolves YES, you receive $100 — a $35 profit.</p>
+            <p>The bid/ask spread adds friction. The true implied probability sits between the best bid and best ask, not at either edge.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-strip">
+    <div class="wrap cta-inner">
+      <div class="cta-text">
+        <h3>Ready to trade prediction markets?</h3>
+        <p>Kalshi offers CFTC-regulated event contracts with no trading fees. Robinhood lets you trade the same markets inside an account you may already have.</p>
+      </div>
+      <div class="cta-links">
+        <a href="https://kalshi.com/sign-up" class="btn btn-primary" target="_blank" rel="noopener">Trade on Kalshi →</a>
+        <a href="/tools/kelly-criterion-calculator" class="btn btn-outline">Kelly Criterion Calculator</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Related -->
+  <div class="related">
+    <div class="wrap">
+      <div class="related-title">Related tools</div>
+      <div class="related-grid">
+        <a href="/tools/kelly-criterion-calculator" class="related-card">
+          <span class="related-arrow">→</span>
+          <span class="related-tag">Prediction Markets</span>
+          <div class="related-name">Kelly Criterion Calculator</div>
+        </a>
+        <a href="/signal/kalshi-vs-polymarket" class="related-card">
+          <span class="related-arrow">→</span>
+          <span class="related-tag">Guide</span>
+          <div class="related-name">Kalshi vs Polymarket — Which one for US traders?</div>
+        </a>
+        <a href="/tools/retirement-calculator-india" class="related-card">
+          <span class="related-arrow">→</span>
+          <span class="related-tag">India · Retirement</span>
+          <div class="related-name">Retirement Calculator India</div>
+        </a>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap footer-inner">
+    <p class="footer-note">© 2026 Seneca Commons</p>
+    <p class="footer-note">Free tools. No login required.</p>
+  </div>
+</footer>
+
+<script>
+let mode = 'decimal';
+
+function setMode(m) {
+  mode = m;
+  document.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('btn-' + m).classList.add('active');
+
+  const input = document.getElementById('price-input');
+  const label = document.getElementById('price-label');
+  const unit = document.getElementById('price-unit');
+  const current = parseFloat(input.value) || 0;
+
+  if (m === 'decimal') {
+    label.textContent = 'Contract price (dollars)';
+    unit.textContent = '$';
+    input.min = 0; input.max = 1; input.step = 0.01;
+    // convert from whatever was showing
+    input.value = (current > 1 ? current / 100 : current).toFixed(2);
+  } else if (m === 'cents') {
+    label.textContent = 'Contract price (cents)';
+    unit.textContent = '¢';
+    input.min = 0; input.max = 100; input.step = 1;
+    input.value = Math.round(current <= 1 ? current * 100 : current);
+  } else {
+    label.textContent = 'Contract price (percent)';
+    unit.textContent = '%';
+    input.min = 0; input.max = 100; input.step = 0.1;
+    input.value = (current <= 1 ? current * 100 : current).toFixed(1);
+  }
+  calculate();
+}
+
+function getDecimalPrice() {
+  const raw = parseFloat(document.getElementById('price-input').value) || 0;
+  if (mode === 'decimal') return Math.min(Math.max(raw, 0.01), 0.99);
+  return Math.min(Math.max(raw / 100, 0.01), 0.99);
+}
+
+function fmt(n, decimals) {
+  return n.toFixed(decimals);
+}
+
+function calculate() {
+  const price = getDecimalPrice();
+  const stake = parseFloat(document.getElementById('stake-input').value) || 0;
+
+  const contracts = stake / price;
+  const profitIfYes = contracts * (1 - price);
+  const lossIfNo = stake;
+  const ratio = profitIfYes / lossIfNo;
+
+  document.getElementById('res-prob').textContent = fmt(price * 100, 1) + '%';
+  document.getElementById('res-breakeven').textContent = fmt(price * 100, 1) + '%';
+  document.getElementById('res-profit').textContent = '$' + fmt(profitIfYes, 2);
+  document.getElementById('res-loss').textContent = '$' + fmt(lossIfNo, 2);
+  document.getElementById('res-ratio').textContent = fmt(ratio, 2) + ' : 1';
+  document.getElementById('stake-label').textContent = fmt(stake, 0);
+}
+
+calculate();
+</script>
+</body>
+</html>

@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kelly Criterion Calculator — Prediction Markets | Seneca Commons</title>
+<meta name="description" content="Calculate optimal bet size using the Kelly Criterion for prediction market contracts. Enter your edge and bankroll to get full Kelly, half Kelly, and quarter Kelly sizing. Free, no login.">
+<link rel="canonical" href="https://senecacommons.com/tools/kelly-criterion-calculator">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Kelly Criterion Calculator — Prediction Markets",
+  "url": "https://senecacommons.com/tools/kelly-criterion-calculator",
+  "description": "Calculate optimal position size using the Kelly Criterion for Kalshi, Robinhood, and Polymarket event contracts.",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --ink: #1a1a2e; --ink-mid: #4a4a6a; --ink-light: #8888aa;
+  --page: #f7f6f2; --panel: #ffffff; --rule: #e2e0da;
+  --accent: #c84b31; --accent-2: #2563a8;
+  --green: #1a7a4a; --green-bg: #f0faf4;
+  --amber: #92600a; --amber-bg: #fdf8ee;
+  --red: #b91c1c; --red-bg: #fef2f2;
+  --serif: 'DM Serif Display', Georgia, serif;
+  --sans: 'Inter', system-ui, sans-serif;
+}
+html { font-size: 16px; }
+body { font-family: var(--sans); background: var(--page); color: var(--ink); line-height: 1.6; -webkit-font-smoothing: antialiased; min-height: 100vh; display: flex; flex-direction: column; }
+.wrap { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+header { border-bottom: 1px solid var(--rule); padding: 16px 0; background: var(--panel); }
+.header-inner { display: flex; align-items: center; justify-content: space-between; }
+.logo { font-family: var(--serif); font-size: 1.2rem; color: var(--ink); text-decoration: none; letter-spacing: -0.01em; }
+.logo em { color: var(--accent); font-style: normal; }
+nav a { font-size: 0.78rem; font-weight: 500; color: var(--ink-mid); text-decoration: none; margin-left: 24px; letter-spacing: 0.05em; text-transform: uppercase; }
+nav a:hover { color: var(--accent); }
+
+.page-hero { padding: 52px 0 36px; border-bottom: 1px solid var(--rule); }
+.page-eyebrow { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+.page-title { font-family: var(--serif); font-size: clamp(2rem, 4vw, 2.8rem); color: var(--ink); margin-bottom: 14px; letter-spacing: -0.02em; }
+.page-sub { font-size: 0.95rem; color: var(--ink-mid); max-width: 560px; line-height: 1.75; }
+
+.tool-section { padding: 48px 0; flex: 1; }
+.tool-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start; }
+
+.calc-panel { background: var(--panel); border: 1px solid var(--rule); border-radius: 4px; padding: 32px; }
+.calc-title { font-family: var(--serif); font-size: 1.2rem; color: var(--ink); margin-bottom: 24px; letter-spacing: -0.01em; }
+
+.field { margin-bottom: 20px; }
+.field label { display: block; font-size: 0.78rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-mid); margin-bottom: 8px; }
+.field-hint { font-size: 0.72rem; color: var(--ink-light); margin-bottom: 6px; display: block; }
+.field-row { display: flex; align-items: center; gap: 8px; }
+.field input[type="number"] {
+  width: 100%; padding: 10px 14px; border: 1px solid var(--rule);
+  border-radius: 3px; font-size: 1rem; font-family: var(--sans);
+  color: var(--ink); background: var(--page);
+  transition: border-color 0.15s;
+  -moz-appearance: textfield;
+}
+.field input[type="number"]::-webkit-outer-spin-button,
+.field input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+.field input[type="number"]:focus { outline: none; border-color: var(--accent-2); background: #fff; }
+.field-unit { font-size: 0.82rem; font-weight: 600; color: var(--ink-light); white-space: nowrap; }
+
+.divider { border: none; border-top: 1px solid var(--rule); margin: 24px 0; }
+
+/* Edge indicator */
+.edge-bar-wrap { margin-top: 10px; }
+.edge-bar-track { height: 6px; background: var(--rule); border-radius: 3px; overflow: hidden; }
+.edge-bar-fill { height: 100%; border-radius: 3px; transition: width 0.2s, background 0.2s; }
+.edge-label { font-size: 0.72rem; color: var(--ink-light); margin-top: 5px; }
+
+/* Results */
+.result-block { display: flex; flex-direction: column; gap: 12px; }
+.result-row { display: flex; justify-content: space-between; align-items: baseline; padding: 14px 16px; border-radius: 3px; }
+.result-row.primary { background: var(--green-bg); border: 1px solid #b8e8cc; }
+.result-row.secondary { background: var(--amber-bg); border: 1px solid #e8d0a0; }
+.result-row.muted { background: var(--page); }
+.result-row.negative { background: var(--red-bg); border: 1px solid #fca5a5; }
+.result-label { font-size: 0.78rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-mid); }
+.result-row.primary .result-label { color: var(--green); }
+.result-row.secondary .result-label { color: var(--amber); }
+.result-row.negative .result-label { color: var(--red); }
+.result-value { font-family: var(--serif); font-size: 1.5rem; color: var(--ink); letter-spacing: -0.02em; }
+.result-row.primary .result-value { color: var(--green); }
+.result-row.secondary .result-value { color: var(--amber); }
+.result-row.negative .result-value { color: var(--red); }
+.result-sub { font-size: 0.72rem; color: var(--ink-light); margin-top: 2px; }
+
+.no-edge-msg { background: var(--red-bg); border: 1px solid #fca5a5; border-radius: 3px; padding: 16px; font-size: 0.85rem; color: var(--red); line-height: 1.6; display: none; }
+
+/* Explainer */
+.explainer { display: flex; flex-direction: column; gap: 24px; }
+.explainer-card { background: var(--panel); border: 1px solid var(--rule); border-radius: 4px; padding: 24px; }
+.explainer-card h3 { font-family: var(--serif); font-size: 1.05rem; color: var(--ink); margin-bottom: 10px; letter-spacing: -0.01em; }
+.explainer-card p { font-size: 0.85rem; color: var(--ink-mid); line-height: 1.7; }
+.explainer-card p + p { margin-top: 8px; }
+.formula { font-family: 'Courier New', monospace; font-size: 0.82rem; background: var(--page); border: 1px solid var(--rule); border-radius: 3px; padding: 10px 14px; margin-top: 10px; color: var(--ink); letter-spacing: 0.02em; line-height: 1.7; }
+.warning-card { background: var(--amber-bg); border: 1px solid #e8d0a0; border-radius: 4px; padding: 20px; }
+.warning-card h3 { font-family: var(--serif); font-size: 1rem; color: var(--amber); margin-bottom: 8px; }
+.warning-card p { font-size: 0.82rem; color: var(--amber); line-height: 1.65; opacity: 0.9; }
+
+/* CTA */
+.cta-strip { border-top: 1px solid var(--rule); background: var(--panel); padding: 32px 0; }
+.cta-inner { display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+.cta-text h3 { font-family: var(--serif); font-size: 1.15rem; color: var(--ink); margin-bottom: 6px; letter-spacing: -0.01em; }
+.cta-text p { font-size: 0.82rem; color: var(--ink-mid); max-width: 440px; line-height: 1.65; }
+.cta-links { display: flex; gap: 12px; flex-wrap: wrap; }
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 18px; border-radius: 3px; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.04em; text-decoration: none; transition: opacity 0.15s; white-space: nowrap; }
+.btn:hover { opacity: 0.82; }
+.btn-primary { background: var(--accent-2); color: #fff; }
+.btn-outline { background: transparent; border: 1px solid var(--rule); color: var(--ink-mid); }
+
+/* Related */
+.related { padding: 40px 0; border-top: 1px solid var(--rule); }
+.related-title { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-light); margin-bottom: 16px; }
+.related-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+.related-card { background: var(--panel); border: 1px solid var(--rule); border-radius: 4px; padding: 20px; text-decoration: none; display: block; transition: border-color 0.15s; position: relative; }
+.related-card:hover { border-color: var(--accent-2); }
+.related-tag { font-size: 0.62rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; display: block; }
+.related-name { font-family: var(--serif); font-size: 1rem; color: var(--ink); letter-spacing: -0.01em; }
+.related-arrow { position: absolute; top: 20px; right: 16px; font-size: 0.9rem; color: var(--ink-light); }
+
+footer { border-top: 1px solid var(--rule); padding: 24px 0; margin-top: auto; }
+.footer-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+.footer-note { font-size: 0.72rem; color: var(--ink-light); }
+
+@media (max-width: 680px) {
+  .tool-layout { grid-template-columns: 1fr; }
+  .cta-inner { flex-direction: column; align-items: flex-start; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap header-inner">
+    <a href="/" class="logo"><img src="/senecacommons-logo.png" alt="Seneca Commons" style="height:36px;width:auto;display:block;"></a>
+    <nav>
+      <a href="/tools">Tools</a>
+      <a href="/signal">Signal</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="page-hero">
+    <div class="wrap">
+      <div class="page-eyebrow">Prediction Markets · Free Calculator</div>
+      <h1 class="page-title">Kelly Criterion Calculator</h1>
+      <p class="page-sub">Find the mathematically optimal position size for a prediction market contract. Enter your true probability estimate and the market price to calculate full, half, and quarter Kelly sizing.</p>
+    </div>
+  </div>
+
+  <div class="tool-section">
+    <div class="wrap">
+      <div class="tool-layout">
+
+        <!-- Calculator -->
+        <div class="calc-panel">
+          <div class="calc-title">Your edge and bankroll</div>
+
+          <div class="field">
+            <label>Your bankroll</label>
+            <span class="field-hint">Total capital allocated to prediction markets</span>
+            <div class="field-row">
+              <input type="number" id="bankroll" min="1" step="10" value="500" oninput="calculate()">
+              <span class="field-unit">$</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Market price (contract)</label>
+            <span class="field-hint">Current YES price — e.g. 0.42 for 42¢ on Kalshi</span>
+            <div class="field-row">
+              <input type="number" id="market-price" min="0.01" max="0.99" step="0.01" value="0.42" oninput="calculate()">
+              <span class="field-unit">$</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Your true probability estimate</label>
+            <span class="field-hint">Your honest estimate — not the market price</span>
+            <div class="field-row">
+              <input type="number" id="true-prob" min="0.01" max="0.99" step="0.01" value="0.55" oninput="calculate()">
+              <span class="field-unit">$</span>
+            </div>
+            <div class="edge-bar-wrap">
+              <div class="edge-bar-track"><div class="edge-bar-fill" id="edge-bar"></div></div>
+              <div class="edge-label" id="edge-label"></div>
+            </div>
+          </div>
+
+          <hr class="divider">
+
+          <div class="no-edge-msg" id="no-edge-msg">
+            No positive edge. Your true probability estimate sits at or below the market price. Kelly sizes to zero — no bet.
+          </div>
+
+          <div class="result-block" id="results">
+            <div class="result-row primary">
+              <div>
+                <div class="result-label">Full Kelly stake</div>
+                <div class="result-sub">Theoretically optimal — aggressive</div>
+              </div>
+              <div class="result-value" id="res-full-dollar">—</div>
+            </div>
+            <div class="result-row">
+              <div>
+                <div class="result-label">Full Kelly %</div>
+                <div class="result-sub">Fraction of bankroll</div>
+              </div>
+              <div class="result-value" id="res-full-pct">—</div>
+            </div>
+            <div class="result-row secondary">
+              <div>
+                <div class="result-label">Half Kelly stake</div>
+                <div class="result-sub">Recommended for most traders</div>
+              </div>
+              <div class="result-value" id="res-half-dollar">—</div>
+            </div>
+            <div class="result-row muted">
+              <div>
+                <div class="result-label">Quarter Kelly stake</div>
+                <div class="result-sub">Conservative — high uncertainty in edge</div>
+              </div>
+              <div class="result-value" id="res-quarter-dollar">—</div>
+            </div>
+            <div class="result-row muted">
+              <div>
+                <div class="result-label">Your edge</div>
+                <div class="result-sub">True prob minus implied prob</div>
+              </div>
+              <div class="result-value" id="res-edge">—</div>
+            </div>
+            <div class="result-row muted">
+              <div>
+                <div class="result-label">Expected value per $1</div>
+                <div class="result-sub">At full Kelly stake</div>
+              </div>
+              <div class="result-value" id="res-ev">—</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Explainer -->
+        <div class="explainer">
+          <div class="explainer-card">
+            <h3>What the Kelly Criterion does</h3>
+            <p>Kelly sizes positions to maximise the long-run growth rate of your bankroll. It tells you the exact fraction to stake given your edge and the odds on offer.</p>
+            <p>Bet more than Kelly and you grow slower — eventually to ruin. Bet less and you leave compounding on the table. Kelly finds the peak.</p>
+          </div>
+          <div class="explainer-card">
+            <h3>The formula for prediction markets</h3>
+            <p>On binary markets priced in dollars, the Kelly fraction simplifies cleanly:</p>
+            <div class="formula">b = (1 − price) ÷ price  &nbsp;&nbsp;← net odds<br>f* = (b × p − q) ÷ b<br><br>where p = your true probability<br>      q = 1 − p<br>      b = net payout per dollar risked</div>
+            <p style="margin-top:10px;">At a market price of $0.42, you risk $0.42 to win $0.58. If you genuinely believe the true probability sits at 55%, Kelly sizes the bet at roughly 21% of bankroll.</p>
+          </div>
+          <div class="warning-card">
+            <h3>Why most traders use half Kelly</h3>
+            <p>Full Kelly assumes your probability estimate is perfectly calibrated. In practice, estimates carry error. Half Kelly absorbs that uncertainty: it cuts drawdowns significantly while sacrificing only a small fraction of long-run growth rate. Quarter Kelly suits high-uncertainty edges.</p>
+          </div>
+          <div class="explainer-card">
+            <h3>The inputs that matter most</h3>
+            <p>The quality of your true probability estimate dominates everything else. A 5% edge held consistently compounds into large gains. A 5% error in your estimate held consistently compounds into ruin.</p>
+            <p>Use the <a href="/tools/implied-probability-calculator" style="color:var(--accent-2);">implied probability calculator</a> to verify what the market already prices in before entering your estimate here.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-strip">
+    <div class="wrap cta-inner">
+      <div class="cta-text">
+        <h3>Put the math to work</h3>
+        <p>Kalshi offers CFTC-regulated event contracts with no trading fees — the tightest execution environment for sizing these positions. Fund an account and start applying Kelly to real markets.</p>
+      </div>
+      <div class="cta-links">
+        <a href="https://kalshi.com/sign-up" class="btn btn-primary" target="_blank" rel="noopener">Open Kalshi account →</a>
+        <a href="/signal/kalshi-vs-polymarket" class="btn btn-outline">Kalshi vs Polymarket</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Related -->
+  <div class="related">
+    <div class="wrap">
+      <div class="related-title">Related tools</div>
+      <div class="related-grid">
+        <a href="/tools/implied-probability-calculator" class="related-card">
+          <span class="related-arrow">→</span>
+          <span class="related-tag">Prediction Markets</span>
+          <div class="related-name">Implied Probability Calculator</div>
+        </a>
+        <a href="/signal/kalshi-vs-polymarket" class="related-card">
+          <span class="related-arrow">→</span>
+          <span class="related-tag">Guide</span>
+          <div class="related-name">Kalshi vs Polymarket — Which one for US traders?</div>
+        </a>
+        <a href="/tools/retirement-calculator-india" class="related-card">
+          <span class="related-arrow">→</span>
+          <span class="related-tag">India · Retirement</span>
+          <div class="related-name">Retirement Calculator India</div>
+        </a>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap footer-inner">
+    <p class="footer-note">© 2026 Seneca Commons</p>
+    <p class="footer-note">Free tools. No login required.</p>
+  </div>
+</footer>
+
+<script>
+function calculate() {
+  const bankroll = parseFloat(document.getElementById('bankroll').value) || 0;
+  const price    = parseFloat(document.getElementById('market-price').value) || 0;
+  const p        = parseFloat(document.getElementById('true-prob').value) || 0;
+
+  const noEdgeMsg = document.getElementById('no-edge-msg');
+  const resultsEl = document.getElementById('results');
+  const edgeBar   = document.getElementById('edge-bar');
+  const edgeLabel = document.getElementById('edge-label');
+
+  // Edge bar
+  const edgePct = (p - price) * 100;
+  const barWidth = Math.min(Math.max(Math.abs(edgePct) / 30 * 100, 0), 100);
+  const barColor = edgePct > 0 ? '#1a7a4a' : (edgePct < 0 ? '#b91c1c' : '#8888aa');
+  edgeBar.style.width = barWidth + '%';
+  edgeBar.style.background = barColor;
+
+  if (edgePct > 0) {
+    edgeLabel.textContent = '+' + edgePct.toFixed(1) + '% edge over market';
+    edgeLabel.style.color = '#1a7a4a';
+  } else if (edgePct < 0) {
+    edgeLabel.textContent = edgePct.toFixed(1) + '% — market prices you as wrong';
+    edgeLabel.style.color = '#b91c1c';
+  } else {
+    edgeLabel.textContent = 'No edge — price matches your estimate';
+    edgeLabel.style.color = '#8888aa';
+  }
+
+  // Kelly: f* = (b*p - q) / b  where b = (1-price)/price
+  const q = 1 - p;
+  const b = (1 - price) / price;
+  const kelly = (b * p - q) / b;
+
+  if (kelly <= 0 || price <= 0 || price >= 1 || p <= 0 || p >= 1) {
+    noEdgeMsg.style.display = 'block';
+    resultsEl.style.display = 'none';
+    return;
+  }
+
+  noEdgeMsg.style.display = 'none';
+  resultsEl.style.display = 'flex';
+
+  const fullStake    = kelly * bankroll;
+  const halfStake    = fullStake / 2;
+  const quarterStake = fullStake / 4;
+  const ev = p * (1 - price) - q * price;
+
+  document.getElementById('res-full-dollar').textContent    = '$' + fullStake.toFixed(2);
+  document.getElementById('res-full-pct').textContent       = (kelly * 100).toFixed(1) + '%';
+  document.getElementById('res-half-dollar').textContent    = '$' + halfStake.toFixed(2);
+  document.getElementById('res-quarter-dollar').textContent = '$' + quarterStake.toFixed(2);
+  document.getElementById('res-edge').textContent           = (edgePct >= 0 ? '+' : '') + edgePct.toFixed(1) + '%';
+  document.getElementById('res-ev').textContent             = (ev >= 0 ? '+' : '') + '$' + Math.abs(ev).toFixed(3);
+}
+
+calculate();
+</script>
+</body>
+</html>

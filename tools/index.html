@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Free Financial Calculators — Seneca Commons Tools</title>
-<meta name="description" content="Free financial calculators for India. Retirement corpus, payroll, tax, and more. No login, no ads on tools.">
+<meta name="description" content="Free financial calculators for prediction markets and India finance. Implied probability, Kelly criterion, retirement, payroll, SIP, and more. No login, no ads.">
 <link rel="canonical" href="https://senecacommons.com/tools">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -31,10 +31,11 @@ nav a:hover { color: var(--accent); }
 .page-title { font-family: var(--serif); font-size: clamp(2rem, 4vw, 3rem); color: var(--ink); margin-bottom: 14px; letter-spacing: -0.02em; }
 .page-sub { font-size: 0.95rem; color: var(--ink-mid); max-width: 500px; line-height: 1.75; }
 .tools-section { padding: 48px 0; flex: 1; }
-.tools-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+.cluster-label { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-light); margin-bottom: 16px; margin-top: 40px; }
+.cluster-label:first-child { margin-top: 0; }
+.tools-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; margin-bottom: 8px; }
 .tool-card { background: var(--panel); border: 1px solid var(--rule); border-radius: 4px; padding: 24px; text-decoration: none; display: block; transition: border-color 0.15s, box-shadow 0.15s; position: relative; }
 .tool-card:hover { border-color: var(--accent-2); box-shadow: 0 2px 12px rgba(37,99,168,0.07); }
-.tool-card.soon { opacity: 0.5; cursor: default; pointer-events: none; }
 .tool-tag { font-size: 0.64rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; display: block; }
 .tool-name { font-family: var(--serif); font-size: 1.15rem; color: var(--ink); margin-bottom: 8px; letter-spacing: -0.01em; line-height: 1.3; }
 .tool-desc { font-size: 0.82rem; color: var(--ink-mid); line-height: 1.65; }
@@ -48,7 +49,7 @@ footer { border-top: 1px solid var(--rule); padding: 24px 0; }
 <body>
 <header>
   <div class="wrap header-inner">
-    <a href="/" class="logo">Seneca<em>Commons</em></a>
+    <a href="/" class="logo"><img src="/senecacommons-logo.png" alt="Seneca Commons" style="height:36px;width:auto;display:block;"></a>
     <nav>
       <a href="/tools">Tools</a>
       <a href="/signal">Signal</a>
@@ -60,11 +61,29 @@ footer { border-top: 1px solid var(--rule); padding: 24px 0; }
     <div class="wrap">
       <div class="page-eyebrow">Calculators</div>
       <h1 class="page-title">Free tools, built right</h1>
-      <p class="page-sub">No login. No upsells. Each calculator does one thing precisely — with Excel export and clear methodology.</p>
+      <p class="page-sub">No login. No upsells. Each calculator does one thing precisely.</p>
     </div>
   </div>
   <div class="tools-section">
     <div class="wrap">
+
+      <div class="cluster-label">Prediction Markets</div>
+      <div class="tools-grid">
+        <a href="/tools/implied-probability-calculator" class="tool-card">
+          <span class="tool-arrow">→</span>
+          <span class="tool-tag">Markets · Live</span>
+          <div class="tool-name">Implied Probability Calculator</div>
+          <p class="tool-desc">Convert Kalshi, Robinhood, or Polymarket contract prices to implied probability, break-even win rate, and payout ratio.</p>
+        </a>
+        <a href="/tools/kelly-criterion-calculator" class="tool-card">
+          <span class="tool-arrow">→</span>
+          <span class="tool-tag">Markets · Live</span>
+          <div class="tool-name">Kelly Criterion Calculator</div>
+          <p class="tool-desc">Optimal position sizing for prediction market contracts. Enter your edge and bankroll to get full, half, and quarter Kelly stakes.</p>
+        </a>
+      </div>
+
+      <div class="cluster-label">India Finance</div>
       <div class="tools-grid">
         <a href="/tools/retirement-calculator-india" class="tool-card">
           <span class="tool-arrow">→</span>
@@ -91,6 +110,7 @@ footer { border-top: 1px solid var(--rule); padding: 24px 0; }
           <p class="tool-desc">Monthly investment to wealth projection with CAGR, step-up SIP, and benchmark comparison. Excel download.</p>
         </a>
       </div>
+
     </div>
   </div>
 </main>

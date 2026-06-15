@@ -33,6 +33,32 @@
       "weight": 1.0,
       "active": true,
       "pages": ["retirement-calculator-india", "sip-calculator-india"]
+    },
+    {
+      "id": "robinhood-funded",
+      "label": "Start trading on Robinhood",
+      "subtext": "Fund your account and trade World Cup, politics, and more. CFTC-regulated.",
+      "url": "PLACEHOLDER_ROBINHOOD_IMPACT",
+      "network": "impact",
+      "program": "robinhood",
+      "commission": "$20 per funded account (iOS/Android/web). $0 for signup alone. $5 for retirement funding.",
+      "attribution_window_days": 7,
+      "weight": 1.0,
+      "active": false,
+      "pages": ["implied-probability-calculator", "kelly-criterion-calculator", "kalshi-vs-polymarket"],
+      "notes": "Only funded accounts pay. CTA copy must push toward deposit, not signup. 1-day change notice — terms can shift fast."
+    },
+    {
+      "id": "kalshi-signup",
+      "label": "Trade on Kalshi",
+      "subtext": "CFTC-regulated prediction market. No trading fees.",
+      "url": "https://kalshi.com/sign-up",
+      "network": "direct",
+      "program": "kalshi",
+      "commission": "none — direct link, no affiliate tracking",
+      "weight": 1.0,
+      "active": true,
+      "pages": ["implied-probability-calculator", "kelly-criterion-calculator", "kalshi-vs-polymarket"]
     }
   ]
 }
