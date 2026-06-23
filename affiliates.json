@@ -57,8 +57,93 @@
       "program": "kalshi",
       "commission": "none — direct link, no affiliate tracking",
       "weight": 1.0,
+      "active": false,
+      "pages": ["kalshi-vs-polymarket"],
+      "notes": "Deactivated 2026-06-23 on implied-probability-calculator/kelly-criterion-calculator — Kalshi referral program confirmed a non-starter, replaced by rotating vCommission worldwide set on those two pages. Left active-eligible only on kalshi-vs-polymarket pending operator review of that page separately."
+    },
+    {
+      "id": "purevpn",
+      "label": "Get PureVPN",
+      "subtext": "Fast, no-log VPN. Multi-device protection.",
+      "url": "https://track.vcommission.com/click?campaign_id=10203&pub_id=130193&source=page-purevpn",
+      "network": "vcommission",
+      "program": "purevpn",
+      "commission": "80% revenue share (new sale)",
+      "weight": 1.0,
       "active": true,
       "pages": ["implied-probability-calculator", "kelly-criterion-calculator", "kalshi-vs-polymarket"]
+    },
+    {
+      "id": "nordpass",
+      "label": "Secure your passwords with NordPass",
+      "subtext": "Password manager built by the NordVPN team.",
+      "url": "https://track.vcommission.com/click?campaign_id=10181&pub_id=130193&source=page-nordpass",
+      "network": "vcommission",
+      "program": "nordpass",
+      "commission": "52.5% (1mo new), 21% (12mo new), 7% (12mo renewal)",
+      "weight": 1.0,
+      "active": true,
+      "pages": ["implied-probability-calculator", "kelly-criterion-calculator", "kalshi-vs-polymarket"]
+    },
+    {
+      "id": "klook",
+      "label": "Book travel on Klook",
+      "subtext": "Tours, activities, and travel essentials worldwide.",
+      "url": "https://track.vcommission.com/click?campaign_id=10132&pub_id=130193&source=page-klook",
+      "network": "vcommission",
+      "program": "klook",
+      "commission": "1.4% revenue share",
+      "weight": 1.0,
+      "active": true,
+      "pages": ["implied-probability-calculator", "kelly-criterion-calculator", "kalshi-vs-polymarket"]
+    },
+    {
+      "id": "cloveoralcare",
+      "label": "Shop Clove Oral Care",
+      "subtext": "Premium oral care essentials, made in India.",
+      "url": "https://track.vcommission.com/click?campaign_id=12131&pub_id=130193&source=page-cloveoralcare",
+      "network": "vcommission",
+      "program": "cloveoralcare",
+      "commission": "₹58/sale",
+      "weight": 1.0,
+      "active": true,
+      "pages": ["retirement-calculator-india", "payroll-calculator-india-excel", "sip-calculator-india", "salary-bonus-calculator-india"]
+    },
+    {
+      "id": "jivisa",
+      "label": "Shop Jivisa skincare",
+      "subtext": "Ayurvedic-inspired skincare and beauty essentials.",
+      "url": "https://track.vcommission.com/click?campaign_id=13410&pub_id=130193&source=page-jivisa",
+      "network": "vcommission",
+      "program": "jivisa",
+      "commission": "₹51.80/sale",
+      "weight": 1.0,
+      "active": true,
+      "pages": ["retirement-calculator-india", "payroll-calculator-india-excel", "sip-calculator-india", "salary-bonus-calculator-india"]
+    },
+    {
+      "id": "nourishmantra",
+      "label": "Shop Nourish Mantra",
+      "subtext": "Natural wellness and ayurvedic health products.",
+      "url": "https://track.vcommission.com/click?campaign_id=12144&pub_id=130193&source=page-nourishmantra",
+      "network": "vcommission",
+      "program": "nourishmantra",
+      "commission": "₹49/sale",
+      "weight": 1.0,
+      "active": true,
+      "pages": ["retirement-calculator-india", "payroll-calculator-india-excel", "sip-calculator-india", "salary-bonus-calculator-india"]
+    },
+    {
+      "id": "firstcry",
+      "label": "Shop FirstCry for baby & kids",
+      "subtext": "India's largest baby and kids store.",
+      "url": "https://track.vcommission.com/click?campaign_id=10081&pub_id=130193&source=page-firstcry",
+      "network": "vcommission",
+      "program": "firstcry",
+      "commission": "₹35/qualifying action (CPA)",
+      "weight": 1.0,
+      "active": true,
+      "pages": ["retirement-calculator-india", "payroll-calculator-india-excel", "sip-calculator-india", "salary-bonus-calculator-india"]
     }
   ]
 }

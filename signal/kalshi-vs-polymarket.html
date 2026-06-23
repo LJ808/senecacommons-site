@@ -273,15 +273,15 @@ footer { border-top: 1px solid var(--rule); padding: 24px 0; margin-top: auto; }
     </div>
   </div>
 
-  <!-- CTA -->
-  <div class="cta-strip">
+  <!-- CTA (rotating affiliate) -->
+  <div class="cta-strip" id="affiliateBanner" style="display:none;">
     <div class="wrap-wide cta-inner">
       <div class="cta-text">
-        <h3>Ready to open a Kalshi account?</h3>
-        <p>CFTC-regulated, zero trading fees, $1 minimum deposit. Fund your account and apply Kelly-sized positions to World Cup and economic markets.</p>
+        <h3 id="affiliateLabel"></h3>
+        <p id="affiliateSubtext"></p>
       </div>
       <div class="cta-links">
-        <a href="https://kalshi.com/sign-up" class="btn btn-primary" target="_blank" rel="noopener">Open Kalshi account →</a>
+        <a id="affiliateLink" href="#" class="btn btn-primary" target="_blank" rel="noopener sponsored" onclick="trackAffiliateClick()">Get started →</a>
         <a href="/tools/kelly-criterion-calculator" class="btn btn-outline">Kelly Calculator</a>
       </div>
     </div>
@@ -319,5 +319,32 @@ footer { border-top: 1px solid var(--rule); padding: 24px 0; margin-top: auto; }
     <p class="footer-note">Free tools. No login required.</p>
   </div>
 </footer>
+
+<script>
+let _aff=null;
+(async function(){
+  try{
+    const res=await fetch('/affiliates.json');
+    const data=await res.json();
+    const page='kalshi-vs-polymarket';
+    const cands=data.slots.filter(s=>s.active&&s.pages.includes(page));
+    if(!cands.length)return;
+    const tw=cands.reduce((s,c)=>s+c.weight,0);
+    let rand=Math.random()*tw,chosen=cands[cands.length-1];
+    for(const c of cands){rand-=c.weight;if(rand<=0){chosen=c;break;}}
+    _aff=chosen;
+    document.getElementById('affiliateLabel').textContent=chosen.label;
+    document.getElementById('affiliateSubtext').textContent=chosen.subtext;
+    document.getElementById('affiliateLink').href=chosen.url;
+    document.getElementById('affiliateBanner').style.display='block';
+  }catch(e){}
+})();
+function trackAffiliateClick(){
+  if(!_aff)return;
+  fetch('/api/click',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({id:_aff.id,program:_aff.program,page:'kalshi-vs-polymarket',ts:Date.now(),ua:navigator.userAgent.slice(0,120)}),
+    mode:'no-cors'}).catch(()=>{});
+}
+</script>
 </body>
 </html>

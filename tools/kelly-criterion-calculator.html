@@ -278,15 +278,15 @@ footer { border-top: 1px solid var(--rule); padding: 24px 0; margin-top: auto; }
     </div>
   </div>
 
-  <!-- CTA -->
-  <div class="cta-strip">
+  <!-- CTA (rotating affiliate) -->
+  <div class="cta-strip" id="affiliateBanner" style="display:none;">
     <div class="wrap cta-inner">
       <div class="cta-text">
-        <h3>Put the math to work</h3>
-        <p>Kalshi offers CFTC-regulated event contracts with no trading fees — the tightest execution environment for sizing these positions. Fund an account and start applying Kelly to real markets.</p>
+        <h3 id="affiliateLabel"></h3>
+        <p id="affiliateSubtext"></p>
       </div>
       <div class="cta-links">
-        <a href="https://kalshi.com/sign-up" class="btn btn-primary" target="_blank" rel="noopener">Open Kalshi account →</a>
+        <a id="affiliateLink" href="#" class="btn btn-primary" target="_blank" rel="noopener sponsored" onclick="trackAffiliateClick()">Get started →</a>
         <a href="/signal/kalshi-vs-polymarket" class="btn btn-outline">Kalshi vs Polymarket</a>
       </div>
     </div>
@@ -381,6 +381,31 @@ function calculate() {
 }
 
 calculate();
+
+let _aff=null;
+(async function(){
+  try{
+    const res=await fetch('/affiliates.json');
+    const data=await res.json();
+    const page='kelly-criterion-calculator';
+    const cands=data.slots.filter(s=>s.active&&s.pages.includes(page));
+    if(!cands.length)return;
+    const tw=cands.reduce((s,c)=>s+c.weight,0);
+    let rand=Math.random()*tw,chosen=cands[cands.length-1];
+    for(const c of cands){rand-=c.weight;if(rand<=0){chosen=c;break;}}
+    _aff=chosen;
+    document.getElementById('affiliateLabel').textContent=chosen.label;
+    document.getElementById('affiliateSubtext').textContent=chosen.subtext;
+    document.getElementById('affiliateLink').href=chosen.url;
+    document.getElementById('affiliateBanner').style.display='block';
+  }catch(e){}
+})();
+function trackAffiliateClick(){
+  if(!_aff)return;
+  fetch('/api/click',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({id:_aff.id,program:_aff.program,page:'kelly-criterion-calculator',ts:Date.now(),ua:navigator.userAgent.slice(0,120)}),
+    mode:'no-cors'}).catch(()=>{});
+}
 </script>
 </body>
 </html>
