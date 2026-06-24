@@ -144,6 +144,30 @@
       "weight": 1.0,
       "active": true,
       "pages": ["retirement-calculator-india", "payroll-calculator-india-excel", "sip-calculator-india", "salary-bonus-calculator-india", "gst-calculator-india", "salary-budget-calculator-india", "salary-difference-calculator-india"]
+    },
+    {
+      "id": "brillare",
+      "label": "Shop Brillare hair care",
+      "subtext": "Professional-grade hair care, made in India.",
+      "url": "https://track.vcommission.com/click?campaign_id=13375&pub_id=130193&source=page-brillare",
+      "network": "vcommission",
+      "program": "brillare",
+      "commission": "28% revenue share",
+      "weight": 1.0,
+      "active": true,
+      "pages": ["retirement-calculator-india", "payroll-calculator-india-excel", "sip-calculator-india", "salary-bonus-calculator-india", "gst-calculator-india", "salary-budget-calculator-india", "salary-difference-calculator-india"]
+    },
+    {
+      "id": "lavieworld",
+      "label": "Shop Lavie bags & accessories",
+      "subtext": "Handbags, wallets, and travel accessories.",
+      "url": "https://track.vcommission.com/click?campaign_id=13524&pub_id=130193&source=page-lavieworld",
+      "network": "vcommission",
+      "program": "lavieworld",
+      "commission": "30% revenue share",
+      "weight": 1.0,
+      "active": true,
+      "pages": ["retirement-calculator-india", "payroll-calculator-india-excel", "sip-calculator-india", "salary-bonus-calculator-india", "gst-calculator-india", "salary-budget-calculator-india", "salary-difference-calculator-india"]
     }
   ]
 }

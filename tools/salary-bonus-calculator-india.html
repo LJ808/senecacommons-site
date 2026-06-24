@@ -381,6 +381,13 @@ function downloadExcel(){
 }
 
 let _aff=null;
+function withPageSource(url,page){
+  try{
+    const u=new URL(url);
+    if(u.searchParams.has('source'))u.searchParams.set('source','page-'+page);
+    return u.toString();
+  }catch(e){return url;}
+}
 (async function(){
   try{
     const res=await fetch('/affiliates.json');
@@ -394,7 +401,7 @@ let _aff=null;
     _aff=chosen;
     $('affiliateLabel').textContent=chosen.label;
     $('affiliateSubtext').textContent=chosen.subtext;
-    $('affiliateLink').href=chosen.url;
+    $('affiliateLink').href=withPageSource(chosen.url,page);
     $('affiliateBanner').style.display='block';
   }catch(e){}
 })();

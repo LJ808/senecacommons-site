@@ -968,6 +968,13 @@ calculate();
 
 // ── Affiliate banner ────────────────────────────────────────────────────
 let _affiliate = null;
+function withPageSource(url,page){
+  try{
+    const u=new URL(url);
+    if(u.searchParams.has('source'))u.searchParams.set('source','page-'+page);
+    return u.toString();
+  }catch(e){return url;}
+}
 
 (async function loadAffiliate() {
   try {
@@ -989,7 +996,7 @@ let _affiliate = null;
     _affiliate = chosen;
     document.getElementById('affiliateLabel').textContent   = chosen.label;
     document.getElementById('affiliateSubtext').textContent = chosen.subtext;
-    document.getElementById('affiliateLink').href           = chosen.url;
+    document.getElementById('affiliateLink').href           = withPageSource(chosen.url, page);
     document.getElementById('affiliateBanner').style.display = 'block';
   } catch (e) {
     // Affiliate load failure — silent. Never break the calculator.
