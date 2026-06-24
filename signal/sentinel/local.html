@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Local Sentinel — Seneca Commons</title>
+<meta name="description" content="Ground-level anomaly monitoring. Live seismic activity, infrastructure and public-safety signal — deviations from the norm, not crimes.">
+<link rel="canonical" href="https://senecacommons.com/signal/sentinel/local">
+<link rel="stylesheet" href="/signal/sentinel/sentinel-terminal.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<header class="st-topbar">
+  <a href="/signal/sentinel" class="st-logo"><span class="dot"></span>SENTINEL</a>
+  <nav class="st-tabs">
+    <a href="/signal/sentinel/macro" class="st-tab">Macro PSI</a>
+    <a href="/signal/sentinel/immiseration" class="st-tab">Immiseration</a>
+    <a href="/signal/sentinel/markets" class="st-tab">Markets</a>
+    <a href="/signal/sentinel/local" class="st-tab active">Local</a>
+    <a href="/signal/sentinel/triggers" class="st-tab">Triggers</a>
+  </nav>
+  <span class="st-clock" id="st-clock">—</span>
+</header>
+
+<main class="st-page">
+  <div class="st-page-head">
+    <div class="st-page-eyebrow">Sentinel · Local Layer</div>
+    <h1 class="st-page-title">Local Sentinel</h1>
+    <p class="st-page-sub">Ground-truth anomaly detection. You aren't looking for crimes — you're looking for deviations from the norm. Seismic activity is live. Infrastructure and public-safety panels are staged pending a confirmed open data source.</p>
+  </div>
+
+  <div class="st-grid" style="grid-template-columns: 1.3fr 1fr;">
+
+    <section class="st-panel" style="grid-row: span 2;">
+      <div class="st-panel-head">
+        <span class="st-panel-title">Seismic Activity — Past 24h (USGS)</span>
+        <span class="st-panel-status live" id="quake-status">LIVE</span>
+      </div>
+      <div class="st-panel-body" id="quake-body">
+        <div class="st-loading">Connecting to USGS feed…</div>
+      </div>
+    </section>
+
+    <section class="st-panel">
+      <div class="st-panel-head">
+        <span class="st-panel-title">Infrastructure Watch</span>
+        <span class="st-panel-status pending">PENDING SOURCE</span>
+      </div>
+      <div class="st-panel-body">
+        <div class="st-placeholder">
+          <div class="st-placeholder-icon">⌁</div>
+          <div class="st-placeholder-label">No verified open feed yet</div>
+          <p class="st-placeholder-note">Water pressure, power grid, and municipal advisory data don't have a confirmed CORS-open public source yet. Wired here once one is verified.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="st-panel">
+      <div class="st-panel-head">
+        <span class="st-panel-title">Public Safety Advisories</span>
+        <span class="st-panel-status pending">PENDING SOURCE</span>
+      </div>
+      <div class="st-panel-body">
+        <div class="st-placeholder">
+          <div class="st-placeholder-icon">⌁</div>
+          <div class="st-placeholder-label">api.weather.gov blocks browser CORS</div>
+          <p class="st-placeholder-note">NWS alerts confirmed not to support direct browser fetch. Needs a proxy layer before this panel can go live.</p>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer class="st-footer">
+  <span>SENTINEL NETWORK — Local Layer</span>
+  <span id="st-updated">Last updated —</span>
+</footer>
+
+<script>
+function tick() {
+  const now = new Date();
+  document.getElementById('st-clock').textContent = now.toUTCString().slice(17, 25) + ' UTC';
+}
+tick();
+setInterval(tick, 1000);
+
+async function loadQuakes() {
+  const body = document.getElementById('quake-body');
+  const statusEl = document.getElementById('quake-status');
+  try {
+    const res = await fetch('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson');
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    const features = data.features.slice(0, 14);
+
+    if (features.length === 0) {
+      body.innerHTML = '<div class="st-loading">No M2.5+ events in the last 24h.</div>';
+      statusEl.textContent = 'LIVE';
+      statusEl.className = 'st-panel-status live';
+      return;
+    }
+
+    body.innerHTML = features.map(f => {
+      const p = f.properties;
+      const mag = p.mag != null ? p.mag.toFixed(1) : '—';
+      const isStrong = p.mag >= 5.0;
+      const time = new Date(p.time);
+      const timeStr = time.toUTCString().slice(17, 22) + ' UTC';
+      return `<div class="st-row">
+        <div>
+          <div class="st-row-label">${p.place || 'Unknown location'}</div>
+          <div class="st-row-meta">${timeStr} · sig ${p.sig ?? '—'}</div>
+        </div>
+        <span class="st-row-value ${isStrong ? 'down' : ''}">M ${mag}</span>
+      </div>`;
+    }).join('');
+
+    document.getElementById('st-updated').textContent =
+      'Last updated ' + new Date(data.metadata.generated).toUTCString().slice(17, 25) + ' UTC';
+  } catch (err) {
+    body.innerHTML = '<div class="st-error">USGS feed unreachable: ' + err.message + '</div>';
+    statusEl.textContent = 'ERROR';
+    statusEl.className = 'st-panel-status alert';
+  }
+}
+
+loadQuakes();
+setInterval(loadQuakes, 5 * 60 * 1000); // refresh every 5 min
+</script>
+
+</body>
+</html>

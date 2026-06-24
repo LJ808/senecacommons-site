@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Macro PSI — Sentinel — Seneca Commons</title>
+<meta name="description" content="Structural-demographic indicators: intra-elite polarization, ideological radicalization, state fiscal distress.">
+<link rel="canonical" href="https://senecacommons.com/signal/sentinel/macro">
+<link rel="stylesheet" href="/signal/sentinel/sentinel-terminal.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<header class="st-topbar">
+  <a href="/signal/sentinel" class="st-logo"><span class="dot"></span>SENTINEL</a>
+  <nav class="st-tabs">
+    <a href="/signal/sentinel/macro" class="st-tab active">Macro PSI</a>
+    <a href="/signal/sentinel/immiseration" class="st-tab">Immiseration</a>
+    <a href="/signal/sentinel/markets" class="st-tab">Markets</a>
+    <a href="/signal/sentinel/local" class="st-tab">Local</a>
+    <a href="/signal/sentinel/triggers" class="st-tab">Triggers</a>
+  </nav>
+  <span class="st-clock" id="st-clock">—</span>
+</header>
+
+<main class="st-page">
+  <div class="st-page-head">
+    <div class="st-page-eyebrow">Sentinel · Structural Layer</div>
+    <h1 class="st-page-title">Macro PSI</h1>
+    <p class="st-page-sub">Political Stress Indicator framework, per Turchin's structural-demographic theory. Elite overproduction and state fiscal capacity — the two structural pillars that compound toward rupture. Panels staged pending a confirmed open data source for each series.</p>
+  </div>
+
+  <div class="st-grid" style="grid-template-columns: repeat(2, 1fr);">
+
+    <section class="st-panel">
+      <div class="st-panel-head">
+        <span class="st-panel-title">Intra-Elite Polarization</span>
+        <span class="st-panel-status pending">PENDING SOURCE</span>
+      </div>
+      <div class="st-panel-body">
+        <div class="st-placeholder">
+          <div class="st-placeholder-icon">⌁</div>
+          <div class="st-placeholder-label">Congressional gridlock index</div>
+          <p class="st-placeholder-note">GovTrack and Federal Register both publish relevant data; CORS support not yet verified for either.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="st-panel">
+      <div class="st-panel-head">
+        <span class="st-panel-title">Federal Debt-to-GDP</span>
+        <span class="st-panel-status pending">PENDING SOURCE</span>
+      </div>
+      <div class="st-panel-body">
+        <div class="st-placeholder">
+          <div class="st-placeholder-icon">⌁</div>
+          <div class="st-placeholder-label">FRED series GFDEGDQ188S</div>
+          <p class="st-placeholder-note">FRED's API requires a key and browser-CORS support is unconfirmed. Needs verification or a proxy before going live.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="st-panel">
+      <div class="st-panel-head">
+        <span class="st-panel-title">State Legitimacy Signal</span>
+        <span class="st-panel-status pending">PENDING SOURCE</span>
+      </div>
+      <div class="st-panel-body">
+        <div class="st-placeholder">
+          <div class="st-placeholder-icon">⌁</div>
+          <div class="st-placeholder-label">No single confirmed source yet</div>
+          <p class="st-placeholder-note">Public-perception-of-institutional-function is a synthesis indicator, not a single feed. Needs a defined methodology before a panel can claim "live."</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="st-panel">
+      <div class="st-panel-head">
+        <span class="st-panel-title">Turchin Crisis DB Status</span>
+        <span class="st-panel-status pending">PENDING SOURCE</span>
+      </div>
+      <div class="st-panel-body">
+        <div class="st-placeholder">
+          <div class="st-placeholder-icon">⌁</div>
+          <div class="st-placeholder-label">No public live feed exists</div>
+          <p class="st-placeholder-note">Turchin's Crisis DB is published periodically, not as a live API. This panel will summarize the latest published read, refreshed manually.</p>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer class="st-footer">
+  <span>SENTINEL NETWORK — Macro PSI</span>
+  <span id="st-updated">No live data wired yet</span>
+</footer>
+
+<script>
+function tick() {
+  const now = new Date();
+  document.getElementById('st-clock').textContent = now.toUTCString().slice(17, 25) + ' UTC';
+}
+tick();
+setInterval(tick, 1000);
+</script>
+
+</body>
+</html>

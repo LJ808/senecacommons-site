@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Popular Immiseration — Sentinel — Seneca Commons</title>
+<meta name="description" content="Wage-productivity decoupling, deaths of despair, declining life expectancy, youth precarity — the fuel layer of structural-demographic crisis.">
+<link rel="canonical" href="https://senecacommons.com/signal/sentinel/immiseration">
+<link rel="stylesheet" href="/signal/sentinel/sentinel-terminal.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<header class="st-topbar">
+  <a href="/signal/sentinel" class="st-logo"><span class="dot"></span>SENTINEL</a>
+  <nav class="st-tabs">
+    <a href="/signal/sentinel/macro" class="st-tab">Macro PSI</a>
+    <a href="/signal/sentinel/immiseration" class="st-tab active">Immiseration</a>
+    <a href="/signal/sentinel/markets" class="st-tab">Markets</a>
+    <a href="/signal/sentinel/local" class="st-tab">Local</a>
+    <a href="/signal/sentinel/triggers" class="st-tab">Triggers</a>
+  </nav>
+  <span class="st-clock" id="st-clock">—</span>
+</header>
+
+<main class="st-page">
+  <div class="st-page-head">
+    <div class="st-page-eyebrow">Sentinel · The Fuel</div>
+    <h1 class="st-page-title">Popular Immiseration</h1>
+    <p class="st-page-sub">Five named indicators from The Independent Manifesto's structural-demographic checklist. This is the chart: not absolute poverty, but a declining trajectory across the bottom 90%. Panels staged pending verified open data sources for each series.</p>
+  </div>
+
+  <div class="st-grid" style="grid-template-columns: repeat(2, 1fr);">
+
+    <section class="st-panel">
+      <div class="st-panel-head">
+        <span class="st-panel-title">Wage-Productivity Decoupling</span>
+        <span class="st-panel-status pending">PENDING SOURCE</span>
+      </div>
+      <div class="st-panel-body">
+        <div class="st-placeholder">
+          <div class="st-placeholder-icon">⌁</div>
+          <div class="st-placeholder-label">Real wages vs. productivity, bottom 90%</div>
+          <p class="st-placeholder-note">BLS and FRED both carry this series. Needs a confirmed CORS-open path before going live.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="st-panel">
+      <div class="st-panel-head">
+        <span class="st-panel-title">Deaths of Despair</span>
+        <span class="st-panel-status pending">PENDING SOURCE</span>
+      </div>
+      <div class="st-panel-body">
+        <div class="st-placeholder">
+          <div class="st-placeholder-icon">⌁</div>
+          <div class="st-placeholder-label">Suicide, overdose, alcoholism rates</div>
+          <p class="st-placeholder-note">CDC WONDER publishes this; updated annually, not real-time. A periodic-refresh panel, not a live feed.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="st-panel">
+      <div class="st-panel-head">
+        <span class="st-panel-title">Life Expectancy Trend</span>
+        <span class="st-panel-status pending">PENDING SOURCE</span>
+      </div>
+      <div class="st-panel-body">
+        <div class="st-placeholder">
+          <div class="st-placeholder-icon">⌁</div>
+          <div class="st-placeholder-label">CDC / World Bank life-expectancy series</div>
+          <p class="st-placeholder-note">Annual data, not real-time. CORS support for World Bank's API not yet checked.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="st-panel">
+      <div class="st-panel-head">
+        <span class="st-panel-title">Youth Precarity</span>
+        <span class="st-panel-status pending">PENDING SOURCE</span>
+      </div>
+      <div class="st-panel-body">
+        <div class="st-placeholder">
+          <div class="st-placeholder-icon">⌁</div>
+          <div class="st-placeholder-label">Youth un/under-employment vs. education level</div>
+          <p class="st-placeholder-note">BLS series exists. No confirmed browser-CORS path yet.</p>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer class="st-footer">
+  <span>SENTINEL NETWORK — Popular Immiseration</span>
+  <span id="st-updated">No live data wired yet</span>
+</footer>
+
+<script>
+function tick() {
+  const now = new Date();
+  document.getElementById('st-clock').textContent = now.toUTCString().slice(17, 25) + ' UTC';
+}
+tick();
+setInterval(tick, 1000);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trigger Events — Sentinel — Seneca Commons</title>
+<meta name="description" content="Symbolic violence, institutional failure, ominous mobilizations — the rare, high-signal rupture indicators.">
+<link rel="canonical" href="https://senecacommons.com/signal/sentinel/triggers">
+<link rel="stylesheet" href="/signal/sentinel/sentinel-terminal.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+.st-page-eyebrow.alert { color: var(--status-red); }
+</style>
+</head>
+<body>
+
+<header class="st-topbar">
+  <a href="/signal/sentinel" class="st-logo"><span class="dot"></span>SENTINEL</a>
+  <nav class="st-tabs">
+    <a href="/signal/sentinel/macro" class="st-tab">Macro PSI</a>
+    <a href="/signal/sentinel/immiseration" class="st-tab">Immiseration</a>
+    <a href="/signal/sentinel/markets" class="st-tab">Markets</a>
+    <a href="/signal/sentinel/local" class="st-tab">Local</a>
+    <a href="/signal/sentinel/triggers" class="st-tab active">Triggers</a>
+  </nav>
+  <span class="st-clock" id="st-clock">—</span>
+</header>
+
+<main class="st-page">
+  <div class="st-page-head">
+    <div class="st-page-eyebrow alert">Sentinel · Rupture Layer</div>
+    <h1 class="st-page-title">Trigger Events</h1>
+    <p class="st-page-sub">These don't cause the rupture — they signal that the structural deadwood is about to ignite. Symbolic acts of violence, state institutional failure, ominous mobilizations. The rare, high-signal layer. Staged pending verified sources.</p>
+  </div>
+
+  <div class="st-grid" style="grid-template-columns: repeat(2, 1fr);">
+
+    <section class="st-panel">
+      <div class="st-panel-head">
+        <span class="st-panel-title">Symbolic Acts of Violence</span>
+        <span class="st-panel-status pending">PENDING SOURCE</span>
+      </div>
+      <div class="st-panel-body">
+        <div class="st-placeholder">
+          <div class="st-placeholder-icon">⌁</div>
+          <div class="st-placeholder-label">High-profile assassination / self-sacrifice events</div>
+          <p class="st-placeholder-note">Requires a curated, verified news classification layer — not a raw feed. Highest-care panel to build correctly.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="st-panel">
+      <div class="st-panel-head">
+        <span class="st-panel-title">State Institutional Failure</span>
+        <span class="st-panel-status pending">PENDING SOURCE</span>
+      </div>
+      <div class="st-panel-body">
+        <div class="st-placeholder">
+          <div class="st-placeholder-icon">⌁</div>
+          <div class="st-placeholder-label">Failed harvest, climate shock, market crash the state can't mitigate</div>
+          <p class="st-placeholder-note">Composite indicator. USGS (confirmed live, see Local panel) covers the seismic/climate angle; the rest needs sourcing.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="st-panel">
+      <div class="st-panel-head">
+        <span class="st-panel-title">Ominous Convoys / Mobilizations</span>
+        <span class="st-panel-status pending">PENDING SOURCE</span>
+      </div>
+      <div class="st-panel-body">
+        <div class="st-placeholder">
+          <div class="st-placeholder-icon">⌁</div>
+          <div class="st-placeholder-label">Organized confrontational public displays</div>
+          <p class="st-placeholder-note">GDELT's event database is the likely source once CORS support is confirmed.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="st-panel">
+      <div class="st-panel-head">
+        <span class="st-panel-title">Crisis DB Composite Read</span>
+        <span class="st-panel-status pending">PENDING SOURCE</span>
+      </div>
+      <div class="st-panel-body">
+        <div class="st-placeholder">
+          <div class="st-placeholder-icon">⌁</div>
+          <div class="st-placeholder-label">Manual periodic update from Turchin's published data</div>
+          <p class="st-placeholder-note">Not a live feed by nature — refreshed on each new Crisis DB publication.</p>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer class="st-footer">
+  <span>SENTINEL NETWORK — Trigger Events</span>
+  <span id="st-updated">No live data wired yet</span>
+</footer>
+
+<script>
+function tick() {
+  const now = new Date();
+  document.getElementById('st-clock').textContent = now.toUTCString().slice(17, 25) + ' UTC';
+}
+tick();
+setInterval(tick, 1000);
+</script>
+
+</body>
+</html>
