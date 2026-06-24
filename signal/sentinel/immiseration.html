@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Popular Immiseration — Sentinel — Seneca Commons</title>
-<meta name="description" content="Wage-productivity decoupling, deaths of despair, declining life expectancy, youth precarity — the fuel layer of structural-demographic crisis.">
+<meta name="description" content="The productivity-pay gap since 1979, charted by EPI. Plus deaths of despair, life expectancy, and youth precarity — the fuel layer of structural-demographic crisis.">
 <link rel="canonical" href="https://senecacommons.com/signal/sentinel/immiseration">
 <link rel="stylesheet" href="/signal/sentinel/sentinel-terminal.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -28,73 +28,37 @@
   <div class="st-page-head">
     <div class="st-page-eyebrow">Sentinel · The Fuel</div>
     <h1 class="st-page-title">Popular Immiseration</h1>
-    <p class="st-page-sub">Five named indicators from The Independent Manifesto's structural-demographic checklist. This is the chart: not absolute poverty, but a declining trajectory across the bottom 90%. Panels staged pending verified open data sources for each series.</p>
+    <p class="st-page-sub">Five named indicators from The Independent Manifesto's structural-demographic checklist. This is the chart: not absolute poverty, but a declining trajectory across the bottom 90%.</p>
   </div>
 
-  <div class="st-grid" style="grid-template-columns: repeat(2, 1fr);">
+  <div class="st-panel">
+    <div class="st-panel-head">
+      <span class="st-panel-title">Wage-Productivity Decoupling — EPI</span>
+      <span class="st-panel-status pending">STATIC</span>
+    </div>
+    <div class="st-panel-body">
+      <img src="/signal/sentinel/wage-productivity-gap-epi.jpeg" alt="Chart: the gap between productivity and a typical worker's compensation has increased dramatically since 1979. Productivity growth and hourly compensation growth, 1948–2025." style="width:100%;height:auto;border-radius:2px;display:block;">
+      <p class="st-page-sub" style="margin-top: 12px;">1948–1979: productivity grew 2.5%/yr, compensation 2.1%/yr — nearly locked together. 1979–2025: productivity grew 1.4%/yr, compensation only 0.6%/yr. The gap is the mechanism, not a side effect.</p>
+      <p class="st-page-sub" style="margin-top: 8px;">Source: Economic Policy Institute, <a href="https://www.epi.org/productivity-pay-gap/" target="_blank" rel="noopener noreferrer" style="color:var(--accent);">epi.org/productivity-pay-gap</a>. EPI analysis of unpublished BLS Total Economy Productivity data, BLS Current Employment Statistics, BLS Employment Cost Trends, BLS Consumer Price Index, and BEA National Income and Product Accounts. Static image, not a live feed — EPI updates this chart periodically, not via API.</p>
+    </div>
+  </div>
 
-    <section class="st-panel">
-      <div class="st-panel-head">
-        <span class="st-panel-title">Wage-Productivity Decoupling</span>
-        <span class="st-panel-status pending">PENDING SOURCE</span>
-      </div>
-      <div class="st-panel-body">
-        <div class="st-placeholder">
-          <div class="st-placeholder-icon">⌁</div>
-          <div class="st-placeholder-label">Real wages vs. productivity, bottom 90%</div>
-          <p class="st-placeholder-note">BLS and FRED both carry this series. Needs a confirmed CORS-open path before going live.</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="st-panel">
-      <div class="st-panel-head">
-        <span class="st-panel-title">Deaths of Despair</span>
-        <span class="st-panel-status pending">PENDING SOURCE</span>
-      </div>
-      <div class="st-panel-body">
-        <div class="st-placeholder">
-          <div class="st-placeholder-icon">⌁</div>
-          <div class="st-placeholder-label">Suicide, overdose, alcoholism rates</div>
-          <p class="st-placeholder-note">CDC WONDER publishes this; updated annually, not real-time. A periodic-refresh panel, not a live feed.</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="st-panel">
-      <div class="st-panel-head">
-        <span class="st-panel-title">Life Expectancy Trend</span>
-        <span class="st-panel-status pending">PENDING SOURCE</span>
-      </div>
-      <div class="st-panel-body">
-        <div class="st-placeholder">
-          <div class="st-placeholder-icon">⌁</div>
-          <div class="st-placeholder-label">CDC / World Bank life-expectancy series</div>
-          <p class="st-placeholder-note">Annual data, not real-time. CORS support for World Bank's API not yet checked.</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="st-panel">
-      <div class="st-panel-head">
-        <span class="st-panel-title">Youth Precarity</span>
-        <span class="st-panel-status pending">PENDING SOURCE</span>
-      </div>
-      <div class="st-panel-body">
-        <div class="st-placeholder">
-          <div class="st-placeholder-icon">⌁</div>
-          <div class="st-placeholder-label">Youth un/under-employment vs. education level</div>
-          <p class="st-placeholder-note">BLS series exists. No confirmed browser-CORS path yet.</p>
-        </div>
-      </div>
-    </section>
-
+  <div class="st-panel" style="margin-top: 1px;">
+    <div class="st-panel-head">
+      <span class="st-panel-title">No live panel here yet</span>
+      <span class="st-panel-status pending">EXPLAINER</span>
+    </div>
+    <div class="st-panel-body">
+      <p class="st-page-sub">Three indicators remain unsourced: deaths of despair, life expectancy trend, and youth precarity. None has a confirmed, free, CORS-open feed a browser can call directly right now.</p>
+      <p class="st-page-sub" style="margin-top: 12px;">CDC WONDER carries deaths of despair; life expectancy comes from CDC or World Bank. None of these sources has confirmed browser-CORS support, and they update annually — periodic-refresh panels at best, not live feeds, even once sourced.</p>
+      <p class="st-page-sub" style="margin-top: 12px;">These panels return once real sources clear — not before.</p>
+    </div>
   </div>
 </main>
 
 <footer class="st-footer">
   <span>SENTINEL NETWORK — Popular Immiseration</span>
-  <span id="st-updated">No live data wired yet</span>
+  <span id="st-updated">Wage-productivity panel: EPI, updated periodically</span>
 </footer>
 
 <script>

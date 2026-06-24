@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Trigger Events — Sentinel — Seneca Commons</title>
-<meta name="description" content="Symbolic violence, institutional failure, ominous mobilizations — the rare, high-signal rupture indicators.">
+<meta name="description" content="Global news volume on protest, unrest, and mobilization, live from GDELT.">
 <link rel="canonical" href="https://senecacommons.com/signal/sentinel/triggers">
 <link rel="stylesheet" href="/signal/sentinel/sentinel-terminal.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -31,64 +31,18 @@
   <div class="st-page-head">
     <div class="st-page-eyebrow alert">Sentinel · Rupture Layer</div>
     <h1 class="st-page-title">Trigger Events</h1>
-    <p class="st-page-sub">These don't cause the rupture — they signal that the structural deadwood is about to ignite. Symbolic acts of violence, state institutional failure, ominous mobilizations. The rare, high-signal layer. Staged pending verified sources.</p>
+    <p class="st-page-sub">These don't cause the rupture — they signal that the structural deadwood is about to ignite. Global news volume on protest, unrest, and mobilization, live from GDELT. A curated symbolic-violence classification layer remains future work, not a raw feed.</p>
   </div>
 
-  <div class="st-grid" style="grid-template-columns: repeat(2, 1fr);">
+  <div class="st-grid" style="grid-template-columns: 1fr;">
 
     <section class="st-panel">
       <div class="st-panel-head">
-        <span class="st-panel-title">Symbolic Acts of Violence</span>
-        <span class="st-panel-status pending">PENDING SOURCE</span>
+        <span class="st-panel-title">Mobilizations &amp; Unrest — Global Coverage (GDELT)</span>
+        <span class="st-panel-status live" id="news-status">LIVE</span>
       </div>
-      <div class="st-panel-body">
-        <div class="st-placeholder">
-          <div class="st-placeholder-icon">⌁</div>
-          <div class="st-placeholder-label">High-profile assassination / self-sacrifice events</div>
-          <p class="st-placeholder-note">Requires a curated, verified news classification layer — not a raw feed. Highest-care panel to build correctly.</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="st-panel">
-      <div class="st-panel-head">
-        <span class="st-panel-title">State Institutional Failure</span>
-        <span class="st-panel-status pending">PENDING SOURCE</span>
-      </div>
-      <div class="st-panel-body">
-        <div class="st-placeholder">
-          <div class="st-placeholder-icon">⌁</div>
-          <div class="st-placeholder-label">Failed harvest, climate shock, market crash the state can't mitigate</div>
-          <p class="st-placeholder-note">Composite indicator. USGS (confirmed live, see Local panel) covers the seismic/climate angle; the rest needs sourcing.</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="st-panel">
-      <div class="st-panel-head">
-        <span class="st-panel-title">Ominous Convoys / Mobilizations</span>
-        <span class="st-panel-status pending">PENDING SOURCE</span>
-      </div>
-      <div class="st-panel-body">
-        <div class="st-placeholder">
-          <div class="st-placeholder-icon">⌁</div>
-          <div class="st-placeholder-label">Organized confrontational public displays</div>
-          <p class="st-placeholder-note">GDELT's event database is the likely source once CORS support is confirmed.</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="st-panel">
-      <div class="st-panel-head">
-        <span class="st-panel-title">Crisis DB Composite Read</span>
-        <span class="st-panel-status pending">PENDING SOURCE</span>
-      </div>
-      <div class="st-panel-body">
-        <div class="st-placeholder">
-          <div class="st-placeholder-icon">⌁</div>
-          <div class="st-placeholder-label">Manual periodic update from Turchin's published data</div>
-          <p class="st-placeholder-note">Not a live feed by nature — refreshed on each new Crisis DB publication.</p>
-        </div>
+      <div class="st-panel-body" id="news-body">
+        <div class="st-loading">Connecting to GDELT feed…</div>
       </div>
     </section>
 
@@ -97,7 +51,7 @@
 
 <footer class="st-footer">
   <span>SENTINEL NETWORK — Trigger Events</span>
-  <span id="st-updated">No live data wired yet</span>
+  <span id="st-updated">Last updated —</span>
 </footer>
 
 <script>
@@ -107,6 +61,47 @@ function tick() {
 }
 tick();
 setInterval(tick, 1000);
+
+async function loadHeadlines() {
+  const body = document.getElementById('news-body');
+  const statusEl = document.getElementById('news-status');
+  const query = encodeURIComponent('(protest OR riot OR unrest OR mobilization OR uprising)');
+  const url = `https://api.gdeltproject.org/api/v2/doc/doc?query=${query}&mode=artlist&maxrecords=14&timespan=12h&sort=datedesc&format=json`;
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    const articles = (data.articles || []).slice(0, 14);
+
+    if (articles.length === 0) {
+      body.innerHTML = '<div class="st-loading">No matching coverage in the last 12h.</div>';
+      statusEl.textContent = 'LIVE';
+      statusEl.className = 'st-panel-status live';
+      return;
+    }
+
+    body.innerHTML = articles.map(a => {
+      const seen = a.seendate ? a.seendate.slice(0, 4) + '-' + a.seendate.slice(4, 6) + '-' + a.seendate.slice(6, 8) + ' ' + a.seendate.slice(9, 11) + ':' + a.seendate.slice(11, 13) : '—';
+      return `<div class="st-row">
+        <div>
+          <div class="st-row-label"><a href="${a.url}" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:none;">${a.title || 'Untitled'}</a></div>
+          <div class="st-row-meta">${a.domain || 'unknown source'} · ${seen} UTC</div>
+        </div>
+        <span class="st-row-value">${a.sourcecountry || '—'}</span>
+      </div>`;
+    }).join('');
+
+    document.getElementById('st-updated').textContent =
+      'Last updated ' + new Date().toUTCString().slice(17, 25) + ' UTC';
+  } catch (err) {
+    body.innerHTML = '<div class="st-error">GDELT feed unreachable: ' + err.message + '</div>';
+    statusEl.textContent = 'ERROR';
+    statusEl.className = 'st-panel-status alert';
+  }
+}
+
+loadHeadlines();
+setInterval(loadHeadlines, 5 * 60 * 1000); // refresh every 5 min
 </script>
 
 </body>
