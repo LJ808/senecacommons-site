@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Salary Budget Calculator India – Monthly Spending Plan from Take-Home Pay</title>
+<meta name="description" content="Build a monthly budget from your in-hand salary. 50/30/20 rule, custom category split, savings target, and year-end projection. Free, no login. Excel download.">
+<link rel="canonical" href="https://senecacommons.com/tools/salary-budget-calculator-india">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --ink:#1a1a2e; --ink-mid:#4a4a6a; --ink-light:#8888aa; --page:#f7f6f2;
+  --panel:#ffffff; --rule:#e2e0da; --accent:#c84b31; --accent-2:#2563a8;
+  --mono:'JetBrains Mono',monospace; --serif:'DM Serif Display',Georgia,serif;
+  --sans:'Inter',system-ui,sans-serif;
+}
+html{font-size:16px;scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--page);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased;}
+.wrap{max-width:960px;margin:0 auto;padding:0 20px;}
+header{border-bottom:1px solid var(--rule);padding:14px 0;background:var(--panel);}
+.header-inner{display:flex;align-items:center;justify-content:space-between;}
+.logo{font-family:var(--serif);font-size:1.15rem;color:var(--ink);text-decoration:none;letter-spacing:-.01em;}
+.logo span{color:var(--accent);}
+nav a{font-size:.8rem;font-weight:500;color:var(--ink-mid);text-decoration:none;margin-left:20px;letter-spacing:.04em;text-transform:uppercase;}
+nav a:hover{color:var(--accent);}
+.hero{padding:52px 0 36px;border-bottom:1px solid var(--rule);}
+.hero-eyebrow{font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;}
+.hero h1{font-family:var(--serif);font-size:clamp(1.9rem,4vw,2.8rem);line-height:1.18;color:var(--ink);max-width:680px;margin-bottom:16px;letter-spacing:-.02em;}
+.hero-sub{font-size:1rem;color:var(--ink-mid);max-width:560px;line-height:1.7;}
+.calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px;padding:36px 0;}
+@media(max-width:680px){.calc-grid{grid-template-columns:1fr;}}
+.panel{background:var(--panel);border:1px solid var(--rule);border-radius:4px;padding:28px;}
+.panel-title{font-size:.7rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-light);margin-bottom:22px;padding-bottom:12px;border-bottom:1px solid var(--rule);}
+.field{margin-bottom:18px;}.field:last-child{margin-bottom:0;}
+label{display:block;font-size:.78rem;font-weight:500;color:var(--ink-mid);margin-bottom:6px;}
+label .hint{font-weight:400;color:var(--ink-light);margin-left:4px;}
+.input-wrap{display:flex;align-items:center;border:1px solid var(--rule);border-radius:3px;background:var(--page);transition:border-color .15s;}
+.input-wrap:focus-within{border-color:var(--accent-2);background:#fff;}
+.input-prefix{padding:0 10px;font-size:.8rem;font-family:var(--mono);color:var(--ink-light);background:transparent;white-space:nowrap;}
+input[type=number],input[type=range]{border:none;background:transparent;outline:none;font-family:var(--mono);font-size:.9rem;color:var(--ink);padding:9px 8px;width:100%;}
+input[type=range]{padding:0 8px;cursor:pointer;accent-color:var(--accent);}
+.range-row{display:flex;align-items:center;gap:10px;}
+.range-val{font-family:var(--mono);font-size:.82rem;color:var(--ink);min-width:48px;text-align:right;}
+.toggle-row{display:flex;gap:8px;margin-bottom:18px;}
+.toggle-btn{flex:1;padding:9px 12px;border:1px solid var(--rule);background:var(--page);border-radius:3px;font-size:.8rem;font-weight:600;letter-spacing:.02em;color:var(--ink-mid);cursor:pointer;transition:all .15s;}
+.toggle-btn.active{background:var(--accent-2);color:#fff;border-color:var(--accent-2);}
+.results-panel{grid-column:1/-1;background:var(--ink);color:#fff;border-radius:4px;padding:32px;}
+.results-panel .panel-title{color:rgba(255,255,255,.4);border-bottom-color:rgba(255,255,255,.1);}
+.corpus-display{display:flex;align-items:baseline;gap:10px;margin:20px 0 6px;}
+.corpus-amount{font-family:var(--serif);font-size:clamp(2.2rem,5vw,3.4rem);color:#fff;letter-spacing:-.03em;line-height:1;}
+.corpus-sub{font-size:.82rem;color:rgba(255,255,255,.5);margin-bottom:28px;}
+.metrics-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:16px;margin-bottom:28px;}
+.metric{border-left:2px solid rgba(255,255,255,.12);padding-left:14px;}
+.metric-val{font-family:var(--mono);font-size:1.1rem;font-weight:500;color:#fff;line-height:1.2;}
+.metric-val.good{color:#5dd68a;}.metric-val.warn{color:#f0b429;}
+.metric-label{font-size:.7rem;color:rgba(255,255,255,.4);margin-top:3px;text-transform:uppercase;letter-spacing:.06em;}
+.bar-stack{display:flex;height:14px;border-radius:7px;overflow:hidden;margin-top:6px;background:rgba(255,255,255,.08);}
+.bar-seg{height:100%;}
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:10px;font-size:.74rem;color:rgba(255,255,255,.6);}
+.legend-item{display:flex;align-items:center;gap:6px;}
+.legend-dot{width:8px;height:8px;border-radius:50%;display:inline-block;}
+.breakdown{margin-top:28px;border-top:1px solid var(--rule);padding-top:24px;}
+.breakdown-title{font-size:.7rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-light);margin-bottom:16px;}
+table{width:100%;border-collapse:collapse;font-size:.82rem;}
+th{text-align:left;font-size:.68rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-light);padding:6px 0;border-bottom:1px solid var(--rule);}
+th:not(:first-child),td:not(:first-child){text-align:right;}
+td{padding:8px 0;border-bottom:1px solid var(--rule);color:var(--ink-mid);font-family:var(--mono);}
+td:first-child{font-family:var(--sans);color:var(--ink);text-align:left;}
+tr:last-child td{border-bottom:none;font-weight:600;color:var(--ink);}
+.btn-row{margin-top:20px;display:flex;gap:12px;flex-wrap:wrap;}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:10px 18px;border-radius:3px;font-size:.8rem;font-weight:600;letter-spacing:.04em;cursor:pointer;border:none;transition:opacity .15s;text-decoration:none;}
+.btn:hover{opacity:.85;}
+.btn-primary{background:var(--accent);color:#fff;}
+.btn-secondary{background:transparent;border:1px solid var(--rule);color:var(--ink-mid);}
+.content-section{padding:40px 0;border-top:1px solid var(--rule);}
+.content-section h2{font-family:var(--serif);font-size:1.5rem;color:var(--ink);margin-bottom:14px;letter-spacing:-.02em;}
+.content-section p{color:var(--ink-mid);line-height:1.8;margin-bottom:14px;max-width:720px;font-size:.92rem;}
+.faq{margin-top:32px;}
+.faq-item{border-top:1px solid var(--rule);padding:18px 0;}
+.faq-item:last-child{border-bottom:1px solid var(--rule);}
+.faq-q{font-weight:600;font-size:.92rem;color:var(--ink);margin-bottom:8px;}
+.faq-a{font-size:.88rem;color:var(--ink-mid);line-height:1.75;}
+.related{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-top:20px;}
+.related-card{border:1px solid var(--rule);border-radius:4px;padding:18px;text-decoration:none;background:var(--panel);transition:border-color .15s;}
+.related-card:hover{border-color:var(--accent-2);}
+.related-card-title{font-weight:600;font-size:.88rem;color:var(--ink);margin-bottom:4px;}
+.related-card-desc{font-size:.78rem;color:var(--ink-light);}
+footer{border-top:1px solid var(--rule);padding:24px 0;margin-top:40px;}
+.footer-inner{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
+.footer-note{font-size:.72rem;color:var(--ink-light);max-width:520px;line-height:1.6;}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap header-inner">
+    <a href="/" class="logo"><img src="/senecacommons-logo.png" alt="Seneca Commons" style="height:36px;width:auto;display:block;"></a>
+    <nav>
+      <a href="/tools/gst-calculator-india">GST</a>
+      <a href="/tools/retirement-calculator-india">Retirement</a>
+      <a href="/tools/payroll-calculator-india-excel">Payroll</a>
+      <a href="/tools/sip-calculator-india">SIP</a>
+      <a href="/tools/salary-bonus-calculator-india">Bonus</a>
+      <a href="/tools/salary-budget-calculator-india">Budget</a>
+      <a href="/tools/salary-difference-calculator-india">Compare</a>
+    </nav>
+  </div>
+</header>
+<main>
+  <div class="wrap">
+    <div class="hero">
+      <div class="hero-eyebrow">Free · No login · Instant results</div>
+      <h1>Salary Budget Calculator India — 50/30/20 Plan from Take-Home Pay</h1>
+      <p class="hero-sub">Enter your monthly in-hand salary. Get a needs/wants/savings split, a custom category breakdown, and a year-end savings projection — instantly. Download Excel.</p>
+    </div>
+    <div class="calc-grid">
+      <div class="panel">
+        <div class="panel-title">Your Income</div>
+        <div class="field">
+          <label>Monthly In-Hand Salary <span class="hint">(after tax, after PF)</span></label>
+          <div class="input-wrap"><span class="input-prefix">₹</span>
+            <input type="number" id="salary" value="60000" min="5000" max="10000000" step="1000">
+          </div>
+        </div>
+        <div class="field">
+          <label>Budget Rule</label>
+          <div class="toggle-row">
+            <button class="toggle-btn active" id="btn503020" onclick="setRule('503020')">50/30/20</button>
+            <button class="toggle-btn" id="btnCustom" onclick="setRule('custom')">Custom Split</button>
+          </div>
+        </div>
+        <div id="customFields" style="display:none;">
+          <div class="field">
+            <label>Needs <span class="hint">rent, groceries, EMIs, utilities</span></label>
+            <div class="input-wrap range-row">
+              <input type="range" id="needsPct" min="0" max="100" value="50">
+              <span class="range-val" id="needsPctVal">50%</span>
+            </div>
+          </div>
+          <div class="field">
+            <label>Wants <span class="hint">dining, entertainment, shopping</span></label>
+            <div class="input-wrap range-row">
+              <input type="range" id="wantsPct" min="0" max="100" value="30">
+              <span class="range-val" id="wantsPctVal">30%</span>
+            </div>
+          </div>
+          <div class="field">
+            <label>Savings &amp; Investments</label>
+            <div class="input-wrap range-row">
+              <input type="range" id="savingsPct" min="0" max="100" value="20">
+              <span class="range-val" id="savingsPctVal">20%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">Fixed Commitments <span class="hint">(optional, refines the split)</span></div>
+        <div class="field">
+          <label>Rent / Home Loan EMI</label>
+          <div class="input-wrap"><span class="input-prefix">₹</span>
+            <input type="number" id="rent" value="15000" min="0" step="500">
+          </div>
+        </div>
+        <div class="field">
+          <label>Other EMIs <span class="hint">car, personal loan, credit card</span></label>
+          <div class="input-wrap"><span class="input-prefix">₹</span>
+            <input type="number" id="emis" value="0" min="0" step="500">
+          </div>
+        </div>
+        <div class="field">
+          <label>Existing Monthly SIP / Investment</label>
+          <div class="input-wrap"><span class="input-prefix">₹</span>
+            <input type="number" id="existingSip" value="5000" min="0" step="500">
+          </div>
+        </div>
+      </div>
+      <div class="panel results-panel">
+        <div class="panel-title">Your Monthly Budget</div>
+        <div class="corpus-display">
+          <div class="corpus-amount" id="totalAmount">₹0</div>
+        </div>
+        <div class="corpus-sub" id="totalSub">monthly in-hand salary</div>
+        <div class="metrics-row">
+          <div class="metric"><div class="metric-val good" id="metricNeeds">₹0</div><div class="metric-label">Needs</div></div>
+          <div class="metric"><div class="metric-val warn" id="metricWants">₹0</div><div class="metric-label">Wants</div></div>
+          <div class="metric"><div class="metric-val" id="metricSavings">₹0</div><div class="metric-label">Savings</div></div>
+          <div class="metric"><div class="metric-val" id="metricFixedGap">₹0</div><div class="metric-label">Fixed vs Needs Budget</div></div>
+          <div class="metric"><div class="metric-val good" id="metricYearEnd">₹0</div><div class="metric-label">Year-End Savings</div></div>
+        </div>
+        <div class="bar-stack">
+          <div class="bar-seg" id="barNeeds" style="background:#5dd68a;"></div>
+          <div class="bar-seg" id="barWants" style="background:#f0b429;"></div>
+          <div class="bar-seg" id="barSavings" style="background:#2563a8;"></div>
+        </div>
+        <div class="legend">
+          <div class="legend-item"><span class="legend-dot" style="background:#5dd68a;"></span>Needs</div>
+          <div class="legend-item"><span class="legend-dot" style="background:#f0b429;"></span>Wants</div>
+          <div class="legend-item"><span class="legend-dot" style="background:#2563a8;"></span>Savings</div>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="downloadExcel()">⬇ Download Excel Budget</button>
+          <button class="btn btn-secondary" onclick="window.print()">Print Report</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="affiliateBanner" style="display:none;margin:32px 0;background:#fff;border:1px solid #e2e0da;border-left:3px solid #2563a8;border-radius:4px;padding:20px 24px;">
+      <div style="font-size:.68rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#8888aa;margin-bottom:10px;">Put your savings to work</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+        <div>
+          <div id="affiliateLabel" style="font-family:'DM Serif Display',Georgia,serif;font-size:1.15rem;color:#1a1a2e;margin-bottom:4px;"></div>
+          <div id="affiliateSubtext" style="font-size:.82rem;color:#4a4a6a;"></div>
+        </div>
+        <a id="affiliateLink" href="#" target="_blank" rel="noopener sponsored"
+           style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:#2563a8;color:#fff;border-radius:3px;font-size:.82rem;font-weight:600;letter-spacing:.04em;text-decoration:none;white-space:nowrap;flex-shrink:0;"
+           onclick="trackAffiliateClick(event)">Get started →</a>
+      </div>
+    </div>
+
+    <div class="breakdown">
+      <div class="breakdown-title">Category Breakdown</div>
+      <table>
+        <thead><tr><th>Category</th><th>Monthly</th><th>% of Income</th><th>Annual</th></tr></thead>
+        <tbody id="breakdownBody"></tbody>
+      </table>
+    </div>
+
+    <div class="content-section">
+      <h2>How to Budget Your Salary in India</h2>
+      <p>The 50/30/20 rule splits take-home pay into three buckets: 50% for needs (rent, groceries, EMIs, utilities, transport), 30% for wants (dining out, entertainment, shopping, subscriptions), and 20% for savings and investments (SIP, EPF top-up, emergency fund). It works as a starting framework, not a rigid law — high-rent cities like Mumbai or Bangalore often push the needs share to 60% or higher, especially in the first few years after relocating for work.</p>
+      <p>Fixed commitments matter more than the percentage split itself. Rent, EMIs, and insurance premiums don't flex month to month, so the real planning question is whether your needs bucket, once fixed costs are subtracted, leaves enough room for groceries, utilities, and transport without bleeding into the wants or savings buckets. Tracking fixed costs as a separate line — rather than burying them inside "needs" — makes it obvious when a salary increase should go toward savings rather than lifestyle inflation.</p>
+      <p>The savings bucket should split further: an emergency fund (3–6 months of expenses, kept liquid) comes first, then EPF/NPS for retirement, then equity mutual fund SIPs for medium-to-long-term goals. Many salaried Indians treat SIP contributions as "savings" while ignoring that EPF (12% of basic, automatically deducted) already counts toward that 20% — double-counting EPF and SIP separately can make a budget look tighter than it actually is.</p>
+      <div class="faq">
+        <div class="faq-item">
+          <div class="faq-q">Should I use gross salary or in-hand salary for budgeting?</div>
+          <div class="faq-a">Always budget from in-hand (take-home) salary — the amount that actually lands in your bank account after tax (TDS), EPF, and professional tax deductions. Budgeting from gross/CTC overstates available cash and leads to overspending, since 15–25% of CTC commonly disappears into deductions and reimbursement components before reaching your account.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">What if my rent alone is more than 50% of my salary?</div>
+          <div class="faq-a">Common in metro cities for early-career professionals. The fix isn't forcing the 50/30/20 ratio — it's tracking actual fixed costs separately and shrinking the wants bucket first, since wants are the most controllable category. A temporarily higher needs percentage isn't a budgeting failure if savings still happen, even at a smaller percentage, every single month.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">Does EPF count as part of my savings percentage?</div>
+          <div class="faq-a">Technically yes, but EPF gets deducted before your salary becomes "in-hand," so it's already excluded from the in-hand number this calculator uses. If you want EPF reflected in your total savings rate, add your EPF contribution back into your gross income figure separately when evaluating your overall savings percentage against retirement targets.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">How much should go to an emergency fund versus SIP?</div>
+          <div class="faq-a">Build the emergency fund first — 3–6 months of fixed expenses in a liquid instrument (savings account, liquid mutual fund, or sweep-in FD) — before increasing SIP contributions beyond a baseline amount. Without that buffer, an unexpected expense forces either debt or redeeming a SIP at a potentially bad time in the market cycle.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h2>Related Calculators</h2>
+      <div class="related">
+        <a href="/tools/payroll-calculator-india-excel" class="related-card">
+          <div class="related-card-title">Payroll Calculator India</div>
+          <div class="related-card-desc">CTC to in-hand with full statutory breakdown</div>
+        </a>
+        <a href="/tools/sip-calculator-india" class="related-card">
+          <div class="related-card-title">SIP Calculator India</div>
+          <div class="related-card-desc">Monthly investment to wealth with CAGR</div>
+        </a>
+        <a href="/tools/retirement-calculator-india" class="related-card">
+          <div class="related-card-title">Retirement Calculator India</div>
+          <div class="related-card-desc">Corpus, EPF, NPS & monthly SIP target</div>
+        </a>
+        <a href="/tools/salary-bonus-calculator-india" class="related-card">
+          <div class="related-card-title">Salary Bonus Calculator</div>
+          <div class="related-card-desc">Performance bonus, statutory bonus & TDS impact</div>
+        </a>
+      </div>
+    </div>
+  </div>
+</main>
+<footer>
+  <div class="wrap footer-inner">
+    <p class="footer-note">Budget splits are general guidance, not personalized financial advice. Actual needs/wants ratios vary significantly by city, family size, and life stage. Consult a SEBI-registered financial adviser for a personalized financial plan.</p>
+    <p class="footer-note" style="text-align:right;max-width:200px;">© 2026 SenecaCommons</p>
+  </div>
+</footer>
+<script>
+const $=id=>document.getElementById(id);
+let rule='503020';
+
+function fmtCr(n){
+  if(Math.abs(n)>=1e7)return'₹'+(n/1e7).toFixed(2)+' Cr';
+  if(Math.abs(n)>=1e5)return'₹'+(n/1e5).toFixed(2)+' L';
+  return'₹'+Math.round(Math.abs(n)).toLocaleString('en-IN');
+}
+
+function setRule(r){
+  rule=r;
+  $('btn503020').classList.toggle('active',r==='503020');
+  $('btnCustom').classList.toggle('active',r==='custom');
+  $('customFields').style.display=r==='custom'?'block':'none';
+  calculate();
+}
+
+['needsPct','wantsPct','savingsPct'].forEach(id=>{
+  $(id).addEventListener('input',()=>{
+    $(id+'Val').textContent=$(id).value+'%';
+    calculate();
+  });
+});
+['salary','rent','emis','existingSip'].forEach(id=>$(id).addEventListener('input',calculate));
+
+function calculate(){
+  const salary=+$('salary').value||0;
+  const rent=+$('rent').value||0;
+  const emis=+$('emis').value||0;
+  const existingSip=+$('existingSip').value||0;
+
+  let needsPct,wantsPct,savingsPct;
+  if(rule==='503020'){
+    needsPct=50;wantsPct=30;savingsPct=20;
+  } else {
+    needsPct=+$('needsPct').value||0;
+    wantsPct=+$('wantsPct').value||0;
+    savingsPct=+$('savingsPct').value||0;
+    const total=needsPct+wantsPct+savingsPct;
+    if(total>0&&total!==100){
+      needsPct=needsPct/total*100;
+      wantsPct=wantsPct/total*100;
+      savingsPct=savingsPct/total*100;
+    }
+  }
+
+  const needs=salary*needsPct/100;
+  const wants=salary*wantsPct/100;
+  const savings=salary*savingsPct/100;
+  const fixedCosts=rent+emis;
+  const fixedGap=needs-fixedCosts;
+  const yearEnd=(savings+existingSip)*12;
+
+  $('totalAmount').textContent=fmtCr(salary);
+  $('totalSub').textContent='monthly in-hand salary';
+  $('metricNeeds').textContent=fmtCr(needs);
+  $('metricWants').textContent=fmtCr(wants);
+  $('metricSavings').textContent=fmtCr(savings);
+  const gapEl=$('metricFixedGap');
+  gapEl.textContent=(fixedGap>=0?'+':'')+fmtCr(fixedGap)+(fixedGap>=0?' left':' over');
+  gapEl.className='metric-val '+(fixedGap>=0?'good':'warn');
+  $('metricYearEnd').textContent=fmtCr(yearEnd);
+
+  $('barNeeds').style.width=needsPct+'%';
+  $('barWants').style.width=wantsPct+'%';
+  $('barSavings').style.width=savingsPct+'%';
+
+  const rows=[
+    {cat:'Needs (rent, groceries, EMIs, utilities)',amt:needs,pct:needsPct},
+    {cat:'— Rent / Home Loan EMI',amt:rent,pct:salary>0?rent/salary*100:0},
+    {cat:'— Other EMIs',amt:emis,pct:salary>0?emis/salary*100:0},
+    {cat:'Wants (dining, entertainment, shopping)',amt:wants,pct:wantsPct},
+    {cat:'Savings & Investments',amt:savings,pct:savingsPct},
+    {cat:'— Existing SIP',amt:existingSip,pct:salary>0?existingSip/salary*100:0},
+  ];
+  $('breakdownBody').innerHTML=rows.map(r=>`<tr>
+    <td>${r.cat}</td>
+    <td>${fmtCr(r.amt)}</td>
+    <td>${r.pct.toFixed(1)}%</td>
+    <td>${fmtCr(r.amt*12)}</td>
+  </tr>`).join('');
+
+  window._calcData={salary,needsPct,wantsPct,savingsPct,needs,wants,savings,rent,emis,existingSip,fixedGap,yearEnd};
+}
+
+function downloadExcel(){
+  const d=window._calcData;if(!d)return;
+  const s=document.createElement('script');
+  s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+  s.onload=()=>{
+    const wb=XLSX.utils.book_new();
+    const data=[['Salary Budget Calculator','',''],
+      ['Generated',new Date().toLocaleDateString('en-IN'),''],
+      ['Monthly In-Hand Salary',Math.round(d.salary),''],['','',''],
+      ['Category','Monthly','Annual'],
+      ['Needs',Math.round(d.needs),Math.round(d.needs*12)],
+      ['Wants',Math.round(d.wants),Math.round(d.wants*12)],
+      ['Savings',Math.round(d.savings),Math.round(d.savings*12)],
+      ['','',''],
+      ['Rent/EMI',Math.round(d.rent),Math.round(d.rent*12)],
+      ['Other EMIs',Math.round(d.emis),Math.round(d.emis*12)],
+      ['Existing SIP',Math.round(d.existingSip),Math.round(d.existingSip*12)],
+      ['Year-End Savings Total',Math.round(d.yearEnd),'']];
+    const ws=XLSX.utils.aoa_to_sheet(data);
+    ws['!cols']=[{wch:24},{wch:16},{wch:16}];
+    XLSX.utils.book_append_sheet(wb,ws,'Salary Budget');
+    XLSX.writeFile(wb,'salary-budget-india.xlsx');
+  };document.head.appendChild(s);
+}
+
+let _aff=null;
+(async function(){
+  try{
+    const res=await fetch('/affiliates.json');
+    const data=await res.json();
+    const page='salary-budget-calculator-india';
+    const cands=data.slots.filter(s=>s.active&&s.pages.includes(page));
+    if(!cands.length)return;
+    const tw=cands.reduce((s,c)=>s+c.weight,0);
+    let rand=Math.random()*tw,chosen=cands[cands.length-1];
+    for(const c of cands){rand-=c.weight;if(rand<=0){chosen=c;break;}}
+    _aff=chosen;
+    $('affiliateLabel').textContent=chosen.label;
+    $('affiliateSubtext').textContent=chosen.subtext;
+    $('affiliateLink').href=chosen.url;
+    $('affiliateBanner').style.display='block';
+  }catch(e){}
+})();
+function trackAffiliateClick(){
+  if(!_aff)return;
+  fetch('/api/click',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({id:_aff.id,program:_aff.program,page:'salary-budget-calculator-india',ts:Date.now(),ua:navigator.userAgent.slice(0,120)}),
+    mode:'no-cors'}).catch(()=>{});
+}
+calculate();
+</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Salary Budget Calculator India","url":"https://senecacommons.com/tools/salary-budget-calculator-india","description":"Free salary budget calculator India. 50/30/20 rule, custom category split, savings projection, and Excel download.","applicationCategory":"FinanceApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"INR"}}</script>
+</body>
+</html>

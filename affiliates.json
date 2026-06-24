@@ -10,7 +10,7 @@
       "program": "groww",
       "weight": 1.0,
       "active": true,
-      "pages": ["retirement-calculator-india", "payroll-calculator-india-excel", "sip-calculator-india", "salary-bonus-calculator-india", "gst-calculator-india"]
+      "pages": ["retirement-calculator-india", "payroll-calculator-india-excel", "sip-calculator-india", "salary-bonus-calculator-india", "gst-calculator-india", "salary-budget-calculator-india", "salary-difference-calculator-india"]
     },
     {
       "id": "zerodha-demat",
@@ -21,7 +21,7 @@
       "program": "zerodha",
       "weight": 1.0,
       "active": true,
-      "pages": ["retirement-calculator-india", "payroll-calculator-india-excel", "sip-calculator-india", "salary-bonus-calculator-india", "gst-calculator-india"]
+      "pages": ["retirement-calculator-india", "payroll-calculator-india-excel", "sip-calculator-india", "salary-bonus-calculator-india", "gst-calculator-india", "salary-budget-calculator-india", "salary-difference-calculator-india"]
     },
     {
       "id": "etmoney-nps",
@@ -32,7 +32,7 @@
       "program": "etmoney",
       "weight": 1.0,
       "active": true,
-      "pages": ["retirement-calculator-india", "sip-calculator-india", "gst-calculator-india"]
+      "pages": ["retirement-calculator-india", "sip-calculator-india", "gst-calculator-india", "salary-budget-calculator-india", "salary-difference-calculator-india"]
     },
     {
       "id": "robinhood-funded",
@@ -107,7 +107,7 @@
       "commission": "₹58/sale",
       "weight": 1.0,
       "active": true,
-      "pages": ["retirement-calculator-india", "payroll-calculator-india-excel", "sip-calculator-india", "salary-bonus-calculator-india", "gst-calculator-india"]
+      "pages": ["retirement-calculator-india", "payroll-calculator-india-excel", "sip-calculator-india", "salary-bonus-calculator-india", "gst-calculator-india", "salary-budget-calculator-india", "salary-difference-calculator-india"]
     },
     {
       "id": "jivisa",
@@ -119,7 +119,7 @@
       "commission": "₹51.80/sale",
       "weight": 1.0,
       "active": true,
-      "pages": ["retirement-calculator-india", "payroll-calculator-india-excel", "sip-calculator-india", "salary-bonus-calculator-india", "gst-calculator-india"]
+      "pages": ["retirement-calculator-india", "payroll-calculator-india-excel", "sip-calculator-india", "salary-bonus-calculator-india", "gst-calculator-india", "salary-budget-calculator-india", "salary-difference-calculator-india"]
     },
     {
       "id": "nourishmantra",
@@ -131,7 +131,7 @@
       "commission": "₹49/sale",
       "weight": 1.0,
       "active": true,
-      "pages": ["retirement-calculator-india", "payroll-calculator-india-excel", "sip-calculator-india", "salary-bonus-calculator-india", "gst-calculator-india"]
+      "pages": ["retirement-calculator-india", "payroll-calculator-india-excel", "sip-calculator-india", "salary-bonus-calculator-india", "gst-calculator-india", "salary-budget-calculator-india", "salary-difference-calculator-india"]
     },
     {
       "id": "firstcry",
@@ -143,7 +143,7 @@
       "commission": "₹35/qualifying action (CPA)",
       "weight": 1.0,
       "active": true,
-      "pages": ["retirement-calculator-india", "payroll-calculator-india-excel", "sip-calculator-india", "salary-bonus-calculator-india", "gst-calculator-india"]
+      "pages": ["retirement-calculator-india", "payroll-calculator-india-excel", "sip-calculator-india", "salary-bonus-calculator-india", "gst-calculator-india", "salary-budget-calculator-india", "salary-difference-calculator-india"]
     }
   ]
 }

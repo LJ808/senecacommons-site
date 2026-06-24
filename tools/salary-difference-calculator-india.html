@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Salary Difference Calculator India – Compare Two CTC Offers Side by Side</title>
+<meta name="description" content="Compare two salary offers — gross, in-hand, and percentage difference, with tax-slab impact. Free, no login. Excel download.">
+<link rel="canonical" href="https://senecacommons.com/tools/salary-difference-calculator-india">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --ink:#1a1a2e; --ink-mid:#4a4a6a; --ink-light:#8888aa; --page:#f7f6f2;
+  --panel:#ffffff; --rule:#e2e0da; --accent:#c84b31; --accent-2:#2563a8;
+  --mono:'JetBrains Mono',monospace; --serif:'DM Serif Display',Georgia,serif;
+  --sans:'Inter',system-ui,sans-serif;
+}
+html{font-size:16px;scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--page);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased;}
+.wrap{max-width:960px;margin:0 auto;padding:0 20px;}
+header{border-bottom:1px solid var(--rule);padding:14px 0;background:var(--panel);}
+.header-inner{display:flex;align-items:center;justify-content:space-between;}
+.logo{font-family:var(--serif);font-size:1.15rem;color:var(--ink);text-decoration:none;letter-spacing:-.01em;}
+.logo span{color:var(--accent);}
+nav a{font-size:.8rem;font-weight:500;color:var(--ink-mid);text-decoration:none;margin-left:20px;letter-spacing:.04em;text-transform:uppercase;}
+nav a:hover{color:var(--accent);}
+.hero{padding:52px 0 36px;border-bottom:1px solid var(--rule);}
+.hero-eyebrow{font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;}
+.hero h1{font-family:var(--serif);font-size:clamp(1.9rem,4vw,2.8rem);line-height:1.18;color:var(--ink);max-width:680px;margin-bottom:16px;letter-spacing:-.02em;}
+.hero-sub{font-size:1rem;color:var(--ink-mid);max-width:560px;line-height:1.7;}
+.calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px;padding:36px 0;}
+@media(max-width:680px){.calc-grid{grid-template-columns:1fr;}}
+.panel{background:var(--panel);border:1px solid var(--rule);border-radius:4px;padding:28px;}
+.panel-title{font-size:.7rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-light);margin-bottom:22px;padding-bottom:12px;border-bottom:1px solid var(--rule);}
+.panel-a .panel-title{color:#2563a8;}
+.panel-b .panel-title{color:#c84b31;}
+.field{margin-bottom:18px;}.field:last-child{margin-bottom:0;}
+label{display:block;font-size:.78rem;font-weight:500;color:var(--ink-mid);margin-bottom:6px;}
+label .hint{font-weight:400;color:var(--ink-light);margin-left:4px;}
+.input-wrap{display:flex;align-items:center;border:1px solid var(--rule);border-radius:3px;background:var(--page);transition:border-color .15s;}
+.input-wrap:focus-within{border-color:var(--accent-2);background:#fff;}
+.input-prefix{padding:0 10px;font-size:.8rem;font-family:var(--mono);color:var(--ink-light);background:transparent;white-space:nowrap;}
+input[type=number],input[type=range],input[type=text]{border:none;background:transparent;outline:none;font-family:var(--mono);font-size:.9rem;color:var(--ink);padding:9px 8px;width:100%;}
+input[type=range]{padding:0 8px;cursor:pointer;accent-color:var(--accent);}
+.range-row{display:flex;align-items:center;gap:10px;}
+.range-val{font-family:var(--mono);font-size:.82rem;color:var(--ink);min-width:48px;text-align:right;}
+.results-panel{grid-column:1/-1;background:var(--ink);color:#fff;border-radius:4px;padding:32px;}
+.results-panel .panel-title{color:rgba(255,255,255,.4);border-bottom-color:rgba(255,255,255,.1);}
+.corpus-display{display:flex;align-items:baseline;gap:10px;margin:20px 0 6px;}
+.corpus-amount{font-family:var(--serif);font-size:clamp(2.2rem,5vw,3.4rem);color:#fff;letter-spacing:-.03em;line-height:1;}
+.corpus-sub{font-size:.82rem;color:rgba(255,255,255,.5);margin-bottom:28px;}
+.metrics-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:16px;margin-bottom:28px;}
+.metric{border-left:2px solid rgba(255,255,255,.12);padding-left:14px;}
+.metric-val{font-family:var(--mono);font-size:1.1rem;font-weight:500;color:#fff;line-height:1.2;}
+.metric-val.good{color:#5dd68a;}.metric-val.warn{color:#f0b429;}
+.metric-label{font-size:.7rem;color:rgba(255,255,255,.4);margin-top:3px;text-transform:uppercase;letter-spacing:.06em;}
+.breakdown{margin-top:28px;border-top:1px solid var(--rule);padding-top:24px;}
+.breakdown-title{font-size:.7rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-light);margin-bottom:16px;}
+table{width:100%;border-collapse:collapse;font-size:.82rem;}
+th{text-align:left;font-size:.68rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-light);padding:6px 0;border-bottom:1px solid var(--rule);}
+th:not(:first-child),td:not(:first-child){text-align:right;}
+td{padding:8px 0;border-bottom:1px solid var(--rule);color:var(--ink-mid);font-family:var(--mono);}
+td:first-child{font-family:var(--sans);color:var(--ink);text-align:left;}
+tr:last-child td{border-bottom:none;font-weight:600;color:var(--ink);}
+.btn-row{margin-top:20px;display:flex;gap:12px;flex-wrap:wrap;}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:10px 18px;border-radius:3px;font-size:.8rem;font-weight:600;letter-spacing:.04em;cursor:pointer;border:none;transition:opacity .15s;text-decoration:none;}
+.btn:hover{opacity:.85;}
+.btn-primary{background:var(--accent);color:#fff;}
+.btn-secondary{background:transparent;border:1px solid var(--rule);color:var(--ink-mid);}
+.content-section{padding:40px 0;border-top:1px solid var(--rule);}
+.content-section h2{font-family:var(--serif);font-size:1.5rem;color:var(--ink);margin-bottom:14px;letter-spacing:-.02em;}
+.content-section p{color:var(--ink-mid);line-height:1.8;margin-bottom:14px;max-width:720px;font-size:.92rem;}
+.faq{margin-top:32px;}
+.faq-item{border-top:1px solid var(--rule);padding:18px 0;}
+.faq-item:last-child{border-bottom:1px solid var(--rule);}
+.faq-q{font-weight:600;font-size:.92rem;color:var(--ink);margin-bottom:8px;}
+.faq-a{font-size:.88rem;color:var(--ink-mid);line-height:1.75;}
+.related{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-top:20px;}
+.related-card{border:1px solid var(--rule);border-radius:4px;padding:18px;text-decoration:none;background:var(--panel);transition:border-color .15s;}
+.related-card:hover{border-color:var(--accent-2);}
+.related-card-title{font-weight:600;font-size:.88rem;color:var(--ink);margin-bottom:4px;}
+.related-card-desc{font-size:.78rem;color:var(--ink-light);}
+footer{border-top:1px solid var(--rule);padding:24px 0;margin-top:40px;}
+.footer-inner{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
+.footer-note{font-size:.72rem;color:var(--ink-light);max-width:520px;line-height:1.6;}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap header-inner">
+    <a href="/" class="logo"><img src="/senecacommons-logo.png" alt="Seneca Commons" style="height:36px;width:auto;display:block;"></a>
+    <nav>
+      <a href="/tools/gst-calculator-india">GST</a>
+      <a href="/tools/retirement-calculator-india">Retirement</a>
+      <a href="/tools/payroll-calculator-india-excel">Payroll</a>
+      <a href="/tools/sip-calculator-india">SIP</a>
+      <a href="/tools/salary-bonus-calculator-india">Bonus</a>
+      <a href="/tools/salary-budget-calculator-india">Budget</a>
+      <a href="/tools/salary-difference-calculator-india">Compare</a>
+    </nav>
+  </div>
+</header>
+<main>
+  <div class="wrap">
+    <div class="hero">
+      <div class="hero-eyebrow">Free · No login · Instant results</div>
+      <h1>Salary Difference Calculator India — Compare Two Offers Side by Side</h1>
+      <p class="hero-sub">Enter two CTC figures. See the gross difference, the real in-hand difference after standard deductions, and the percentage uplift — instantly. Download Excel.</p>
+    </div>
+    <div class="calc-grid">
+      <div class="panel panel-a">
+        <div class="panel-title">Offer A</div>
+        <div class="field">
+          <label>Label</label>
+          <div class="input-wrap"><input type="text" id="labelA" value="Current Role"></div>
+        </div>
+        <div class="field">
+          <label>Annual CTC</label>
+          <div class="input-wrap"><span class="input-prefix">₹</span>
+            <input type="number" id="ctcA" value="1200000" min="0" max="100000000" step="10000">
+          </div>
+        </div>
+        <div class="field">
+          <label>Deduction Rate <span class="hint">tax + PF + other, % of CTC</span></label>
+          <div class="input-wrap range-row">
+            <input type="range" id="deductA" min="0" max="40" value="18" step="0.5">
+            <span class="range-val" id="deductAVal">18%</span>
+          </div>
+        </div>
+      </div>
+      <div class="panel panel-b">
+        <div class="panel-title">Offer B</div>
+        <div class="field">
+          <label>Label</label>
+          <div class="input-wrap"><input type="text" id="labelB" value="New Offer"></div>
+        </div>
+        <div class="field">
+          <label>Annual CTC</label>
+          <div class="input-wrap"><span class="input-prefix">₹</span>
+            <input type="number" id="ctcB" value="1500000" min="0" max="100000000" step="10000">
+          </div>
+        </div>
+        <div class="field">
+          <label>Deduction Rate <span class="hint">tax + PF + other, % of CTC</span></label>
+          <div class="input-wrap range-row">
+            <input type="range" id="deductB" min="0" max="40" value="20" step="0.5">
+            <span class="range-val" id="deductBVal">20%</span>
+          </div>
+        </div>
+      </div>
+      <div class="panel results-panel">
+        <div class="panel-title">Difference</div>
+        <div class="corpus-display">
+          <div class="corpus-amount" id="diffAmount">₹0</div>
+        </div>
+        <div class="corpus-sub" id="diffSub">annual CTC difference</div>
+        <div class="metrics-row">
+          <div class="metric"><div class="metric-val" id="metricCtcA">₹0</div><div class="metric-label" id="metricCtcALabel">Offer A CTC</div></div>
+          <div class="metric"><div class="metric-val" id="metricCtcB">₹0</div><div class="metric-label" id="metricCtcBLabel">Offer B CTC</div></div>
+          <div class="metric"><div class="metric-val good" id="metricPctDiff">0%</div><div class="metric-label">% Difference</div></div>
+          <div class="metric"><div class="metric-val good" id="metricMonthlyDiff">₹0</div><div class="metric-label">Monthly In-Hand Diff</div></div>
+          <div class="metric"><div class="metric-val" id="metricAnnualInHandDiff">₹0</div><div class="metric-label">Annual In-Hand Diff</div></div>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="downloadExcel()">⬇ Download Excel Comparison</button>
+          <button class="btn btn-secondary" onclick="window.print()">Print Report</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="affiliateBanner" style="display:none;margin:32px 0;background:#fff;border:1px solid #e2e0da;border-left:3px solid #2563a8;border-radius:4px;padding:20px 24px;">
+      <div style="font-size:.68rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#8888aa;margin-bottom:10px;">Planning the move</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+        <div>
+          <div id="affiliateLabel" style="font-family:'DM Serif Display',Georgia,serif;font-size:1.15rem;color:#1a1a2e;margin-bottom:4px;"></div>
+          <div id="affiliateSubtext" style="font-size:.82rem;color:#4a4a6a;"></div>
+        </div>
+        <a id="affiliateLink" href="#" target="_blank" rel="noopener sponsored"
+           style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:#2563a8;color:#fff;border-radius:3px;font-size:.82rem;font-weight:600;letter-spacing:.04em;text-decoration:none;white-space:nowrap;flex-shrink:0;"
+           onclick="trackAffiliateClick(event)">Get started →</a>
+      </div>
+    </div>
+
+    <div class="breakdown">
+      <div class="breakdown-title">Full Comparison</div>
+      <table>
+        <thead><tr><th>Metric</th><th id="thA">Offer A</th><th id="thB">Offer B</th><th>Difference</th></tr></thead>
+        <tbody id="breakdownBody"></tbody>
+      </table>
+    </div>
+
+    <div class="content-section">
+      <h2>How to Compare Two Salary Offers Correctly</h2>
+      <p>Comparing two CTC figures directly overstates or understates the real difference, because CTC bundles components that don't all convert to take-home cash the same way — employer PF contribution, gratuity provision, and certain insurance premiums sit inside CTC but never reach your bank account. A ₹3 lakh CTC gap between two offers can shrink to a ₹1.5–2 lakh real in-hand gap once both offers' deduction structures get applied.</p>
+      <p>Deduction rate varies by CTC level due to India's progressive tax slabs — a jump from ₹12 lakh to ₹15 lakh CTC typically pushes a larger share of the increase into a higher tax bracket, meaning the marginal in-hand gain on the raise itself runs lower than the average deduction rate across the whole salary would suggest. This calculator uses a flat deduction rate per offer as an approximation; for an exact marginal-rate breakdown, model both CTCs through a full payroll/tax calculator separately.</p>
+      <p>Beyond the number itself, a higher-CTC offer with a longer commute, lower job security, or no remote flexibility doesn't automatically "win" — but having the precise in-hand difference removes one variable from the decision, so the remaining tradeoffs (role, growth, stability, location) can get evaluated on their own terms rather than blended into a fuzzy sense of "it pays more."</p>
+      <div class="faq">
+        <div class="faq-item">
+          <div class="faq-q">Why does my in-hand salary increase less than my CTC increase?</div>
+          <div class="faq-a">CTC increases typically raise variable pay, employer PF contribution, and gratuity provision proportionally — all of which never reach your bank account. Combined with crossing into a higher tax slab on the marginal increase, a 25% CTC jump often produces only a 15–20% in-hand jump. This is normal, not a sign of a bad offer.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">What deduction rate should I use for accurate comparison?</div>
+          <div class="faq-a">Check your current payslip: divide (CTC − annual in-hand) by CTC to get your actual current deduction rate. For a new offer at a different CTC level, estimate slightly higher if it pushes you into a higher tax slab, since the marginal rate on the increase typically exceeds your current blended rate.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">Should I count signing bonus or joining bonus in this comparison?</div>
+          <div class="faq-a">Keep one-time bonuses separate from the annual CTC comparison — they affect year-one cash flow but not the ongoing annual difference that matters for long-term financial planning. Add the after-tax value of a signing bonus as a separate one-time adjustment if it's a deciding factor between two offers.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">Does this account for cost-of-living differences between cities?</div>
+          <div class="faq-a">No — this calculator compares CTC and in-hand pay only. If one offer requires relocating to a higher cost-of-living city (Mumbai or Bangalore versus a tier-2 city, for example), factor rent and commute cost differences in separately before concluding which offer leaves you better off financially.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h2>Related Calculators</h2>
+      <div class="related">
+        <a href="/tools/payroll-calculator-india-excel" class="related-card">
+          <div class="related-card-title">Payroll Calculator India</div>
+          <div class="related-card-desc">CTC to in-hand with full statutory breakdown</div>
+        </a>
+        <a href="/tools/salary-budget-calculator-india" class="related-card">
+          <div class="related-card-title">Salary Budget Calculator</div>
+          <div class="related-card-desc">50/30/20 monthly spending plan</div>
+        </a>
+        <a href="/tools/salary-bonus-calculator-india" class="related-card">
+          <div class="related-card-title">Salary Bonus Calculator</div>
+          <div class="related-card-desc">Performance bonus, statutory bonus & TDS impact</div>
+        </a>
+        <a href="/tools/retirement-calculator-india" class="related-card">
+          <div class="related-card-title">Retirement Calculator India</div>
+          <div class="related-card-desc">Corpus, EPF, NPS & monthly SIP target</div>
+        </a>
+      </div>
+    </div>
+  </div>
+</main>
+<footer>
+  <div class="wrap footer-inner">
+    <p class="footer-note">Deduction rates are user-supplied approximations, not exact tax-slab calculations. Use your actual payslip figures where available for precise comparison. Not tax advice. Consult a chartered accountant for exact marginal-rate analysis.</p>
+    <p class="footer-note" style="text-align:right;max-width:200px;">© 2026 SenecaCommons</p>
+  </div>
+</footer>
+<script>
+const $=id=>document.getElementById(id);
+
+function fmtCr(n){
+  const sign=n<0?'-':'';
+  n=Math.abs(n);
+  if(n>=1e7)return sign+'₹'+(n/1e7).toFixed(2)+' Cr';
+  if(n>=1e5)return sign+'₹'+(n/1e5).toFixed(2)+' L';
+  return sign+'₹'+Math.round(n).toLocaleString('en-IN');
+}
+
+['deductA','deductB'].forEach(id=>{
+  $(id).addEventListener('input',()=>{
+    $(id+'Val').textContent=$(id).value+'%';
+    calculate();
+  });
+});
+['ctcA','ctcB','labelA','labelB'].forEach(id=>$(id).addEventListener('input',calculate));
+
+function calculate(){
+  const ctcA=+$('ctcA').value||0;
+  const ctcB=+$('ctcB').value||0;
+  const dA=+$('deductA').value||0;
+  const dB=+$('deductB').value||0;
+  const labelA=$('labelA').value||'Offer A';
+  const labelB=$('labelB').value||'Offer B';
+
+  const inHandA=ctcA*(1-dA/100);
+  const inHandB=ctcB*(1-dB/100);
+  const ctcDiff=ctcB-ctcA;
+  const inHandDiff=inHandB-inHandA;
+  const pctDiff=ctcA>0?(ctcDiff/ctcA*100):0;
+  const monthlyDiff=inHandDiff/12;
+
+  $('diffAmount').textContent=(ctcDiff>=0?'+':'')+fmtCr(ctcDiff);
+  $('diffSub').textContent=`annual CTC difference, ${labelA} → ${labelB}`;
+  $('metricCtcALabel').textContent=labelA+' CTC';
+  $('metricCtcBLabel').textContent=labelB+' CTC';
+  $('metricCtcA').textContent=fmtCr(ctcA);
+  $('metricCtcB').textContent=fmtCr(ctcB);
+  const pctEl=$('metricPctDiff');
+  pctEl.textContent=(pctDiff>=0?'+':'')+pctDiff.toFixed(1)+'%';
+  pctEl.className='metric-val '+(pctDiff>=0?'good':'warn');
+  const monthlyEl=$('metricMonthlyDiff');
+  monthlyEl.textContent=(monthlyDiff>=0?'+':'')+fmtCr(monthlyDiff);
+  monthlyEl.className='metric-val '+(monthlyDiff>=0?'good':'warn');
+  $('metricAnnualInHandDiff').textContent=(inHandDiff>=0?'+':'')+fmtCr(inHandDiff);
+
+  $('thA').textContent=labelA;
+  $('thB').textContent=labelB;
+  const rows=[
+    {m:'Annual CTC',a:ctcA,b:ctcB},
+    {m:'Deduction Rate',a:dA+'%',b:dB+'%',isPct:true},
+    {m:'Annual In-Hand',a:inHandA,b:inHandB},
+    {m:'Monthly In-Hand',a:inHandA/12,b:inHandB/12},
+  ];
+  $('breakdownBody').innerHTML=rows.map(r=>{
+    if(r.isPct)return`<tr><td>${r.m}</td><td>${r.a}</td><td>${r.b}</td><td>—</td></tr>`;
+    const diff=r.b-r.a;
+    return `<tr>
+      <td>${r.m}</td>
+      <td>${fmtCr(r.a)}</td>
+      <td>${fmtCr(r.b)}</td>
+      <td style="color:${diff>=0?'#1a7a4a':'#c84b31'}">${diff>=0?'+':''}${fmtCr(diff)}</td>
+    </tr>`;
+  }).join('');
+
+  window._calcData={labelA,labelB,ctcA,ctcB,dA,dB,inHandA,inHandB,ctcDiff,inHandDiff,pctDiff,monthlyDiff};
+}
+
+function downloadExcel(){
+  const d=window._calcData;if(!d)return;
+  const s=document.createElement('script');
+  s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+  s.onload=()=>{
+    const wb=XLSX.utils.book_new();
+    const data=[['Salary Difference Calculator','',''],
+      ['Generated',new Date().toLocaleDateString('en-IN'),''],
+      ['','',''],
+      ['Metric',d.labelA,d.labelB],
+      ['Annual CTC',Math.round(d.ctcA),Math.round(d.ctcB)],
+      ['Deduction Rate',d.dA+'%',d.dB+'%'],
+      ['Annual In-Hand',Math.round(d.inHandA),Math.round(d.inHandB)],
+      ['Monthly In-Hand',Math.round(d.inHandA/12),Math.round(d.inHandB/12)],
+      ['','',''],
+      ['CTC Difference',Math.round(d.ctcDiff),''],
+      ['% Difference',d.pctDiff.toFixed(1)+'%',''],
+      ['Annual In-Hand Difference',Math.round(d.inHandDiff),''],
+      ['Monthly In-Hand Difference',Math.round(d.monthlyDiff),'']];
+    const ws=XLSX.utils.aoa_to_sheet(data);
+    ws['!cols']=[{wch:24},{wch:18},{wch:18}];
+    XLSX.utils.book_append_sheet(wb,ws,'Salary Comparison');
+    XLSX.writeFile(wb,'salary-difference-india.xlsx');
+  };document.head.appendChild(s);
+}
+
+let _aff=null;
+(async function(){
+  try{
+    const res=await fetch('/affiliates.json');
+    const data=await res.json();
+    const page='salary-difference-calculator-india';
+    const cands=data.slots.filter(s=>s.active&&s.pages.includes(page));
+    if(!cands.length)return;
+    const tw=cands.reduce((s,c)=>s+c.weight,0);
+    let rand=Math.random()*tw,chosen=cands[cands.length-1];
+    for(const c of cands){rand-=c.weight;if(rand<=0){chosen=c;break;}}
+    _aff=chosen;
+    $('affiliateLabel').textContent=chosen.label;
+    $('affiliateSubtext').textContent=chosen.subtext;
+    $('affiliateLink').href=chosen.url;
+    $('affiliateBanner').style.display='block';
+  }catch(e){}
+})();
+function trackAffiliateClick(){
+  if(!_aff)return;
+  fetch('/api/click',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({id:_aff.id,program:_aff.program,page:'salary-difference-calculator-india',ts:Date.now(),ua:navigator.userAgent.slice(0,120)}),
+    mode:'no-cors'}).catch(()=>{});
+}
+calculate();
+</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Salary Difference Calculator India","url":"https://senecacommons.com/tools/salary-difference-calculator-india","description":"Free salary difference calculator India. Compare two CTC offers, in-hand pay, and percentage difference, with Excel download.","applicationCategory":"FinanceApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"INR"}}</script>
+</body>
+</html>
