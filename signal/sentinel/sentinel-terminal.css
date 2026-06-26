@@ -66,8 +66,9 @@ body {
 }
 .st-back {
   font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
   text-decoration: none;
   margin-right: 16px;
   padding-right: 16px;
