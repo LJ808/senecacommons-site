@@ -33,21 +33,30 @@
 
   <div class="st-panel">
     <div class="st-panel-head">
+      <span class="st-panel-title">Federal Debt — Percent of GDP (FRED)</span>
+      <span class="st-panel-status live" id="fred-status">LIVE</span>
+    </div>
+    <div class="st-panel-body" id="fred-body">
+      <div class="st-loading">Connecting to FRED proxy…</div>
+    </div>
+  </div>
+
+  <div class="st-panel" style="margin-top: 1px;">
+    <div class="st-panel-head">
       <span class="st-panel-title">No live panel here yet</span>
       <span class="st-panel-status pending">EXPLAINER</span>
     </div>
     <div class="st-panel-body">
-      <p class="st-page-sub">Four indicators belong on this page: intra-elite polarization, federal debt-to-GDP, a state-legitimacy signal, and Turchin's published Crisis DB status. None has a confirmed, free, CORS-open feed a browser can call directly right now.</p>
-      <p class="st-page-sub" style="margin-top: 12px;">Debt-to-GDP (FRED series GFDEGDQ188S) hits a real dead end: FRED's API requires a key, doesn't grant browser CORS, and sending that key from client-side code would leak it to every visitor. It needs a server-side proxy, not just a CORS check, before it can go live here.</p>
+      <p class="st-page-sub">Three indicators on this page remain unsourced: intra-elite polarization, a state-legitimacy signal, and Turchin's published Crisis DB status.</p>
       <p class="st-page-sub" style="margin-top: 12px;">Intra-elite polarization and the state-legitimacy signal aren't single feeds — they're synthesis indicators with no defined methodology yet. The Crisis DB status updates on Turchin's own publication schedule, not in real time, so it will run as a manually-refreshed read rather than a live call even once sourced.</p>
-      <p class="st-page-sub" style="margin-top: 12px;">This panel returns once a real source clears or a proxy gets built — not before.</p>
+      <p class="st-page-sub" style="margin-top: 12px;">These panels return once real sources clear — not before.</p>
     </div>
   </div>
 </main>
 
 <footer class="st-footer">
   <span>SENTINEL NETWORK — Macro PSI</span>
-  <span id="st-updated">No live data wired yet</span>
+  <span id="st-updated">Last updated —</span>
 </footer>
 
 <script>
@@ -57,6 +66,60 @@ function tick() {
 }
 tick();
 setInterval(tick, 1000);
+
+async function loadFred() {
+  const body = document.getElementById('fred-body');
+  const statusEl = document.getElementById('fred-status');
+  const url = 'https://sentinel-proxy.jay-greathouse.workers.dev/fred?series=GFDEGDQ188S&limit=8';
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    const obs = data.observations || [];
+
+    if (obs.length === 0) {
+      body.innerHTML = '<div class="st-loading">No observations returned.</div>';
+      statusEl.textContent = 'LIVE';
+      statusEl.className = 'st-panel-status live';
+      return;
+    }
+
+    const latest = obs[obs.length - 1];
+    const prior = obs.length > 1 ? obs[obs.length - 2] : null;
+    const delta = prior ? (latest.value - prior.value) : null;
+    const deltaStr = delta !== null ? (delta >= 0 ? '+' : '') + delta.toFixed(2) + ' pp vs prior quarter' : '';
+
+    const rows = obs.slice().reverse().map(o => {
+      return `<div class="st-row">
+        <div class="st-row-label">${o.date}</div>
+        <span class="st-row-value">${o.value.toFixed(2)}%</span>
+      </div>`;
+    }).join('');
+
+    body.innerHTML = `
+      <div class="st-row" style="border-bottom: none; padding-bottom: 4px;">
+        <div>
+          <div class="st-row-label" style="font-size: 1.4em;">${latest.value.toFixed(2)}%</div>
+          <div class="st-row-meta">as of ${latest.date} · ${deltaStr}</div>
+        </div>
+      </div>
+      ${rows}
+      <div class="st-page-sub" style="margin-top: 12px;">Federal Debt: Total Public Debt as Percent of GDP (FRED series GFDEGDQ188S), quarterly. Source: Federal Reserve Bank of St. Louis, via a Cloudflare Worker proxy — FRED's API requires a key and does not grant browser CORS, so this Worker holds the key server-side and forwards clean JSON.</div>
+    `;
+    statusEl.textContent = 'LIVE';
+    statusEl.className = 'st-panel-status live';
+
+    document.getElementById('st-updated').textContent =
+      'Last updated ' + new Date().toUTCString().slice(17, 25) + ' UTC';
+  } catch (err) {
+    body.innerHTML = '<div class="st-error">FRED proxy unreachable: ' + err.message + '</div>';
+    statusEl.textContent = 'ERROR';
+    statusEl.className = 'st-panel-status alert';
+  }
+}
+
+loadFred();
+setInterval(loadFred, 30 * 60 * 1000); // refresh every 30 min — quarterly data, no need to poll often
 </script>
 
 </body>
