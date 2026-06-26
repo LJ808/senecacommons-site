@@ -64,6 +64,17 @@ body {
   color: var(--text-primary);
   text-decoration: none;
 }
+.st-back {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  text-decoration: none;
+  margin-right: 16px;
+  padding-right: 16px;
+  border-right: 1px solid var(--border-subtle);
+  transition: color 0.12s;
+}
+.st-back:hover { color: var(--text-primary); }
 .st-logo .dot {
   display: inline-block;
   width: 6px;
