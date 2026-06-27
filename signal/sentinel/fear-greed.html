@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fear/Greed Index — Sentinel — Seneca Commons</title>
+<meta name="description" content="A live 0-100 panic gauge built from Polymarket prediction-market volatility across politics, crypto, geopolitics, and sports.">
+<link rel="canonical" href="https://senecacommons.com/signal/sentinel/fear-greed">
+<link rel="stylesheet" href="/signal/sentinel/sentinel-terminal.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+.st-page-eyebrow.alert { color: var(--status-red); }
+
+/* Overall gauge — large readout, sits above the category grid */
+.fg-overall {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  padding: 18px 12px;
+}
+.fg-overall-number {
+  font-family: var(--font-mono);
+  font-size: 3.2rem;
+  font-weight: 600;
+  line-height: 1;
+}
+.fg-overall-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.fg-overall-word {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+/* Category panel gauge readout */
+.fg-gauge {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 4px 0 10px;
+}
+.fg-gauge-number {
+  font-family: var(--font-mono);
+  font-size: 1.8rem;
+  font-weight: 600;
+  line-height: 1;
+}
+.fg-gauge-of100 {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.fg-calm { color: var(--status-green); }
+.fg-watch { color: var(--status-yellow); }
+.fg-panic { color: var(--status-red); }
+
+.fg-move {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+}
+</style>
+</head>
+<body>
+
+<header class="st-topbar">
+  <a href="/" class="st-back">← Seneca Commons</a>
+  <a href="/signal/sentinel" class="st-logo"><span class="dot"></span>SENTINEL</a>
+  <nav class="st-tabs">
+    <a href="/signal/sentinel/macro" class="st-tab">Macro PSI</a>
+    <a href="/signal/sentinel/immiseration" class="st-tab">Immiseration</a>
+    <a href="/signal/sentinel/markets" class="st-tab">Markets</a>
+    <a href="/signal/sentinel/local" class="st-tab">Local</a>
+    <a href="/signal/sentinel/triggers" class="st-tab">Triggers</a>
+    <a href="/signal/sentinel/fear-greed" class="st-tab active">Fear/Greed</a>
+  </nav>
+  <span class="st-clock" id="st-clock">—</span>
+</header>
+
+<main class="st-page">
+  <div class="st-page-head">
+    <div class="st-page-eyebrow">Sentinel · Markets Layer</div>
+    <h1 class="st-page-title">Fear/Greed Index</h1>
+    <p class="st-page-sub">A live 0-100 panic gauge built from Polymarket prediction-market volatility — how hard the crowd's odds are moving over the last hour, six hours, and day, weighted toward recent movement and trading volume. Four categories: politics, crypto, geopolitics, sports. Refreshes every 5 minutes.</p>
+  </div>
+
+  <section class="fg-overall">
+    <span class="fg-overall-number" id="fg-overall-number">—</span>
+    <div>
+      <div class="fg-overall-label">Overall</div>
+      <div class="fg-overall-word" id="fg-overall-word">Connecting…</div>
+    </div>
+  </section>
+
+  <div class="st-grid" style="grid-template-columns: repeat(2, 1fr);" id="fg-grid">
+    <!-- four category panels injected here -->
+  </div>
+</main>
+
+<footer class="st-footer">
+  <span>SENTINEL NETWORK — Fear/Greed Index</span>
+  <span id="st-updated">Last updated —</span>
+</footer>
+
+<script>
+function tick() {
+  const now = new Date();
+  document.getElementById('st-clock').textContent = now.toUTCString().slice(17, 25) + ' UTC';
+}
+tick();
+setInterval(tick, 1000);
+
+const CATEGORY_LABELS = {
+  politics: 'Politics',
+  crypto: 'Crypto',
+  geopolitics: 'Geopolitics',
+  sports: 'Sports',
+};
+
+// Gauge severity bands. Real thresholds, not arbitrary: the scoring ceiling
+// (worker.js FEARGREED_SCALE_CEILING = 30) maps a 30-percentage-point
+// weighted move to 100, calibrated against a live resolving sports match.
+// Calm/watch/panic bands below are a first pass on top of that — may need
+// recalibration once more real data comes in across categories and time.
+function severityClass(gauge) {
+  if (gauge === null || gauge === undefined) return '';
+  if (gauge < 20) return 'fg-calm';
+  if (gauge < 50) return 'fg-watch';
+  return 'fg-panic';
+}
+function severityWord(gauge) {
+  if (gauge === null || gauge === undefined) return 'No data';
+  if (gauge < 20) return 'Calm';
+  if (gauge < 50) return 'Watching';
+  return 'Elevated';
+}
+
+function renderCategoryPanel(cat) {
+  const sevClass = severityClass(cat.gauge);
+  const sevWord = severityWord(cat.gauge);
+  const gaugeDisplay = cat.gauge === null || cat.gauge === undefined ? '—' : cat.gauge;
+
+  const marketRows = (cat.markets || []).slice(0, 5).map(m => {
+    return `<div class="st-row">
+      <div>
+        <div class="st-row-label">${m.question}</div>
+        <div class="st-row-meta">1h ${m.move1h}pt · 6h ${m.move6h}pt · 24h ${m.move24h}pt</div>
+      </div>
+      <span class="st-row-value">${(m.currentPrice * 100).toFixed(1)}%</span>
+    </div>`;
+  }).join('');
+
+  const body = cat.error
+    ? `<div class="st-error">Category unavailable: ${cat.error}</div>`
+    : (marketRows || '<div class="st-loading">No markets scored this cycle.</div>');
+
+  return `<section class="st-panel">
+    <div class="st-panel-head">
+      <span class="st-panel-title">${CATEGORY_LABELS[cat.tag] || cat.tag}</span>
+      <span class="st-panel-status ${cat.error ? 'alert' : 'live'}">${cat.error ? 'ERROR' : 'LIVE'}</span>
+    </div>
+    <div class="st-panel-body">
+      <div class="fg-gauge">
+        <span class="fg-gauge-number ${sevClass}">${gaugeDisplay}</span>
+        <span class="fg-gauge-of100">/100 · ${sevWord}</span>
+      </div>
+      ${body}
+    </div>
+  </section>`;
+}
+
+async function loadFearGreed() {
+  const overallNumber = document.getElementById('fg-overall-number');
+  const overallWord = document.getElementById('fg-overall-word');
+  const grid = document.getElementById('fg-grid');
+
+  try {
+    const res = await fetch('https://sentinel-proxy.jay-greathouse.workers.dev/feargreed');
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || ('HTTP ' + res.status));
+
+    if (data.overall === null || data.overall === undefined) {
+      overallNumber.textContent = '—';
+      overallNumber.className = 'fg-overall-number';
+      overallWord.textContent = data.note || 'Index not yet computed — check back shortly.';
+      grid.innerHTML = '<div class="st-loading" style="grid-column: 1 / -1;">Waiting on the first scheduled refresh…</div>';
+      return;
+    }
+
+    overallNumber.textContent = data.overall;
+    overallNumber.className = 'fg-overall-number ' + severityClass(data.overall);
+    overallWord.textContent = severityWord(data.overall) + ' across politics, crypto, geopolitics, and sports.';
+
+    grid.innerHTML = (data.categories || []).map(renderCategoryPanel).join('');
+
+    document.getElementById('st-updated').textContent =
+      'Last updated ' + new Date(data.asOf).toUTCString().slice(17, 25) + ' UTC';
+  } catch (err) {
+    overallWord.textContent = 'Feed unreachable: ' + err.message;
+    grid.innerHTML = '<div class="st-error" style="grid-column: 1 / -1;">Fear/Greed feed unreachable: ' + err.message + '</div>';
+  }
+}
+
+loadFearGreed();
+// API itself only refreshes every 5 min via cron — polling faster than that
+// just re-reads the same cached KV value, so match the real cadence.
+setInterval(loadFearGreed, 2 * 60 * 1000);
+</script>
+
+</body>
+</html>
