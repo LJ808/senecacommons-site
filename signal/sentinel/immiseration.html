@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Popular Immiseration — Sentinel — Seneca Commons</title>
-<meta name="description" content="The productivity-pay gap since 1979, charted by EPI. Plus deaths of despair, life expectancy, and youth precarity — the fuel layer of structural-demographic crisis.">
+<meta name="description" content="The productivity-pay gap since 1979, charted by EPI, plus live wages/labor/cost-of-living headlines. Deaths of despair, life expectancy, and youth precarity remain unsourced as live statistics.">
 <link rel="canonical" href="https://senecacommons.com/signal/sentinel/immiseration">
 <link rel="stylesheet" href="/signal/sentinel/sentinel-terminal.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -47,14 +47,33 @@
 
   <div class="st-panel" style="margin-top: 1px;">
     <div class="st-panel-head">
-      <span class="st-panel-title">No live panel here yet</span>
+      <span class="st-panel-title">Wages, Cost of Living &amp; Labor — Global Coverage (BBC Economy)</span>
+      <span class="st-panel-status live" id="news-status">LIVE</span>
+    </div>
+    <div class="st-panel-body" id="news-body">
+      <div class="st-loading">Connecting to headline feed…</div>
+    </div>
+  </div>
+
+  <div class="st-panel" style="margin-top: 1px;">
+    <div class="st-panel-head">
+      <span class="st-panel-title">No live statistic here yet</span>
       <span class="st-panel-status pending">EXPLAINER</span>
     </div>
     <div class="st-panel-body">
-      <p class="st-page-sub">Three indicators remain unsourced: deaths of despair, life expectancy trend, and youth precarity. None has a confirmed, free, CORS-open feed a browser can call directly right now.</p>
+      <p class="st-page-sub">Three indicators remain unsourced as live statistics: deaths of despair, life expectancy trend, and youth precarity. None has a confirmed, free, CORS-open feed a browser can call directly right now — the panel above gives a real, live news signal on the same underlying subject (wages, labor, cost of living) instead, while these three stay unsolved.</p>
       <p class="st-page-sub" style="margin-top: 12px;">CDC WONDER carries deaths of despair; life expectancy comes from CDC or World Bank. None of these sources has confirmed browser-CORS support, and they update annually — periodic-refresh panels at best, not live feeds, even once sourced.</p>
       <p class="st-page-sub" style="margin-top: 12px;">These panels return once real sources clear — not before.</p>
     </div>
+  </div>
+
+  <div class="st-banner" id="affiliateBanner">
+    <div>
+      <div class="st-banner-eyebrow">Sponsored</div>
+      <div class="st-banner-label" id="affiliateLabel"></div>
+      <div class="st-banner-subtext" id="affiliateSubtext"></div>
+    </div>
+    <a class="st-banner-link" id="affiliateLink" href="#" target="_blank" rel="noopener sponsored" onclick="trackAffiliateClick()">Learn more →</a>
   </div>
 </main>
 
@@ -70,6 +89,69 @@ function tick() {
 }
 tick();
 setInterval(tick, 1000);
+
+async function loadHeadlines() {
+  const body = document.getElementById('news-body');
+  const statusEl = document.getElementById('news-status');
+  const url = `https://sentinel-proxy.jay-greathouse.workers.dev/headlines?source=bbc-economy&maxrecords=14`;
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || data.error || ('HTTP ' + res.status));
+    const articles = (data.articles || []).slice(0, 14);
+
+    if (articles.length === 0) {
+      body.innerHTML = '<div class="st-loading">No matching coverage right now.</div>';
+      statusEl.textContent = 'LIVE';
+      statusEl.className = 'st-panel-status live';
+      return;
+    }
+
+    body.innerHTML = articles.map(a => {
+      const seen = a.seendate || '—';
+      return `<div class="st-row">
+        <div>
+          <div class="st-row-label"><a href="${a.url}" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:none;">${a.title || 'Untitled'}</a></div>
+          <div class="st-row-meta">${a.domain || 'unknown source'} · ${seen}</div>
+        </div>
+      </div>`;
+    }).join('');
+  } catch (err) {
+    body.innerHTML = '<div class="st-error">Headline feed unreachable: ' + err.message + '</div>';
+    statusEl.textContent = 'ERROR';
+    statusEl.className = 'st-panel-status alert';
+  }
+}
+
+loadHeadlines();
+setInterval(loadHeadlines, 5 * 60 * 1000); // refresh every 5 min
+
+let _aff = null;
+(async function () {
+  try {
+    const res = await fetch('/affiliates.json');
+    const data = await res.json();
+    const page = 'immiseration';
+    const cands = data.slots.filter(s => s.active && s.pages.includes(page));
+    if (!cands.length) return;
+    const tw = cands.reduce((s, c) => s + c.weight, 0);
+    let rand = Math.random() * tw, chosen = cands[cands.length - 1];
+    for (const c of cands) { rand -= c.weight; if (rand <= 0) { chosen = c; break; } }
+    _aff = chosen;
+    document.getElementById('affiliateLabel').textContent = chosen.label;
+    document.getElementById('affiliateSubtext').textContent = chosen.subtext;
+    document.getElementById('affiliateLink').href = chosen.url;
+    document.getElementById('affiliateBanner').classList.add('is-visible');
+  } catch (e) {}
+})();
+function trackAffiliateClick() {
+  if (!_aff) return;
+  fetch('/api/click', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id: _aff.id, program: _aff.program, page: 'immiseration', ts: Date.now(), ua: navigator.userAgent.slice(0, 120) }),
+    mode: 'no-cors'
+  }).catch(() => {});
+}
 </script>
 
 </body>
