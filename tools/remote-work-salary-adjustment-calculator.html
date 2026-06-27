@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Remote Work Salary Adjustment Calculator – What Your Offer Is Really Worth</title>
+<meta name="description" content="Compare a remote job offer against your current city's cost of living. See real purchasing power after a location-based pay adjustment, not just the headline number. Free, instant.">
+<link rel="canonical" href="https://senecacommons.com/tools/remote-work-salary-adjustment-calculator">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --ink:#1a1a2e; --ink-mid:#4a4a6a; --ink-light:#8888aa;
+  --page:#f7f6f2; --panel:#ffffff; --rule:#e2e0da;
+  --accent:#2a6f4f; --accent-2:#2563a8; --good:#1a7a4a;
+  --mono:'JetBrains Mono', monospace; --serif:'DM Serif Display', Georgia, serif; --sans:'Inter', system-ui, sans-serif;
+}
+html { font-size: 16px; scroll-behavior: smooth; }
+body { font-family: var(--sans); background: var(--page); color: var(--ink); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+.wrap { max-width: 960px; margin: 0 auto; padding: 0 20px; }
+header { border-bottom: 1px solid var(--rule); padding: 14px 0; background: var(--panel); }
+.header-inner { display: flex; align-items: center; justify-content: space-between; }
+.logo { font-family: var(--serif); font-size: 1.15rem; color: var(--ink); text-decoration: none; letter-spacing: -0.01em; }
+.logo span { color: var(--accent); }
+nav a { font-size: 0.8rem; font-weight: 500; color: var(--ink-mid); text-decoration: none; margin-left: 18px; letter-spacing: 0.04em; text-transform: uppercase; }
+nav a:hover { color: var(--accent); }
+.hero { padding: 52px 0 36px; border-bottom: 1px solid var(--rule); }
+.hero-eyebrow { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+.hero h1 { font-family: var(--serif); font-size: clamp(1.9rem, 4vw, 2.8rem); line-height: 1.18; color: var(--ink); max-width: 680px; margin-bottom: 16px; letter-spacing: -0.02em; }
+.hero-sub { font-size: 1rem; color: var(--ink-mid); max-width: 560px; line-height: 1.7; }
+.calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; padding: 36px 0; }
+@media (max-width: 680px) { .calc-grid { grid-template-columns: 1fr; } }
+.panel { background: var(--panel); border: 1px solid var(--rule); border-radius: 4px; padding: 28px; }
+.panel-title { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-light); margin-bottom: 22px; padding-bottom: 12px; border-bottom: 1px solid var(--rule); }
+.field { margin-bottom: 18px; }
+.field:last-child { margin-bottom: 0; }
+label { display: block; font-size: 0.78rem; font-weight: 500; color: var(--ink-mid); margin-bottom: 6px; }
+label .hint { font-weight: 400; color: var(--ink-light); margin-left: 4px; }
+.input-wrap { display: flex; align-items: center; border: 1px solid var(--rule); border-radius: 3px; background: var(--page); transition: border-color 0.15s; }
+.input-wrap:focus-within { border-color: var(--accent-2); background: #fff; }
+.input-prefix, .input-suffix { padding: 0 10px; font-size: 0.8rem; font-family: var(--mono); color: var(--ink-light); background: transparent; white-space: nowrap; }
+input[type=number] { border: none; background: transparent; outline: none; font-family: var(--mono); font-size: 0.9rem; color: var(--ink); padding: 9px 8px; width: 100%; }
+select { border: none; background: transparent; outline: none; font-family: var(--sans); font-size: 0.9rem; color: var(--ink); padding: 9px 8px; width: 100%; appearance: none; cursor: pointer; }
+.results-panel { grid-column: 1 / -1; background: var(--ink); color: #fff; border-radius: 4px; padding: 32px; }
+.results-panel .panel-title { color: rgba(255,255,255,0.4); border-bottom-color: rgba(255,255,255,0.1); }
+.corpus-display { display: flex; align-items: baseline; gap: 10px; margin: 20px 0 8px; }
+.corpus-amount { font-family: var(--serif); font-size: clamp(2.2rem, 5vw, 3.4rem); color: #fff; letter-spacing: -0.03em; line-height: 1; }
+.corpus-sub { font-size: 0.82rem; color: rgba(255,255,255,0.5); margin-bottom: 28px; }
+.metrics-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; margin-bottom: 28px; }
+.metric { border-left: 2px solid rgba(255,255,255,0.12); padding-left: 14px; }
+.metric-val { font-family: var(--mono); font-size: 1.1rem; font-weight: 500; color: #fff; line-height: 1.2; }
+.metric-val.good { color: #5dd68a; }
+.metric-val.warn { color: #f0b429; }
+.metric-label { font-size: 0.7rem; color: rgba(255,255,255,0.4); margin-top: 3px; text-transform: uppercase; letter-spacing: 0.06em; }
+.breakdown { margin-top: 28px; border-top: 1px solid var(--rule); padding-top: 24px; }
+.breakdown-title { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-light); margin-bottom: 16px; }
+table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+th { text-align: left; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-light); padding: 6px 0; border-bottom: 1px solid var(--rule); }
+th:not(:first-child), td:not(:first-child) { text-align: right; }
+td { padding: 8px 0; border-bottom: 1px solid var(--rule); color: var(--ink-mid); font-family: var(--mono); }
+td:first-child { font-family: var(--sans); color: var(--ink); }
+tr:last-child td { border-bottom: none; font-weight: 600; color: var(--ink); }
+.btn-row { margin-top: 20px; display: flex; gap: 12px; flex-wrap: wrap; }
+.btn { display: inline-flex; align-items: center; gap: 7px; padding: 10px 18px; border-radius: 3px; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.04em; cursor: pointer; border: none; transition: opacity 0.15s; text-decoration: none; }
+.btn:hover { opacity: 0.85; }
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-secondary { background: transparent; border: 1px solid var(--rule); color: var(--ink-mid); }
+.content-section { padding: 40px 0; border-top: 1px solid var(--rule); }
+.content-section h2 { font-family: var(--serif); font-size: 1.5rem; color: var(--ink); margin-bottom: 14px; letter-spacing: -0.02em; }
+.content-section p { color: var(--ink-mid); line-height: 1.8; margin-bottom: 14px; max-width: 720px; font-size: 0.92rem; }
+.faq { margin-top: 32px; }
+.faq-item { border-top: 1px solid var(--rule); padding: 18px 0; }
+.faq-item:last-child { border-bottom: 1px solid var(--rule); }
+.faq-q { font-weight: 600; font-size: 0.92rem; color: var(--ink); margin-bottom: 8px; }
+.faq-a { font-size: 0.88rem; color: var(--ink-mid); line-height: 1.75; }
+.related { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 20px; }
+.related-card { border: 1px solid var(--rule); border-radius: 4px; padding: 18px; text-decoration: none; background: var(--panel); transition: border-color 0.15s; }
+.related-card:hover { border-color: var(--accent-2); }
+.related-card-title { font-weight: 600; font-size: 0.88rem; color: var(--ink); margin-bottom: 4px; }
+.related-card-desc { font-size: 0.78rem; color: var(--ink-light); }
+footer { border-top: 1px solid var(--rule); padding: 24px 0; margin-top: 40px; }
+.footer-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+.footer-note { font-size: 0.72rem; color: var(--ink-light); max-width: 520px; line-height: 1.6; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap header-inner">
+    <a href="/" class="logo"><img src="/senecacommons-logo.png" alt="Seneca Commons" style="height:36px;width:auto;display:block;"></a>
+    <nav>
+      <a href="/tools">All Tools</a>
+      <a href="/tools/moving-cost-calculator">Moving Cost</a>
+      <a href="/tools/cost-of-living-by-state-calculator">Cost of Living</a>
+      <a href="/tools/best-cities-to-retire-calculator">Retire</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+
+    <div class="hero">
+      <div class="hero-eyebrow">Free · No login · 2026 metro cost data</div>
+      <h1>Remote Work Salary Adjustment Calculator — What Your Offer Is Really Worth</h1>
+      <p class="hero-sub">Companies that location-adjust remote pay use a cost index to cut your offer. Enter the headline number and both cities to see what you're actually losing — or gaining — in real purchasing power.</p>
+    </div>
+
+    <div class="calc-grid">
+
+      <div class="panel">
+        <div class="panel-title">The Offer</div>
+
+        <div class="field">
+          <label>Base Salary Offered <span class="hint">(before any location adjustment)</span></label>
+          <div class="input-wrap">
+            <span class="input-prefix">$</span>
+            <input type="number" id="baseSalary" value="120000" min="20000" max="2000000" step="1000">
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Company's Location-Adjustment Policy</label>
+          <div class="input-wrap">
+            <select id="adjustPolicy">
+              <option value="none" selected>No adjustment — same pay everywhere</option>
+              <option value="partial">Partial adjustment — splits the difference</option>
+              <option value="full">Full adjustment — pegs to your metro's cost index</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Company's Reference City <span class="hint">(the city their base salary assumes)</span></label>
+          <div class="input-wrap"><select id="cityFrom"></select></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Where You'll Actually Live</div>
+
+        <div class="field">
+          <label>Your City</label>
+          <div class="input-wrap"><select id="cityTo"></select></div>
+        </div>
+
+        <div class="field">
+          <label>Your Current Salary <span class="hint">(for comparison, optional)</span></label>
+          <div class="input-wrap">
+            <span class="input-prefix">$</span>
+            <input type="number" id="currentSalary" value="95000" min="0" max="2000000" step="1000">
+          </div>
+        </div>
+      </div>
+
+      <div class="panel results-panel">
+        <div class="panel-title">Real Value</div>
+
+        <div class="corpus-display">
+          <div class="corpus-amount" id="adjustedSalary">$120,000</div>
+        </div>
+        <div class="corpus-sub" id="adjustedSub">your actual offer after the company's adjustment policy</div>
+
+        <div class="metrics-row">
+          <div class="metric">
+            <div class="metric-val" id="metricEquiv">$120,000</div>
+            <div class="metric-label">Reference-City-Equivalent Value</div>
+          </div>
+          <div class="metric">
+            <div class="metric-val" id="metricColDiff">+0%</div>
+            <div class="metric-label">Cost of Living Difference</div>
+          </div>
+          <div class="metric">
+            <div class="metric-val" id="metricVsCurrent">+$25,000</div>
+            <div class="metric-label">vs. Your Current Salary</div>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="downloadExcel()">⬇ Download Comparison (Excel)</button>
+          <button class="btn btn-secondary" onclick="window.print()">Print Comparison</button>
+        </div>
+      </div>
+
+    </div>
+
+    <div id="affiliateBanner" style="display:none; margin:32px 0; background:#fff; border:1px solid #e2e0da; border-left:3px solid #2563a8; border-radius:4px; padding:20px 24px;">
+      <div style="font-size:0.68rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:#8888aa; margin-bottom:10px;">Next step</div>
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;">
+        <div>
+          <div id="affiliateLabel" style="font-family:'DM Serif Display',Georgia,serif; font-size:1.15rem; color:#1a1a2e; margin-bottom:4px;"></div>
+          <div id="affiliateSubtext" style="font-size:0.82rem; color:#4a4a6a;"></div>
+        </div>
+        <a id="affiliateLink" href="#" target="_blank" rel="noopener sponsored"
+           style="display:inline-flex; align-items:center; gap:8px; padding:10px 20px; background:#2563a8; color:#fff; border-radius:3px; font-size:0.82rem; font-weight:600; letter-spacing:0.04em; text-decoration:none; white-space:nowrap; flex-shrink:0;"
+           onclick="trackAffiliateClick(event)">
+          Get started →
+        </a>
+      </div>
+    </div>
+
+    <div class="breakdown">
+      <div class="breakdown-title">Side-by-Side Detail</div>
+      <table id="breakdownTable">
+        <thead><tr><th>Factor</th><th id="colFromHead">Reference City</th><th id="colToHead">Your City</th></tr></thead>
+        <tbody id="breakdownBody"></tbody>
+      </table>
+    </div>
+
+    <div class="content-section">
+      <h2>How Remote Salary Location-Adjustment Actually Works</h2>
+      <p>Most large remote employers set a base salary band against a reference market — often San Francisco, New York, or Seattle — then apply one of three policies when you live somewhere cheaper: no adjustment at all (rare, but real at some fully-distributed companies), a partial haircut that splits the cost difference, or a full peg to your metro's cost index, which can cut a six-figure SF-anchored offer by 15-30% for someone living in a lower-cost city.</p>
+      <p>The number that actually matters isn't the headline salary, it's the reference-city-equivalent purchasing power after the adjustment. A $120,000 offer with a full cost-of-living haircut moving from San Francisco to Austin might land around $96,000 — still a real number, but a very different one than the headline figure implied during the interview process.</p>
+      <p>This calculator runs both directions: it shows what your adjusted offer actually pays after the company's stated policy, and separately what that adjusted figure is worth relative to your current salary, so a "pay cut" on paper and a "pay cut" in real terms can be told apart.</p>
+
+      <div class="faq">
+        <div class="faq-item">
+          <div class="faq-q">Is remote salary location-adjustment legal?</div>
+          <div class="faq-a">Yes — in the US, paying different salaries for the same role based on location is legal as long as it isn't a pretext for discrimination on a protected class. Some states and cities (California, Colorado, New York) require pay-transparency disclosures, but location-based pay bands themselves are standard and lawful practice at most large remote-first employers.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">Which big companies adjust pay by location?</div>
+          <div class="faq-a">Policies vary and change over time, so always confirm with the specific employer rather than assuming — some companies that have publicly used cost-of-living-adjusted remote pay bands include large tech firms with zone-based pay tiers, while others (including some prominent all-remote companies) have explicitly chosen flat, location-independent pay as a stated policy differentiator.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">Can I negotiate a location-adjusted offer?</div>
+          <div class="faq-a">Sometimes. Leverage depends on how rigid the company's pay-band policy is internally — some bands are hard-coded into compensation software with little room to move, while others have more flexibility for a specific candidate. It's reasonable to ask directly whether the band is fixed or negotiable before assuming either way.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">Does a full cost-of-living adjustment mean I'm being underpaid?</div>
+          <div class="faq-a">Not necessarily — that's the whole point of the adjustment. A fully-adjusted offer is designed to deliver equivalent purchasing power across cities, not equivalent face-value dollars. Whether that's fair to you depends on whether you value the headline number (useful for future job-hopping comparisons, loan applications) or the real lifestyle it buys where you actually live.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h2>Related Calculators</h2>
+      <div class="related">
+        <a href="/tools/cost-of-living-by-state-calculator" class="related-card">
+          <div class="related-card-title">Cost of Living by State</div>
+          <div class="related-card-desc">Compare income tax and cost of living before you relocate</div>
+        </a>
+        <a href="/tools/moving-cost-calculator" class="related-card">
+          <div class="related-card-title">Moving Cost Calculator</div>
+          <div class="related-card-desc">Budget the actual move once you've decided</div>
+        </a>
+        <a href="/tools/best-cities-to-retire-calculator" class="related-card">
+          <div class="related-card-title">Best Cities to Retire</div>
+          <div class="related-card-desc">Rank retirement destinations on a fixed income</div>
+        </a>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  <div class="wrap footer-inner">
+    <p class="footer-note">Cost-of-living index figures are 2026 metro-level estimates for planning purposes — actual employer adjustment formulas vary and are rarely published in full. Confirm your specific company's policy with HR before relying on this for negotiation. Updated June 2026.</p>
+    <p class="footer-note" style="text-align:right; max-width:200px;">© 2026 SenecaCommons</p>
+  </div>
+</footer>
+
+<script>
+// 2026 metro cost-of-living index, US national average = 100
+const CITIES = {
+  sf:      { name: 'San Francisco, CA', col: 195 },
+  nyc:     { name: 'New York, NY',      col: 187 },
+  sea:     { name: 'Seattle, WA',       col: 152 },
+  bos:     { name: 'Boston, MA',        col: 158 },
+  la:      { name: 'Los Angeles, CA',   col: 173 },
+  dc:      { name: 'Washington, DC',    col: 150 },
+  chi:     { name: 'Chicago, IL',       col: 116 },
+  den:     { name: 'Denver, CO',        col: 121 },
+  atx:     { name: 'Austin, TX',        col: 119 },
+  mia:     { name: 'Miami, FL',         col: 123 },
+  atl:     { name: 'Atlanta, GA',       col: 105 },
+  phx:     { name: 'Phoenix, AZ',       col: 108 },
+  dal:     { name: 'Dallas, TX',        col: 102 },
+  nash:    { name: 'Nashville, TN',     col: 104 },
+  rdu:     { name: 'Raleigh, NC',       col: 99  },
+  pit:     { name: 'Pittsburgh, PA',    col: 91  },
+  stl:     { name: 'St. Louis, MO',     col: 87  },
+  cle:     { name: 'Cleveland, OH',     col: 86  },
+  okc:     { name: 'Oklahoma City, OK', col: 84  },
+  rural:   { name: 'Small Town / Rural', col: 78 },
+};
+
+const selFrom = document.getElementById('cityFrom');
+const selTo = document.getElementById('cityTo');
+Object.keys(CITIES).forEach(code => {
+  const o1 = document.createElement('option'); o1.value = code; o1.textContent = CITIES[code].name; selFrom.appendChild(o1);
+  const o2 = document.createElement('option'); o2.value = code; o2.textContent = CITIES[code].name; selTo.appendChild(o2);
+});
+selFrom.value = 'sf';
+selTo.value = 'atx';
+
+const inputs = {
+  baseSalary: document.getElementById('baseSalary'),
+  adjustPolicy: document.getElementById('adjustPolicy'),
+  cityFrom: selFrom,
+  cityTo: selTo,
+  currentSalary: document.getElementById('currentSalary'),
+};
+Object.values(inputs).forEach(el => el.addEventListener('input', calculate));
+
+function fmt(n) { return '$' + Math.round(n).toLocaleString('en-US'); }
+
+function calculate() {
+  const base = +inputs.baseSalary.value || 0;
+  const policy = inputs.adjustPolicy.value;
+  const from = CITIES[selFrom.value];
+  const to = CITIES[selTo.value];
+  const current = +inputs.currentSalary.value || 0;
+
+  const ratio = to.col / from.col; // <1 if moving to cheaper city
+
+  let adjusted;
+  if (policy === 'none') adjusted = base;
+  else if (policy === 'full') adjusted = base * ratio;
+  else adjusted = base * (1 - (1 - ratio) * 0.5); // partial: splits the haircut in half
+
+  // What that adjusted figure is worth back in reference-city terms (real purchasing power, reference-anchored)
+  const equivValue = adjusted / ratio;
+
+  document.getElementById('adjustedSalary').textContent = fmt(adjusted);
+  document.getElementById('adjustedSub').textContent =
+    `your actual offer after a ${policy === 'none' ? 'no-adjustment' : policy} policy, ${from.name} → ${to.name}`;
+
+  document.getElementById('metricEquiv').textContent = fmt(equivValue);
+
+  const colDiffPct = (ratio - 1) * 100;
+  const colEl = document.getElementById('metricColDiff');
+  colEl.textContent = (colDiffPct >= 0 ? '+' : '') + colDiffPct.toFixed(0) + '%';
+  colEl.className = 'metric-val ' + (colDiffPct <= 0 ? 'good' : 'warn');
+
+  const vsCurrent = adjusted - current;
+  const vsEl = document.getElementById('metricVsCurrent');
+  vsEl.textContent = (vsCurrent >= 0 ? '+' : '') + fmt(vsCurrent);
+  vsEl.className = 'metric-val ' + (vsCurrent >= 0 ? 'good' : 'warn');
+
+  document.getElementById('colFromHead').textContent = from.name;
+  document.getElementById('colToHead').textContent = to.name;
+
+  const rows = [
+    ['Cost of Living Index (US=100)', from.col, to.col],
+    ['Headline Base Salary', fmt(base), fmt(base)],
+    ['Adjustment Policy', '—', policy === 'none' ? 'None' : policy === 'full' ? 'Full peg' : 'Partial'],
+    ['Your Actual Offer', '—', fmt(adjusted)],
+    ['Reference-City-Equivalent Value', fmt(base), fmt(equivValue)],
+    ['vs. Current Salary', fmt(current), fmt(adjusted)],
+  ];
+  document.getElementById('breakdownBody').innerHTML = rows.map(r =>
+    `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`
+  ).join('');
+
+  window._calcData = { from: from.name, to: to.name, base, adjusted, equivValue, current, rows };
+}
+
+calculate();
+
+function downloadExcel() {
+  const d = window._calcData;
+  if (!d) return;
+  const script = document.createElement('script');
+  script.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+  script.onload = () => {
+    const wb = XLSX.utils.book_new();
+    const summary = [
+      ['Remote Salary Adjustment', '', ''],
+      ['Generated', new Date().toLocaleDateString('en-US'), ''],
+      ['Reference City', d.from, ''],
+      ['Your City', d.to, ''],
+      ['Headline Salary', d.base, ''],
+      ['', '', ''],
+      ...d.rows,
+    ];
+    const ws = XLSX.utils.aoa_to_sheet(summary);
+    ws['!cols'] = [{wch:32},{wch:18},{wch:18}];
+    XLSX.utils.book_append_sheet(wb, ws, 'Salary Adjustment');
+    XLSX.writeFile(wb, 'remote-salary-adjustment.xlsx');
+  };
+  document.head.appendChild(script);
+}
+
+let _affiliate = null;
+function withPageSource(url, page) {
+  try { const u = new URL(url); if (u.searchParams.has('source')) u.searchParams.set('source', 'page-' + page); return u.toString(); }
+  catch (e) { return url; }
+}
+(async function loadAffiliate() {
+  try {
+    const res = await fetch('/affiliates.json');
+    const data = await res.json();
+    const page = 'remote-work-salary-adjustment-calculator';
+    const candidates = data.slots.filter(s => s.active && s.pages.includes(page));
+    if (!candidates.length) return;
+    const totalWeight = candidates.reduce((s, c) => s + c.weight, 0);
+    let rand = Math.random() * totalWeight;
+    let chosen = candidates[candidates.length - 1];
+    for (const c of candidates) { rand -= c.weight; if (rand <= 0) { chosen = c; break; } }
+    _affiliate = chosen;
+    document.getElementById('affiliateLabel').textContent = chosen.label;
+    document.getElementById('affiliateSubtext').textContent = chosen.subtext;
+    document.getElementById('affiliateLink').href = withPageSource(chosen.url, page);
+    document.getElementById('affiliateBanner').style.display = 'block';
+  } catch (e) {}
+})();
+function trackAffiliateClick(e) {
+  if (!_affiliate) return;
+  const payload = { id: _affiliate.id, program: _affiliate.program, page: 'remote-work-salary-adjustment-calculator', ts: Date.now(), ua: navigator.userAgent.slice(0, 120) };
+  fetch('/api/click', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload), mode: 'no-cors' }).catch(() => {});
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Remote Work Salary Adjustment Calculator",
+  "url": "https://senecacommons.com/tools/remote-work-salary-adjustment-calculator",
+  "description": "Free calculator showing what a remote job offer is really worth after location-based cost-of-living salary adjustment.",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Web",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+}
+</script>
+
+</body>
+</html>

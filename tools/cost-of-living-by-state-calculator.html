@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cost of Living by State Calculator – Compare Income Tax & Expenses Before You Move</title>
+<meta name="description" content="Compare two states side by side: state income tax, average housing, and overall cost of living. See what salary you'd need to maintain your lifestyle. Free, instant.">
+<link rel="canonical" href="https://senecacommons.com/tools/cost-of-living-by-state-calculator">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --ink:#1a1a2e; --ink-mid:#4a4a6a; --ink-light:#8888aa;
+  --page:#f7f6f2; --panel:#ffffff; --rule:#e2e0da;
+  --accent:#2a6f4f; --accent-2:#2563a8; --good:#1a7a4a;
+  --mono:'JetBrains Mono', monospace; --serif:'DM Serif Display', Georgia, serif; --sans:'Inter', system-ui, sans-serif;
+}
+html { font-size: 16px; scroll-behavior: smooth; }
+body { font-family: var(--sans); background: var(--page); color: var(--ink); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+.wrap { max-width: 960px; margin: 0 auto; padding: 0 20px; }
+header { border-bottom: 1px solid var(--rule); padding: 14px 0; background: var(--panel); }
+.header-inner { display: flex; align-items: center; justify-content: space-between; }
+.logo { font-family: var(--serif); font-size: 1.15rem; color: var(--ink); text-decoration: none; letter-spacing: -0.01em; }
+.logo span { color: var(--accent); }
+nav a { font-size: 0.8rem; font-weight: 500; color: var(--ink-mid); text-decoration: none; margin-left: 18px; letter-spacing: 0.04em; text-transform: uppercase; }
+nav a:hover { color: var(--accent); }
+.hero { padding: 52px 0 36px; border-bottom: 1px solid var(--rule); }
+.hero-eyebrow { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+.hero h1 { font-family: var(--serif); font-size: clamp(1.9rem, 4vw, 2.8rem); line-height: 1.18; color: var(--ink); max-width: 680px; margin-bottom: 16px; letter-spacing: -0.02em; }
+.hero-sub { font-size: 1rem; color: var(--ink-mid); max-width: 560px; line-height: 1.7; }
+.calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; padding: 36px 0; }
+@media (max-width: 680px) { .calc-grid { grid-template-columns: 1fr; } }
+.panel { background: var(--panel); border: 1px solid var(--rule); border-radius: 4px; padding: 28px; }
+.panel-title { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-light); margin-bottom: 22px; padding-bottom: 12px; border-bottom: 1px solid var(--rule); }
+.field { margin-bottom: 18px; }
+.field:last-child { margin-bottom: 0; }
+label { display: block; font-size: 0.78rem; font-weight: 500; color: var(--ink-mid); margin-bottom: 6px; }
+label .hint { font-weight: 400; color: var(--ink-light); margin-left: 4px; }
+.input-wrap { display: flex; align-items: center; border: 1px solid var(--rule); border-radius: 3px; background: var(--page); transition: border-color 0.15s; }
+.input-wrap:focus-within { border-color: var(--accent-2); background: #fff; }
+.input-prefix, .input-suffix { padding: 0 10px; font-size: 0.8rem; font-family: var(--mono); color: var(--ink-light); background: transparent; white-space: nowrap; }
+input[type=number] { border: none; background: transparent; outline: none; font-family: var(--mono); font-size: 0.9rem; color: var(--ink); padding: 9px 8px; width: 100%; }
+select { border: none; background: transparent; outline: none; font-family: var(--sans); font-size: 0.9rem; color: var(--ink); padding: 9px 8px; width: 100%; appearance: none; cursor: pointer; }
+.results-panel { grid-column: 1 / -1; background: var(--ink); color: #fff; border-radius: 4px; padding: 32px; }
+.results-panel .panel-title { color: rgba(255,255,255,0.4); border-bottom-color: rgba(255,255,255,0.1); }
+.corpus-display { display: flex; align-items: baseline; gap: 10px; margin: 20px 0 8px; }
+.corpus-amount { font-family: var(--serif); font-size: clamp(2.2rem, 5vw, 3.4rem); color: #fff; letter-spacing: -0.03em; line-height: 1; }
+.corpus-sub { font-size: 0.82rem; color: rgba(255,255,255,0.5); margin-bottom: 28px; }
+.metrics-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; margin-bottom: 28px; }
+.metric { border-left: 2px solid rgba(255,255,255,0.12); padding-left: 14px; }
+.metric-val { font-family: var(--mono); font-size: 1.1rem; font-weight: 500; color: #fff; line-height: 1.2; }
+.metric-val.good { color: #5dd68a; }
+.metric-val.warn { color: #f0b429; }
+.metric-label { font-size: 0.7rem; color: rgba(255,255,255,0.4); margin-top: 3px; text-transform: uppercase; letter-spacing: 0.06em; }
+.breakdown { margin-top: 28px; border-top: 1px solid var(--rule); padding-top: 24px; }
+.breakdown-title { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-light); margin-bottom: 16px; }
+table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+th { text-align: left; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-light); padding: 6px 0; border-bottom: 1px solid var(--rule); }
+th:not(:first-child), td:not(:first-child) { text-align: right; }
+td { padding: 8px 0; border-bottom: 1px solid var(--rule); color: var(--ink-mid); font-family: var(--mono); }
+td:first-child { font-family: var(--sans); color: var(--ink); }
+tr:last-child td { border-bottom: none; font-weight: 600; color: var(--ink); }
+.btn-row { margin-top: 20px; display: flex; gap: 12px; flex-wrap: wrap; }
+.btn { display: inline-flex; align-items: center; gap: 7px; padding: 10px 18px; border-radius: 3px; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.04em; cursor: pointer; border: none; transition: opacity 0.15s; text-decoration: none; }
+.btn:hover { opacity: 0.85; }
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-secondary { background: transparent; border: 1px solid var(--rule); color: var(--ink-mid); }
+.content-section { padding: 40px 0; border-top: 1px solid var(--rule); }
+.content-section h2 { font-family: var(--serif); font-size: 1.5rem; color: var(--ink); margin-bottom: 14px; letter-spacing: -0.02em; }
+.content-section p { color: var(--ink-mid); line-height: 1.8; margin-bottom: 14px; max-width: 720px; font-size: 0.92rem; }
+.faq { margin-top: 32px; }
+.faq-item { border-top: 1px solid var(--rule); padding: 18px 0; }
+.faq-item:last-child { border-bottom: 1px solid var(--rule); }
+.faq-q { font-weight: 600; font-size: 0.92rem; color: var(--ink); margin-bottom: 8px; }
+.faq-a { font-size: 0.88rem; color: var(--ink-mid); line-height: 1.75; }
+.related { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 20px; }
+.related-card { border: 1px solid var(--rule); border-radius: 4px; padding: 18px; text-decoration: none; background: var(--panel); transition: border-color 0.15s; }
+.related-card:hover { border-color: var(--accent-2); }
+.related-card-title { font-weight: 600; font-size: 0.88rem; color: var(--ink); margin-bottom: 4px; }
+.related-card-desc { font-size: 0.78rem; color: var(--ink-light); }
+footer { border-top: 1px solid var(--rule); padding: 24px 0; margin-top: 40px; }
+.footer-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+.footer-note { font-size: 0.72rem; color: var(--ink-light); max-width: 520px; line-height: 1.6; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap header-inner">
+    <a href="/" class="logo"><img src="/senecacommons-logo.png" alt="Seneca Commons" style="height:36px;width:auto;display:block;"></a>
+    <nav>
+      <a href="/tools">All Tools</a>
+      <a href="/tools/moving-cost-calculator">Moving Cost</a>
+      <a href="/tools/remote-work-salary-adjustment-calculator">Remote Pay</a>
+      <a href="/tools/best-cities-to-retire-calculator">Retire</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+
+    <div class="hero">
+      <div class="hero-eyebrow">Free · No login · 2026 state tax rates</div>
+      <h1>Cost of Living by State Calculator — Income Tax & Relocation Comparison</h1>
+      <p class="hero-sub">Compare two states side by side: state income tax bite, average housing cost, and overall cost-of-living index. See the salary you'd actually need to keep your lifestyle.</p>
+    </div>
+
+    <div class="calc-grid">
+
+      <div class="panel">
+        <div class="panel-title">Current State</div>
+
+        <div class="field">
+          <label>Current State</label>
+          <div class="input-wrap"><select id="stateFrom"></select></div>
+        </div>
+
+        <div class="field">
+          <label>Current Annual Salary</label>
+          <div class="input-wrap">
+            <span class="input-prefix">$</span>
+            <input type="number" id="salaryFrom" value="85000" min="15000" max="1000000" step="1000">
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Filing Status</label>
+          <div class="input-wrap">
+            <select id="filingStatus">
+              <option value="single" selected>Single</option>
+              <option value="married">Married Filing Jointly</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Destination State</div>
+
+        <div class="field">
+          <label>Moving To</label>
+          <div class="input-wrap"><select id="stateTo"></select></div>
+        </div>
+
+        <div class="field">
+          <label>Household Size <span class="hint">(for COL scaling)</span></label>
+          <div class="input-wrap range-row" style="padding:0 8px;">
+            <input type="range" id="householdSize" min="1" max="6" value="1" style="padding:9px 0;">
+            <span class="range-val" id="householdSizeVal" style="font-family:var(--mono);font-size:0.82rem;min-width:24px;text-align:right;">1</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel results-panel">
+        <div class="panel-title">Comparison</div>
+
+        <div class="corpus-display">
+          <div class="corpus-amount" id="equivSalary">$92,400</div>
+        </div>
+        <div class="corpus-sub" id="equivSub">salary needed in destination state to match your current take-home + lifestyle</div>
+
+        <div class="metrics-row">
+          <div class="metric">
+            <div class="metric-val" id="metricTaxFrom">$3,200</div>
+            <div class="metric-label">State Tax — Current</div>
+          </div>
+          <div class="metric">
+            <div class="metric-val" id="metricTaxTo">$0</div>
+            <div class="metric-label">State Tax — Destination</div>
+          </div>
+          <div class="metric">
+            <div class="metric-val" id="metricColDiff">+8%</div>
+            <div class="metric-label">Cost of Living Difference</div>
+          </div>
+          <div class="metric">
+            <div class="metric-val" id="metricNetGain">+$5,100</div>
+            <div class="metric-label">Net Annual Difference</div>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="downloadExcel()">⬇ Download Comparison (Excel)</button>
+          <button class="btn btn-secondary" onclick="window.print()">Print Comparison</button>
+        </div>
+      </div>
+
+    </div>
+
+    <div id="affiliateBanner" style="display:none; margin:32px 0; background:#fff; border:1px solid #e2e0da; border-left:3px solid #2563a8; border-radius:4px; padding:20px 24px;">
+      <div style="font-size:0.68rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:#8888aa; margin-bottom:10px;">Next step</div>
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;">
+        <div>
+          <div id="affiliateLabel" style="font-family:'DM Serif Display',Georgia,serif; font-size:1.15rem; color:#1a1a2e; margin-bottom:4px;"></div>
+          <div id="affiliateSubtext" style="font-size:0.82rem; color:#4a4a6a;"></div>
+        </div>
+        <a id="affiliateLink" href="#" target="_blank" rel="noopener sponsored"
+           style="display:inline-flex; align-items:center; gap:8px; padding:10px 20px; background:#2563a8; color:#fff; border-radius:3px; font-size:0.82rem; font-weight:600; letter-spacing:0.04em; text-decoration:none; white-space:nowrap; flex-shrink:0;"
+           onclick="trackAffiliateClick(event)">
+          Get started →
+        </a>
+      </div>
+    </div>
+
+    <div class="breakdown">
+      <div class="breakdown-title">Side-by-Side Detail</div>
+      <table id="breakdownTable">
+        <thead><tr><th>Factor</th><th id="colFromHead">Current</th><th id="colToHead">Destination</th></tr></thead>
+        <tbody id="breakdownBody"></tbody>
+      </table>
+    </div>
+
+    <div class="content-section">
+      <h2>How State Income Tax Actually Affects a Relocation Decision</h2>
+      <p>Nine states charge no state income tax at all (Alaska, Florida, Nevada, New Hampshire, South Dakota, Tennessee, Texas, Washington, Wyoming), while California's top marginal rate runs above 13% and New York City layers a city tax on top of the state rate. The headline number rarely tells the full story — a no-income-tax state often funds services through higher property or sales tax instead, and a high-tax state's cost of living can still run lower than a no-tax state's if housing is cheap enough.</p>
+      <p>The real comparison that matters for a relocation decision is take-home pay after state tax, adjusted for the destination's overall cost-of-living index — housing, groceries, utilities, transportation, and healthcare combined. A 10% salary bump moving from a low-cost state to a high-cost one can still be a real pay cut once rent alone eats the difference.</p>
+      <p>This calculator estimates 2026 state income tax brackets for both states, then scales the destination's cost of living by household size to estimate the salary you'd need there to match your current lifestyle — not just your current paycheck.</p>
+
+      <div class="faq">
+        <div class="faq-item">
+          <div class="faq-q">Which states have no income tax in 2026?</div>
+          <div class="faq-a">Alaska, Florida, Nevada, New Hampshire, South Dakota, Tennessee, Texas, Washington, and Wyoming charge no state income tax on wages. New Hampshire and Washington tax certain investment income separately. All nine still charge property tax, and several (Texas, Tennessee) lean on higher-than-average sales tax to compensate.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">Does a no-tax state automatically mean lower cost of living?</div>
+          <div class="faq-a">No. Texas and Florida have no income tax but cost-of-living varies enormously by metro — Austin and Miami run well above the national average, while smaller Texas and Florida cities run below it. Washington has no income tax and Seattle is one of the most expensive metros in the country. State tax policy and cost of living move independently.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">How is the "equivalent salary" calculated?</div>
+          <div class="faq-a">This calculator takes your current after-state-tax income, then scales it by the destination state's cost-of-living index relative to the national average, then re-grosses for the destination's state tax brackets. The result is the gross salary that would leave you with equivalent real purchasing power in the new location.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">What does the cost-of-living index actually measure?</div>
+          <div class="faq-a">A composite of housing, groceries, utilities, transportation, and healthcare costs, indexed against the national average (100). A state at 115 costs roughly 15% more than the national average to live in; a state at 85 costs roughly 15% less. Housing typically drives most of the variance between states.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h2>Related Calculators</h2>
+      <div class="related">
+        <a href="/tools/moving-cost-calculator" class="related-card">
+          <div class="related-card-title">Moving Cost Calculator</div>
+          <div class="related-card-desc">Budget the actual move once you've picked a state</div>
+        </a>
+        <a href="/tools/remote-work-salary-adjustment-calculator" class="related-card">
+          <div class="related-card-title">Remote Work Salary Adjustment</div>
+          <div class="related-card-desc">What a remote offer is really worth by location</div>
+        </a>
+        <a href="/tools/best-cities-to-retire-calculator" class="related-card">
+          <div class="related-card-title">Best Cities to Retire</div>
+          <div class="related-card-desc">Rank retirement destinations on a fixed income</div>
+        </a>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  <div class="wrap footer-inner">
+    <p class="footer-note">State tax brackets and cost-of-living indices are 2026 estimates for planning purposes only — actual brackets, deductions, and local cost variation within a state can shift the real numbers. Consult a tax professional before relocating for tax reasons alone. Updated June 2026.</p>
+    <p class="footer-note" style="text-align:right; max-width:200px;">© 2026 SenecaCommons</p>
+  </div>
+</footer>
+
+<script>
+// Simplified 2026 state data: [no-income-tax flag, flat-or-top-marginal rate for $85k single bracket approx, COL index vs national=100]
+const STATES = {
+  AL:{tax:0.05,col:88},  AK:{tax:0.00,col:127}, AZ:{tax:0.025,col:104}, AR:{tax:0.044,col:87},
+  CA:{tax:0.093,col:142}, CO:{tax:0.044,col:106}, CT:{tax:0.0599,col:128}, DE:{tax:0.066,col:103},
+  FL:{tax:0.00,col:103}, GA:{tax:0.0539,col:92}, HI:{tax:0.079,col:184}, ID:{tax:0.058,col:97},
+  IL:{tax:0.0495,col:94}, IN:{tax:0.0305,col:90}, IA:{tax:0.057,col:89}, KS:{tax:0.057,col:87},
+  KY:{tax:0.04,col:91}, LA:{tax:0.03,col:92}, ME:{tax:0.0715,col:115}, MD:{tax:0.0575,col:124},
+  MA:{tax:0.05,col:148}, MI:{tax:0.0425,col:90}, MN:{tax:0.0785,col:98}, MS:{tax:0.044,col:84},
+  MO:{tax:0.048,col:88}, MT:{tax:0.059,col:99}, NE:{tax:0.0584,col:91}, NV:{tax:0.00,col:108},
+  NH:{tax:0.00,col:115}, NJ:{tax:0.0637,col:125}, NM:{tax:0.049,col:90}, NY:{tax:0.0685,col:139},
+  NC:{tax:0.045,col:96}, ND:{tax:0.025,col:92}, OH:{tax:0.035,col:90}, OK:{tax:0.0475,col:86},
+  OR:{tax:0.0875,col:113}, PA:{tax:0.0307,col:97}, RI:{tax:0.0599,col:118}, SC:{tax:0.064,col:94},
+  SD:{tax:0.00,col:92}, TN:{tax:0.00,col:90}, TX:{tax:0.00,col:92}, UT:{tax:0.0465,col:101},
+  VT:{tax:0.066,col:114}, VA:{tax:0.0575,col:103}, WA:{tax:0.00,col:117}, WV:{tax:0.0512,col:88},
+  WI:{tax:0.0527,col:97}, WY:{tax:0.00,col:94}, DC:{tax:0.0895,col:150},
+};
+const STATE_NAMES = {
+  AL:'Alabama',AK:'Alaska',AZ:'Arizona',AR:'Arkansas',CA:'California',CO:'Colorado',CT:'Connecticut',
+  DE:'Delaware',FL:'Florida',GA:'Georgia',HI:'Hawaii',ID:'Idaho',IL:'Illinois',IN:'Indiana',IA:'Iowa',
+  KS:'Kansas',KY:'Kentucky',LA:'Louisiana',ME:'Maine',MD:'Maryland',MA:'Massachusetts',MI:'Michigan',
+  MN:'Minnesota',MS:'Mississippi',MO:'Missouri',MT:'Montana',NE:'Nebraska',NV:'Nevada',NH:'New Hampshire',
+  NJ:'New Jersey',NM:'New Mexico',NY:'New York',NC:'North Carolina',ND:'North Dakota',OH:'Ohio',
+  OK:'Oklahoma',OR:'Oregon',PA:'Pennsylvania',RI:'Rhode Island',SC:'South Carolina',SD:'South Dakota',
+  TN:'Tennessee',TX:'Texas',UT:'Utah',VT:'Vermont',VA:'Virginia',WA:'Washington',WV:'West Virginia',
+  WI:'Wisconsin',WY:'Wyoming',DC:'Washington DC',
+};
+
+const selFrom = document.getElementById('stateFrom');
+const selTo = document.getElementById('stateTo');
+Object.keys(STATE_NAMES).sort((a,b)=>STATE_NAMES[a].localeCompare(STATE_NAMES[b])).forEach(code => {
+  const o1 = document.createElement('option'); o1.value = code; o1.textContent = STATE_NAMES[code]; selFrom.appendChild(o1);
+  const o2 = document.createElement('option'); o2.value = code; o2.textContent = STATE_NAMES[code]; selTo.appendChild(o2);
+});
+selFrom.value = 'CA';
+selTo.value = 'TX';
+
+const inputs = {
+  stateFrom: selFrom, stateTo: selTo,
+  salaryFrom: document.getElementById('salaryFrom'),
+  filingStatus: document.getElementById('filingStatus'),
+  householdSize: document.getElementById('householdSize'),
+};
+document.getElementById('householdSize').addEventListener('input', () => {
+  document.getElementById('householdSizeVal').textContent = inputs.householdSize.value;
+  calculate();
+});
+['stateFrom','stateTo','salaryFrom','filingStatus'].forEach(k => inputs[k].addEventListener('input', calculate));
+
+function fmt(n) { return '$' + Math.round(n).toLocaleString('en-US'); }
+
+function calculate() {
+  const from = STATES[selFrom.value];
+  const to = STATES[selTo.value];
+  const salary = +inputs.salaryFrom.value || 0;
+  const household = +inputs.householdSize.value || 1;
+
+  const filingAdj = inputs.filingStatus.value === 'married' ? 0.85 : 1; // joint brackets roughly widen effective rate down a bit at this income level
+
+  const taxFrom = salary * from.tax * filingAdj;
+  const taxTo = salary * to.tax * filingAdj;
+
+  const netFrom = salary - taxFrom;
+
+  // Household scaling on COL: each additional member adds ~12% marginal living cost
+  const householdFactor = 1 + (household - 1) * 0.12;
+
+  const colRatio = (to.col / from.col) * householdFactor;
+  // Equivalent gross salary in destination: scale net income by COL ratio, then re-gross for destination tax
+  const targetNet = netFrom * colRatio;
+  const equivSalary = targetNet / (1 - to.tax * filingAdj);
+
+  const netGain = (salary - taxTo) - netFrom; // naive same-salary comparison, net of tax only — shown alongside COL-adjusted figure
+
+  document.getElementById('equivSalary').textContent = fmt(equivSalary);
+  document.getElementById('equivSub').textContent =
+    `salary needed in ${STATE_NAMES[selTo.value]} to match your current take-home + lifestyle`;
+
+  document.getElementById('metricTaxFrom').textContent = fmt(taxFrom);
+  document.getElementById('metricTaxTo').textContent = fmt(taxTo);
+
+  const colDiffPct = ((to.col / from.col) - 1) * 100;
+  const colDiffEl = document.getElementById('metricColDiff');
+  colDiffEl.textContent = (colDiffPct >= 0 ? '+' : '') + colDiffPct.toFixed(0) + '%';
+  colDiffEl.className = 'metric-val ' + (colDiffPct <= 0 ? 'good' : 'warn');
+
+  const gainEl = document.getElementById('metricNetGain');
+  gainEl.textContent = (netGain >= 0 ? '+' : '') + fmt(netGain);
+  gainEl.className = 'metric-val ' + (netGain >= 0 ? 'good' : 'warn');
+
+  document.getElementById('colFromHead').textContent = selFrom.value;
+  document.getElementById('colToHead').textContent = selTo.value;
+
+  const rows = [
+    ['State Income Tax Rate', (from.tax*100).toFixed(2)+'%', (to.tax*100).toFixed(2)+'%'],
+    ['Est. State Tax on Salary', fmt(taxFrom), fmt(taxTo)],
+    ['Net Take-Home (state tax only)', fmt(netFrom), fmt(salary - taxTo)],
+    ['Cost of Living Index (US=100)', from.col, to.col],
+    ['Equivalent Salary Needed', fmt(salary), fmt(equivSalary)],
+  ];
+  document.getElementById('breakdownBody').innerHTML = rows.map(r =>
+    `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`
+  ).join('');
+
+  window._calcData = { from: selFrom.value, to: selTo.value, salary, taxFrom, taxTo, equivSalary, rows };
+}
+
+calculate();
+
+function downloadExcel() {
+  const d = window._calcData;
+  if (!d) return;
+  const script = document.createElement('script');
+  script.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+  script.onload = () => {
+    const wb = XLSX.utils.book_new();
+    const summary = [
+      ['Cost of Living Comparison', '', ''],
+      ['Generated', new Date().toLocaleDateString('en-US'), ''],
+      ['From', STATE_NAMES[d.from], ''],
+      ['To', STATE_NAMES[d.to], ''],
+      ['Current Salary', d.salary, ''],
+      ['', '', ''],
+      ...d.rows,
+    ];
+    const ws = XLSX.utils.aoa_to_sheet(summary);
+    ws['!cols'] = [{wch:32},{wch:16},{wch:16}];
+    XLSX.utils.book_append_sheet(wb, ws, 'COL Comparison');
+    XLSX.writeFile(wb, 'cost-of-living-comparison.xlsx');
+  };
+  document.head.appendChild(script);
+}
+
+let _affiliate = null;
+function withPageSource(url, page) {
+  try { const u = new URL(url); if (u.searchParams.has('source')) u.searchParams.set('source', 'page-' + page); return u.toString(); }
+  catch (e) { return url; }
+}
+(async function loadAffiliate() {
+  try {
+    const res = await fetch('/affiliates.json');
+    const data = await res.json();
+    const page = 'cost-of-living-by-state-calculator';
+    const candidates = data.slots.filter(s => s.active && s.pages.includes(page));
+    if (!candidates.length) return;
+    const totalWeight = candidates.reduce((s, c) => s + c.weight, 0);
+    let rand = Math.random() * totalWeight;
+    let chosen = candidates[candidates.length - 1];
+    for (const c of candidates) { rand -= c.weight; if (rand <= 0) { chosen = c; break; } }
+    _affiliate = chosen;
+    document.getElementById('affiliateLabel').textContent = chosen.label;
+    document.getElementById('affiliateSubtext').textContent = chosen.subtext;
+    document.getElementById('affiliateLink').href = withPageSource(chosen.url, page);
+    document.getElementById('affiliateBanner').style.display = 'block';
+  } catch (e) {}
+})();
+function trackAffiliateClick(e) {
+  if (!_affiliate) return;
+  const payload = { id: _affiliate.id, program: _affiliate.program, page: 'cost-of-living-by-state-calculator', ts: Date.now(), ua: navigator.userAgent.slice(0, 120) };
+  fetch('/api/click', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload), mode: 'no-cors' }).catch(() => {});
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Cost of Living by State Calculator",
+  "url": "https://senecacommons.com/tools/cost-of-living-by-state-calculator",
+  "description": "Free calculator comparing state income tax and cost of living between any two US states, with an equivalent-salary estimate for relocation.",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Web",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+}
+</script>
+
+</body>
+</html>

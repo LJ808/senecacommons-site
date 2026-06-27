@@ -10,7 +10,7 @@
       "program": "groww",
       "weight": 1.0,
       "active": true,
-      "pages": ["retirement-calculator-india", "payroll-calculator-india-excel", "sip-calculator-india", "salary-bonus-calculator-india", "gst-calculator-india", "salary-budget-calculator-india", "salary-difference-calculator-india"]
+      "pages": ["retirement-calculator-india", "payroll-calculator-india-excel", "sip-calculator-india", "salary-bonus-calculator-india", "gst-calculator-india", "gst-calculator-easy-calculation", "salary-budget-calculator-india", "salary-difference-calculator-india"]
     },
     {
       "id": "zerodha-demat",
@@ -21,7 +21,7 @@
       "program": "zerodha",
       "weight": 1.0,
       "active": true,
-      "pages": ["retirement-calculator-india", "payroll-calculator-india-excel", "sip-calculator-india", "salary-bonus-calculator-india", "gst-calculator-india", "salary-budget-calculator-india", "salary-difference-calculator-india"]
+      "pages": ["retirement-calculator-india", "payroll-calculator-india-excel", "sip-calculator-india", "salary-bonus-calculator-india", "gst-calculator-india", "gst-calculator-easy-calculation", "salary-budget-calculator-india", "salary-difference-calculator-india"]
     },
     {
       "id": "etmoney-nps",
@@ -32,7 +32,7 @@
       "program": "etmoney",
       "weight": 1.0,
       "active": true,
-      "pages": ["retirement-calculator-india", "sip-calculator-india", "gst-calculator-india", "salary-budget-calculator-india", "salary-difference-calculator-india"]
+      "pages": ["retirement-calculator-india", "sip-calculator-india", "gst-calculator-india", "gst-calculator-easy-calculation", "salary-budget-calculator-india", "salary-difference-calculator-india"]
     },
     {
       "id": "robinhood-funded",
@@ -71,7 +71,7 @@
       "commission": "80% revenue share (new sale)",
       "weight": 1.0,
       "active": true,
-      "pages": ["implied-probability-calculator", "kelly-criterion-calculator", "kalshi-vs-polymarket", "markets", "triggers", "immiseration", "macro", "local", "fear-greed", "signal-sentinel-index"]
+      "pages": ["implied-probability-calculator", "kelly-criterion-calculator", "kalshi-vs-polymarket", "markets", "triggers", "immiseration", "macro", "local", "fear-greed", "signal-sentinel-index", "moving-cost-calculator", "cost-of-living-by-state-calculator", "remote-work-salary-adjustment-calculator", "best-cities-to-retire-calculator", "debt-to-income-ratio-calculator", "early-retirement-fire-calculator", "electric-vehicle-cost-savings-calculator"]
     },
     {
       "id": "nordpass",
@@ -83,7 +83,7 @@
       "commission": "52.5% (1mo new), 21% (12mo new), 7% (12mo renewal)",
       "weight": 1.0,
       "active": true,
-      "pages": ["implied-probability-calculator", "kelly-criterion-calculator", "kalshi-vs-polymarket", "markets", "triggers", "immiseration", "macro", "local", "fear-greed", "signal-sentinel-index"]
+      "pages": ["implied-probability-calculator", "kelly-criterion-calculator", "kalshi-vs-polymarket", "markets", "triggers", "immiseration", "macro", "local", "fear-greed", "signal-sentinel-index", "moving-cost-calculator", "cost-of-living-by-state-calculator", "remote-work-salary-adjustment-calculator", "best-cities-to-retire-calculator", "debt-to-income-ratio-calculator", "early-retirement-fire-calculator", "electric-vehicle-cost-savings-calculator"]
     },
     {
       "id": "klook",
@@ -95,7 +95,7 @@
       "commission": "1.4% revenue share",
       "weight": 1.0,
       "active": true,
-      "pages": ["implied-probability-calculator", "kelly-criterion-calculator", "kalshi-vs-polymarket", "markets", "triggers", "immiseration", "macro", "local", "fear-greed", "signal-sentinel-index"]
+      "pages": ["implied-probability-calculator", "kelly-criterion-calculator", "kalshi-vs-polymarket", "markets", "triggers", "immiseration", "macro", "local", "fear-greed", "signal-sentinel-index", "moving-cost-calculator", "cost-of-living-by-state-calculator", "remote-work-salary-adjustment-calculator", "best-cities-to-retire-calculator", "debt-to-income-ratio-calculator", "early-retirement-fire-calculator", "electric-vehicle-cost-savings-calculator"]
     },
     {
       "id": "cloveoralcare",
@@ -107,7 +107,7 @@
       "commission": "₹58/sale",
       "weight": 1.0,
       "active": true,
-      "pages": ["retirement-calculator-india", "payroll-calculator-india-excel", "sip-calculator-india", "salary-bonus-calculator-india", "gst-calculator-india", "salary-budget-calculator-india", "salary-difference-calculator-india"]
+      "pages": ["retirement-calculator-india", "payroll-calculator-india-excel", "sip-calculator-india", "salary-bonus-calculator-india", "gst-calculator-india", "gst-calculator-easy-calculation", "salary-budget-calculator-india", "salary-difference-calculator-india"]
     },
     {
       "id": "jivisa",
@@ -119,7 +119,7 @@
       "commission": "₹51.80/sale",
       "weight": 1.0,
       "active": true,
-      "pages": ["retirement-calculator-india", "payroll-calculator-india-excel", "sip-calculator-india", "salary-bonus-calculator-india", "gst-calculator-india", "salary-budget-calculator-india", "salary-difference-calculator-india"]
+      "pages": ["retirement-calculator-india", "payroll-calculator-india-excel", "sip-calculator-india", "salary-bonus-calculator-india", "gst-calculator-india", "gst-calculator-easy-calculation", "salary-budget-calculator-india", "salary-difference-calculator-india"]
     },
     {
       "id": "nourishmantra",
@@ -131,7 +131,7 @@
       "commission": "₹49/sale",
       "weight": 1.0,
       "active": true,
-      "pages": ["retirement-calculator-india", "payroll-calculator-india-excel", "sip-calculator-india", "salary-bonus-calculator-india", "gst-calculator-india", "salary-budget-calculator-india", "salary-difference-calculator-india"]
+      "pages": ["retirement-calculator-india", "payroll-calculator-india-excel", "sip-calculator-india", "salary-bonus-calculator-india", "gst-calculator-india", "gst-calculator-easy-calculation", "salary-budget-calculator-india", "salary-difference-calculator-india"]
     },
     {
       "id": "firstcry",
@@ -143,7 +143,7 @@
       "commission": "₹35/qualifying action (CPA)",
       "weight": 1.0,
       "active": true,
-      "pages": ["retirement-calculator-india", "payroll-calculator-india-excel", "sip-calculator-india", "salary-bonus-calculator-india", "gst-calculator-india", "salary-budget-calculator-india", "salary-difference-calculator-india"]
+      "pages": ["retirement-calculator-india", "payroll-calculator-india-excel", "sip-calculator-india", "salary-bonus-calculator-india", "gst-calculator-india", "gst-calculator-easy-calculation", "salary-budget-calculator-india", "salary-difference-calculator-india"]
     },
     {
       "id": "brillare",
@@ -155,7 +155,7 @@
       "commission": "28% revenue share",
       "weight": 1.0,
       "active": true,
-      "pages": ["retirement-calculator-india", "payroll-calculator-india-excel", "sip-calculator-india", "salary-bonus-calculator-india", "gst-calculator-india", "salary-budget-calculator-india", "salary-difference-calculator-india"]
+      "pages": ["retirement-calculator-india", "payroll-calculator-india-excel", "sip-calculator-india", "salary-bonus-calculator-india", "gst-calculator-india", "gst-calculator-easy-calculation", "salary-budget-calculator-india", "salary-difference-calculator-india"]
     },
     {
       "id": "lavieworld",
@@ -167,7 +167,7 @@
       "commission": "30% revenue share",
       "weight": 1.0,
       "active": true,
-      "pages": ["retirement-calculator-india", "payroll-calculator-india-excel", "sip-calculator-india", "salary-bonus-calculator-india", "gst-calculator-india", "salary-budget-calculator-india", "salary-difference-calculator-india"]
+      "pages": ["retirement-calculator-india", "payroll-calculator-india-excel", "sip-calculator-india", "salary-bonus-calculator-india", "gst-calculator-india", "gst-calculator-easy-calculation", "salary-budget-calculator-india", "salary-difference-calculator-india"]
     }
   ]
 }

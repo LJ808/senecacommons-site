@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Best Cities to Retire Calculator – Rank Destinations on a Fixed Income</title>
+<meta name="description" content="Enter your fixed retirement income and rank US cities by how far it actually stretches — cost of living, state tax on retirement income, and climate weighted together. Free, instant.">
+<link rel="canonical" href="https://senecacommons.com/tools/best-cities-to-retire-calculator">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --ink:#1a1a2e; --ink-mid:#4a4a6a; --ink-light:#8888aa;
+  --page:#f7f6f2; --panel:#ffffff; --rule:#e2e0da;
+  --accent:#2a6f4f; --accent-2:#2563a8; --good:#1a7a4a;
+  --mono:'JetBrains Mono', monospace; --serif:'DM Serif Display', Georgia, serif; --sans:'Inter', system-ui, sans-serif;
+}
+html { font-size: 16px; scroll-behavior: smooth; }
+body { font-family: var(--sans); background: var(--page); color: var(--ink); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+.wrap { max-width: 960px; margin: 0 auto; padding: 0 20px; }
+header { border-bottom: 1px solid var(--rule); padding: 14px 0; background: var(--panel); }
+.header-inner { display: flex; align-items: center; justify-content: space-between; }
+.logo { font-family: var(--serif); font-size: 1.15rem; color: var(--ink); text-decoration: none; letter-spacing: -0.01em; }
+.logo span { color: var(--accent); }
+nav a { font-size: 0.8rem; font-weight: 500; color: var(--ink-mid); text-decoration: none; margin-left: 18px; letter-spacing: 0.04em; text-transform: uppercase; }
+nav a:hover { color: var(--accent); }
+.hero { padding: 52px 0 36px; border-bottom: 1px solid var(--rule); }
+.hero-eyebrow { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+.hero h1 { font-family: var(--serif); font-size: clamp(1.9rem, 4vw, 2.8rem); line-height: 1.18; color: var(--ink); max-width: 680px; margin-bottom: 16px; letter-spacing: -0.02em; }
+.hero-sub { font-size: 1rem; color: var(--ink-mid); max-width: 560px; line-height: 1.7; }
+.calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; padding: 36px 0; }
+@media (max-width: 680px) { .calc-grid { grid-template-columns: 1fr; } }
+.panel { background: var(--panel); border: 1px solid var(--rule); border-radius: 4px; padding: 28px; }
+.panel-title { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-light); margin-bottom: 22px; padding-bottom: 12px; border-bottom: 1px solid var(--rule); }
+.field { margin-bottom: 18px; }
+.field:last-child { margin-bottom: 0; }
+label { display: block; font-size: 0.78rem; font-weight: 500; color: var(--ink-mid); margin-bottom: 6px; }
+label .hint { font-weight: 400; color: var(--ink-light); margin-left: 4px; }
+.input-wrap { display: flex; align-items: center; border: 1px solid var(--rule); border-radius: 3px; background: var(--page); transition: border-color 0.15s; }
+.input-wrap:focus-within { border-color: var(--accent-2); background: #fff; }
+.input-prefix, .input-suffix { padding: 0 10px; font-size: 0.8rem; font-family: var(--mono); color: var(--ink-light); background: transparent; white-space: nowrap; }
+input[type=number], input[type=range] { border: none; background: transparent; outline: none; font-family: var(--mono); font-size: 0.9rem; color: var(--ink); padding: 9px 8px; width: 100%; }
+input[type=range] { padding: 0 8px; cursor: pointer; accent-color: var(--accent); }
+.range-row { display: flex; align-items: center; gap: 10px; }
+.range-val { font-family: var(--mono); font-size: 0.82rem; color: var(--ink); min-width: 40px; text-align: right; }
+select { border: none; background: transparent; outline: none; font-family: var(--sans); font-size: 0.9rem; color: var(--ink); padding: 9px 8px; width: 100%; appearance: none; cursor: pointer; }
+.toggle-row { display: flex; gap: 8px; margin-bottom: 4px; flex-wrap: wrap; }
+.toggle-btn { flex: 1; min-width: 90px; padding: 9px 10px; border: 1px solid var(--rule); background: var(--page); border-radius: 3px; font-size: 0.76rem; font-weight: 600; letter-spacing: 0.02em; color: var(--ink-mid); cursor: pointer; transition: all 0.15s; }
+.toggle-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.results-panel { grid-column: 1 / -1; background: var(--ink); color: #fff; border-radius: 4px; padding: 32px; }
+.results-panel .panel-title { color: rgba(255,255,255,0.4); border-bottom-color: rgba(255,255,255,0.1); }
+.rank-list { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
+.rank-row { display: flex; align-items: center; gap: 16px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.08); }
+.rank-row:last-child { border-bottom: none; }
+.rank-num { font-family: var(--serif); font-size: 1.3rem; color: rgba(255,255,255,0.3); width: 28px; flex-shrink: 0; }
+.rank-name { font-weight: 600; font-size: 0.95rem; flex: 1; min-width: 140px; }
+.rank-meta { font-size: 0.76rem; color: rgba(255,255,255,0.5); font-family: var(--mono); }
+.rank-score { font-family: var(--mono); font-size: 1rem; color: #5dd68a; font-weight: 600; width: 50px; text-align: right; flex-shrink: 0; }
+.breakdown { margin-top: 28px; border-top: 1px solid var(--rule); padding-top: 24px; }
+.breakdown-title { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-light); margin-bottom: 16px; }
+table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+th { text-align: left; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-light); padding: 6px 0; border-bottom: 1px solid var(--rule); }
+th:not(:first-child), td:not(:first-child) { text-align: right; }
+td { padding: 8px 0; border-bottom: 1px solid var(--rule); color: var(--ink-mid); font-family: var(--mono); }
+td:first-child { font-family: var(--sans); color: var(--ink); text-align: left; }
+tr:last-child td { border-bottom: none; }
+.btn-row { margin-top: 20px; display: flex; gap: 12px; flex-wrap: wrap; }
+.btn { display: inline-flex; align-items: center; gap: 7px; padding: 10px 18px; border-radius: 3px; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.04em; cursor: pointer; border: none; transition: opacity 0.15s; text-decoration: none; }
+.btn:hover { opacity: 0.85; }
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-secondary { background: transparent; border: 1px solid var(--rule); color: var(--ink-mid); }
+.content-section { padding: 40px 0; border-top: 1px solid var(--rule); }
+.content-section h2 { font-family: var(--serif); font-size: 1.5rem; color: var(--ink); margin-bottom: 14px; letter-spacing: -0.02em; }
+.content-section p { color: var(--ink-mid); line-height: 1.8; margin-bottom: 14px; max-width: 720px; font-size: 0.92rem; }
+.faq { margin-top: 32px; }
+.faq-item { border-top: 1px solid var(--rule); padding: 18px 0; }
+.faq-item:last-child { border-bottom: 1px solid var(--rule); }
+.faq-q { font-weight: 600; font-size: 0.92rem; color: var(--ink); margin-bottom: 8px; }
+.faq-a { font-size: 0.88rem; color: var(--ink-mid); line-height: 1.75; }
+.related { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 20px; }
+.related-card { border: 1px solid var(--rule); border-radius: 4px; padding: 18px; text-decoration: none; background: var(--panel); transition: border-color 0.15s; }
+.related-card:hover { border-color: var(--accent-2); }
+.related-card-title { font-weight: 600; font-size: 0.88rem; color: var(--ink); margin-bottom: 4px; }
+.related-card-desc { font-size: 0.78rem; color: var(--ink-light); }
+footer { border-top: 1px solid var(--rule); padding: 24px 0; margin-top: 40px; }
+.footer-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+.footer-note { font-size: 0.72rem; color: var(--ink-light); max-width: 520px; line-height: 1.6; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap header-inner">
+    <a href="/" class="logo"><img src="/senecacommons-logo.png" alt="Seneca Commons" style="height:36px;width:auto;display:block;"></a>
+    <nav>
+      <a href="/tools">All Tools</a>
+      <a href="/tools/moving-cost-calculator">Moving Cost</a>
+      <a href="/tools/cost-of-living-by-state-calculator">Cost of Living</a>
+      <a href="/tools/remote-work-salary-adjustment-calculator">Remote Pay</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+
+    <div class="hero">
+      <div class="hero-eyebrow">Free · No login · 2026 cost &amp; tax data</div>
+      <h1>Best Cities to Retire Calculator — Rank Destinations on a Fixed Income</h1>
+      <p class="hero-sub">Enter your fixed monthly income and what matters to you. Get a ranked list of US cities by how far your money actually stretches there — cost of living, state tax on retirement income, and climate weighted your way.</p>
+    </div>
+
+    <div class="calc-grid">
+
+      <div class="panel">
+        <div class="panel-title">Your Fixed Income</div>
+
+        <div class="field">
+          <label>Monthly Income <span class="hint">(Social Security + pension + withdrawals)</span></label>
+          <div class="input-wrap">
+            <span class="input-prefix">$</span>
+            <input type="number" id="monthlyIncome" value="4500" min="500" max="50000" step="100">
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Retirement Savings/Withdrawals Included Above?</label>
+          <div class="input-wrap">
+            <select id="incomeType">
+              <option value="mixed" selected>Mixed — Social Security + pension/401k withdrawals</option>
+              <option value="ss-only">Social Security only</option>
+              <option value="pension-401k">Pension/401k withdrawals only (no Social Security yet)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">What Matters to You</div>
+
+        <div class="field">
+          <label>Climate Preference</label>
+          <div class="toggle-row">
+            <button class="toggle-btn active" data-climate="warm" onclick="setClimate('warm')">Warm</button>
+            <button class="toggle-btn" data-climate="mild" onclick="setClimate('mild')">Mild</button>
+            <button class="toggle-btn" data-climate="any" onclick="setClimate('any')">No preference</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Weight: Cost of Living vs. Tax Treatment</label>
+          <div class="input-wrap range-row" style="padding:0 8px;">
+            <input type="range" id="weightSlider" min="0" max="100" value="60">
+            <span class="range-val" id="weightVal">60%</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:0.7rem;color:var(--ink-light);margin-top:4px;">
+            <span>Favor low tax</span><span>Favor low cost</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel results-panel">
+        <div class="panel-title">Top Matches for Your Income</div>
+        <div class="rank-list" id="rankList"></div>
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="downloadExcel()">⬇ Download Full Ranking (Excel)</button>
+          <button class="btn btn-secondary" onclick="window.print()">Print Ranking</button>
+        </div>
+      </div>
+
+    </div>
+
+    <div id="affiliateBanner" style="display:none; margin:32px 0; background:#fff; border:1px solid #e2e0da; border-left:3px solid #2563a8; border-radius:4px; padding:20px 24px;">
+      <div style="font-size:0.68rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:#8888aa; margin-bottom:10px;">Next step</div>
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;">
+        <div>
+          <div id="affiliateLabel" style="font-family:'DM Serif Display',Georgia,serif; font-size:1.15rem; color:#1a1a2e; margin-bottom:4px;"></div>
+          <div id="affiliateSubtext" style="font-size:0.82rem; color:#4a4a6a;"></div>
+        </div>
+        <a id="affiliateLink" href="#" target="_blank" rel="noopener sponsored"
+           style="display:inline-flex; align-items:center; gap:8px; padding:10px 20px; background:#2563a8; color:#fff; border-radius:3px; font-size:0.82rem; font-weight:600; letter-spacing:0.04em; text-decoration:none; white-space:nowrap; flex-shrink:0;"
+           onclick="trackAffiliateClick(event)">
+          Get started →
+        </a>
+      </div>
+    </div>
+
+    <div class="breakdown">
+      <div class="breakdown-title">Full Comparison Table</div>
+      <table id="breakdownTable">
+        <thead><tr><th>City</th><th>Cost Index</th><th>Tax on Retirement Income</th><th>Climate</th><th>Match Score</th></tr></thead>
+        <tbody id="breakdownBody"></tbody>
+      </table>
+    </div>
+
+    <div class="content-section">
+      <h2>What Actually Makes a City Good to Retire In</h2>
+      <p>The cities that show up on generic "best places to retire" lists usually optimize for one thing — warm weather, or low taxes, or cheap housing — without weighting them against each other or against your specific income source. A pension and Social Security income get taxed completely differently state to state: several states tax neither, several tax pensions but exempt Social Security, and a handful tax both fully.</p>
+      <p>Cost of living matters more in retirement than during working years, because there's no raise coming to outpace it. A city with a cost index 20% below the national average effectively stretches a fixed income 25% further (since $1 buys 1.25x as much), which usually outweighs a modest state tax difference on a typical Social Security + pension income level.</p>
+      <p>This calculator weights cost of living and tax treatment against each other based on your stated preference, applies your climate filter, and ranks real US cities by how far your specific monthly income would actually go — not a generic national ranking that ignores your numbers.</p>
+
+      <div class="faq">
+        <div class="faq-item">
+          <div class="faq-q">Which states don't tax Social Security or retirement income?</div>
+          <div class="faq-a">As of 2026, the large majority of states don't tax Social Security benefits at all. A smaller group of states tax neither Social Security nor most other retirement income (Alaska, Florida, Nevada, South Dakota, Tennessee, Texas, Washington, Wyoming, and New Hampshire — the same states with no general income tax). A few additional states exempt Social Security but still tax pension and 401k/IRA withdrawals.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">Is a no-income-tax state always cheaper to retire in?</div>
+          <div class="faq-a">Not automatically. No-income-tax states often lean on higher property or sales tax instead, and several (Florida coastal areas, parts of Texas) have cost-of-living indexes well above the national average despite the tax advantage. The combined effect of tax treatment and cost of living, not either alone, determines how far a fixed income actually stretches.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">How is the "match score" calculated?</div>
+          <div class="faq-a">Each city gets a cost-of-living score and a tax-treatment score, both normalized to a 0-100 scale, then blended according to your weight slider (favor-low-tax vs. favor-low-cost). Cities outside your selected climate preference are excluded from the ranking entirely rather than just scored lower, since climate is typically a hard filter for retirees rather than a tradeoff.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">Does this account for healthcare costs?</div>
+          <div class="faq-a">Not as a separate line item — healthcare cost variation is folded into each city's overall cost-of-living index rather than broken out individually, since Medicare coverage (federal, not state-based) handles the bulk of retiree healthcare cost regardless of location. Out-of-pocket variation by state (Medigap pricing, provider density) is real but smaller than the headline cost-of-living gap between cities on this list.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h2>Related Calculators</h2>
+      <div class="related">
+        <a href="/tools/cost-of-living-by-state-calculator" class="related-card">
+          <div class="related-card-title">Cost of Living by State</div>
+          <div class="related-card-desc">Compare income tax and cost of living before you relocate</div>
+        </a>
+        <a href="/tools/moving-cost-calculator" class="related-card">
+          <div class="related-card-title">Moving Cost Calculator</div>
+          <div class="related-card-desc">Budget the actual move once you've picked a city</div>
+        </a>
+        <a href="/tools/remote-work-salary-adjustment-calculator" class="related-card">
+          <div class="related-card-title">Remote Work Salary Adjustment</div>
+          <div class="related-card-desc">What a remote offer is really worth by location</div>
+        </a>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  <div class="wrap footer-inner">
+    <p class="footer-note">Cost-of-living and tax-treatment figures are 2026 estimates for planning purposes only. State tax rules on retirement income change periodically — confirm current treatment with a tax professional before relocating for tax reasons alone. Updated June 2026.</p>
+    <p class="footer-note" style="text-align:right; max-width:200px;">© 2026 SenecaCommons</p>
+  </div>
+</footer>
+
+<script>
+// 2026 estimates: cost index (US=100, lower=cheaper), retirement-income tax burden score (0=no tax, 100=full tax both SS+pension), climate
+const CITIES = [
+  { name: 'Knoxville, TN',        col: 88,  tax: 0,  climate: 'mild' },
+  { name: 'Asheville, NC',        col: 102, tax: 25, climate: 'mild' },
+  { name: 'San Antonio, TX',      col: 91,  tax: 0,  climate: 'warm' },
+  { name: 'Tampa, FL',            col: 104, tax: 0,  climate: 'warm' },
+  { name: 'Sarasota, FL',         col: 112, tax: 0,  climate: 'warm' },
+  { name: 'Henderson, NV',        col: 106, tax: 0,  climate: 'warm' },
+  { name: 'Boise, ID',            col: 99,  tax: 35, climate: 'mild' },
+  { name: 'Greenville, SC',       col: 93,  tax: 20, climate: 'mild' },
+  { name: 'Chattanooga, TN',      col: 89,  tax: 0,  climate: 'mild' },
+  { name: 'Huntsville, AL',       col: 90,  tax: 30, climate: 'warm' },
+  { name: 'Pensacola, FL',        col: 96,  tax: 0,  climate: 'warm' },
+  { name: 'Charleston, SC',       col: 108, tax: 20, climate: 'warm' },
+  { name: 'Albuquerque, NM',      col: 93,  tax: 45, climate: 'warm' },
+  { name: 'Las Vegas, NV',        col: 102, tax: 0,  climate: 'warm' },
+  { name: 'Wilmington, NC',       col: 100, tax: 30, climate: 'mild' },
+  { name: 'Fort Myers, FL',       col: 105, tax: 0,  climate: 'warm' },
+  { name: 'Lubbock, TX',          col: 84,  tax: 0,  climate: 'warm' },
+  { name: 'Spokane, WA',          col: 97,  tax: 0,  climate: 'mild' },
+  { name: 'Colorado Springs, CO', col: 103, tax: 40, climate: 'mild' },
+  { name: 'Tucson, AZ',           col: 98,  tax: 35, climate: 'warm' },
+];
+
+let climateFilter = 'warm';
+function setClimate(c) {
+  climateFilter = c;
+  document.querySelectorAll('.toggle-btn').forEach(b => b.classList.toggle('active', b.dataset.climate === c));
+  calculate();
+}
+document.getElementById('weightSlider').addEventListener('input', () => {
+  document.getElementById('weightVal').textContent = document.getElementById('weightSlider').value + '%';
+  calculate();
+});
+document.getElementById('monthlyIncome').addEventListener('input', calculate);
+document.getElementById('incomeType').addEventListener('input', calculate);
+
+function fmt(n) { return '$' + Math.round(n).toLocaleString('en-US'); }
+
+function calculate() {
+  const income = +document.getElementById('monthlyIncome').value || 0;
+  const incomeType = document.getElementById('incomeType').value;
+  const costWeight = +document.getElementById('weightSlider').value / 100;
+  const taxWeight = 1 - costWeight;
+
+  // Tax burden scales by income type: SS-only retirees feel tax-on-pension states less
+  const taxRelevance = incomeType === 'ss-only' ? 0.4 : incomeType === 'pension-401k' ? 1.1 : 1.0;
+
+  let pool = CITIES.filter(c => climateFilter === 'any' || c.climate === climateFilter);
+  if (pool.length === 0) pool = CITIES; // safety fallback, shouldn't trigger with current data
+
+  const scored = pool.map(c => {
+    // Lower cost index and lower tax score = better. Normalize within pool.
+    const colVals = pool.map(p => p.col);
+    const taxVals = pool.map(p => p.tax);
+    const colMin = Math.min(...colVals), colMax = Math.max(...colVals);
+    const taxMin = Math.min(...taxVals), taxMax = Math.max(...taxVals);
+    const colScore = colMax === colMin ? 100 : 100 - ((c.col - colMin) / (colMax - colMin)) * 100;
+    const taxScoreRaw = taxMax === taxMin ? 100 : 100 - ((c.tax - taxMin) / (taxMax - taxMin)) * 100;
+    const taxScore = Math.min(100, taxScoreRaw * taxRelevance + (1 - taxRelevance) * 50);
+    const matchScore = colScore * costWeight + taxScore * taxWeight;
+    const effectiveIncome = income * (100 / c.col); // purchasing power vs national average
+    return { ...c, matchScore, effectiveIncome };
+  }).sort((a, b) => b.matchScore - a.matchScore);
+
+  const top5 = scored.slice(0, 5);
+  document.getElementById('rankList').innerHTML = top5.map((c, i) => `
+    <div class="rank-row">
+      <div class="rank-num">${i + 1}</div>
+      <div>
+        <div class="rank-name">${c.name}</div>
+        <div class="rank-meta">~${fmt(c.effectiveIncome)}/mo equivalent purchasing power</div>
+      </div>
+      <div class="rank-score">${c.matchScore.toFixed(0)}</div>
+    </div>
+  `).join('');
+
+  document.getElementById('breakdownBody').innerHTML = scored.map(c => `
+    <tr>
+      <td>${c.name}</td>
+      <td>${c.col}</td>
+      <td>${c.tax === 0 ? 'None' : c.tax + '/100'}</td>
+      <td>${c.climate}</td>
+      <td>${c.matchScore.toFixed(0)}</td>
+    </tr>
+  `).join('');
+
+  window._calcData = { income, incomeType, climateFilter, scored };
+}
+
+calculate();
+
+function downloadExcel() {
+  const d = window._calcData;
+  if (!d) return;
+  const script = document.createElement('script');
+  script.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+  script.onload = () => {
+    const wb = XLSX.utils.book_new();
+    const summary = [
+      ['Best Cities to Retire — Ranking', '', '', '', ''],
+      ['Generated', new Date().toLocaleDateString('en-US'), '', '', ''],
+      ['Monthly Income', d.income, '', '', ''],
+      ['Climate Preference', d.climateFilter, '', '', ''],
+      ['', '', '', '', ''],
+      ['CITY', 'COST INDEX', 'TAX SCORE', 'CLIMATE', 'MATCH SCORE'],
+      ...d.scored.map(c => [c.name, c.col, c.tax, c.climate, c.matchScore.toFixed(1)]),
+    ];
+    const ws = XLSX.utils.aoa_to_sheet(summary);
+    ws['!cols'] = [{wch:22},{wch:12},{wch:12},{wch:10},{wch:12}];
+    XLSX.utils.book_append_sheet(wb, ws, 'Retire Ranking');
+    XLSX.writeFile(wb, 'best-cities-to-retire.xlsx');
+  };
+  document.head.appendChild(script);
+}
+
+let _affiliate = null;
+function withPageSource(url, page) {
+  try { const u = new URL(url); if (u.searchParams.has('source')) u.searchParams.set('source', 'page-' + page); return u.toString(); }
+  catch (e) { return url; }
+}
+(async function loadAffiliate() {
+  try {
+    const res = await fetch('/affiliates.json');
+    const data = await res.json();
+    const page = 'best-cities-to-retire-calculator';
+    const candidates = data.slots.filter(s => s.active && s.pages.includes(page));
+    if (!candidates.length) return;
+    const totalWeight = candidates.reduce((s, c) => s + c.weight, 0);
+    let rand = Math.random() * totalWeight;
+    let chosen = candidates[candidates.length - 1];
+    for (const c of candidates) { rand -= c.weight; if (rand <= 0) { chosen = c; break; } }
+    _affiliate = chosen;
+    document.getElementById('affiliateLabel').textContent = chosen.label;
+    document.getElementById('affiliateSubtext').textContent = chosen.subtext;
+    document.getElementById('affiliateLink').href = withPageSource(chosen.url, page);
+    document.getElementById('affiliateBanner').style.display = 'block';
+  } catch (e) {}
+})();
+function trackAffiliateClick(e) {
+  if (!_affiliate) return;
+  const payload = { id: _affiliate.id, program: _affiliate.program, page: 'best-cities-to-retire-calculator', ts: Date.now(), ua: navigator.userAgent.slice(0, 120) };
+  fetch('/api/click', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload), mode: 'no-cors' }).catch(() => {});
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Best Cities to Retire Calculator",
+  "url": "https://senecacommons.com/tools/best-cities-to-retire-calculator",
+  "description": "Free calculator ranking US cities for retirement based on fixed income, cost of living, state tax on retirement income, and climate preference.",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Web",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+}
+</script>
+
+</body>
+</html>

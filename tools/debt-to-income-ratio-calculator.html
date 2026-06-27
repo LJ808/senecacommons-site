@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Debt-to-Income Ratio Calculator – Mortgage Qualification DTI Check</title>
+<meta name="description" content="Calculate your debt-to-income ratio the way mortgage lenders do — front-end and back-end DTI, with the exact thresholds for conventional, FHA, and VA loans. Free, instant.">
+<link rel="canonical" href="https://senecacommons.com/tools/debt-to-income-ratio-calculator">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --ink:#1a1a2e; --ink-mid:#4a4a6a; --ink-light:#8888aa;
+  --page:#f7f6f2; --panel:#ffffff; --rule:#e2e0da;
+  --accent:#2563a8; --accent-2:#c84b31; --good:#1a7a4a;
+  --mono:'JetBrains Mono', monospace; --serif:'DM Serif Display', Georgia, serif; --sans:'Inter', system-ui, sans-serif;
+}
+html { font-size: 16px; scroll-behavior: smooth; }
+body { font-family: var(--sans); background: var(--page); color: var(--ink); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+.wrap { max-width: 960px; margin: 0 auto; padding: 0 20px; }
+header { border-bottom: 1px solid var(--rule); padding: 14px 0; background: var(--panel); }
+.header-inner { display: flex; align-items: center; justify-content: space-between; }
+.logo { font-family: var(--serif); font-size: 1.15rem; color: var(--ink); text-decoration: none; letter-spacing: -0.01em; }
+.logo span { color: var(--accent); }
+nav a { font-size: 0.8rem; font-weight: 500; color: var(--ink-mid); text-decoration: none; margin-left: 18px; letter-spacing: 0.04em; text-transform: uppercase; }
+nav a:hover { color: var(--accent); }
+.hero { padding: 52px 0 36px; border-bottom: 1px solid var(--rule); }
+.hero-eyebrow { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+.hero h1 { font-family: var(--serif); font-size: clamp(1.9rem, 4vw, 2.8rem); line-height: 1.18; color: var(--ink); max-width: 680px; margin-bottom: 16px; letter-spacing: -0.02em; }
+.hero-sub { font-size: 1rem; color: var(--ink-mid); max-width: 560px; line-height: 1.7; }
+.calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; padding: 36px 0; }
+@media (max-width: 680px) { .calc-grid { grid-template-columns: 1fr; } }
+.panel { background: var(--panel); border: 1px solid var(--rule); border-radius: 4px; padding: 28px; }
+.panel-title { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-light); margin-bottom: 22px; padding-bottom: 12px; border-bottom: 1px solid var(--rule); }
+.field { margin-bottom: 18px; }
+.field:last-child { margin-bottom: 0; }
+label { display: block; font-size: 0.78rem; font-weight: 500; color: var(--ink-mid); margin-bottom: 6px; }
+label .hint { font-weight: 400; color: var(--ink-light); margin-left: 4px; }
+.input-wrap { display: flex; align-items: center; border: 1px solid var(--rule); border-radius: 3px; background: var(--page); transition: border-color 0.15s; }
+.input-wrap:focus-within { border-color: var(--accent); background: #fff; }
+.input-prefix, .input-suffix { padding: 0 10px; font-size: 0.8rem; font-family: var(--mono); color: var(--ink-light); background: transparent; white-space: nowrap; }
+input[type=number] { border: none; background: transparent; outline: none; font-family: var(--mono); font-size: 0.9rem; color: var(--ink); padding: 9px 8px; width: 100%; }
+.results-panel { grid-column: 1 / -1; background: var(--ink); color: #fff; border-radius: 4px; padding: 32px; }
+.results-panel .panel-title { color: rgba(255,255,255,0.4); border-bottom-color: rgba(255,255,255,0.1); }
+.dti-display { display: flex; gap: 32px; margin: 20px 0 8px; flex-wrap: wrap; }
+.dti-block { flex: 1; min-width: 160px; }
+.dti-amount { font-family: var(--serif); font-size: clamp(2rem, 4.5vw, 3rem); color: #fff; letter-spacing: -0.03em; line-height: 1; }
+.dti-amount.good { color: #5dd68a; }
+.dti-amount.warn { color: #f0b429; }
+.dti-amount.bad { color: #f06464; }
+.dti-label-big { font-size: 0.78rem; color: rgba(255,255,255,0.5); margin-top: 6px; }
+.status-badge { display: inline-block; margin-top: 28px; padding: 8px 16px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+.status-badge.good { background: rgba(93,214,138,0.15); color: #5dd68a; }
+.status-badge.warn { background: rgba(240,180,41,0.15); color: #f0b429; }
+.status-badge.bad { background: rgba(240,100,100,0.15); color: #f06464; }
+.qual-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 14px; margin-top: 28px; }
+.qual-card { border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; padding: 14px; }
+.qual-name { font-size: 0.75rem; color: rgba(255,255,255,0.6); margin-bottom: 6px; }
+.qual-status { font-size: 0.85rem; font-weight: 600; }
+.qual-status.pass { color: #5dd68a; }
+.qual-status.fail { color: #f06464; }
+.breakdown { margin-top: 28px; border-top: 1px solid var(--rule); padding-top: 24px; }
+.breakdown-title { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-light); margin-bottom: 16px; }
+table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+th { text-align: left; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-light); padding: 6px 0; border-bottom: 1px solid var(--rule); }
+th:not(:first-child), td:not(:first-child) { text-align: right; }
+td { padding: 8px 0; border-bottom: 1px solid var(--rule); color: var(--ink-mid); font-family: var(--mono); }
+td:first-child { font-family: var(--sans); color: var(--ink); text-align: left; }
+tr:last-child td { border-bottom: none; font-weight: 600; color: var(--ink); }
+.btn-row { margin-top: 20px; display: flex; gap: 12px; flex-wrap: wrap; }
+.btn { display: inline-flex; align-items: center; gap: 7px; padding: 10px 18px; border-radius: 3px; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.04em; cursor: pointer; border: none; transition: opacity 0.15s; text-decoration: none; }
+.btn:hover { opacity: 0.85; }
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-secondary { background: transparent; border: 1px solid var(--rule); color: var(--ink-mid); }
+.content-section { padding: 40px 0; border-top: 1px solid var(--rule); }
+.content-section h2 { font-family: var(--serif); font-size: 1.5rem; color: var(--ink); margin-bottom: 14px; letter-spacing: -0.02em; }
+.content-section p { color: var(--ink-mid); line-height: 1.8; margin-bottom: 14px; max-width: 720px; font-size: 0.92rem; }
+.faq { margin-top: 32px; }
+.faq-item { border-top: 1px solid var(--rule); padding: 18px 0; }
+.faq-item:last-child { border-bottom: 1px solid var(--rule); }
+.faq-q { font-weight: 600; font-size: 0.92rem; color: var(--ink); margin-bottom: 8px; }
+.faq-a { font-size: 0.88rem; color: var(--ink-mid); line-height: 1.75; }
+.related { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 20px; }
+.related-card { border: 1px solid var(--rule); border-radius: 4px; padding: 18px; text-decoration: none; background: var(--panel); transition: border-color 0.15s; }
+.related-card:hover { border-color: var(--accent); }
+.related-card-title { font-weight: 600; font-size: 0.88rem; color: var(--ink); margin-bottom: 4px; }
+.related-card-desc { font-size: 0.78rem; color: var(--ink-light); }
+footer { border-top: 1px solid var(--rule); padding: 24px 0; margin-top: 40px; }
+.footer-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+.footer-note { font-size: 0.72rem; color: var(--ink-light); max-width: 520px; line-height: 1.6; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap header-inner">
+    <a href="/" class="logo"><img src="/senecacommons-logo.png" alt="Seneca Commons" style="height:36px;width:auto;display:block;"></a>
+    <nav>
+      <a href="/tools">All Tools</a>
+      <a href="/tools/early-retirement-fire-calculator">FIRE</a>
+      <a href="/tools/moving-cost-calculator">Moving Cost</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+
+    <div class="hero">
+      <div class="hero-eyebrow">Free · No login · Conventional, FHA &amp; VA thresholds</div>
+      <h1>Debt-to-Income Ratio Calculator — Mortgage Qualification Check</h1>
+      <p class="hero-sub">Lenders calculate DTI two ways: front-end (housing only) and back-end (all debt). Enter your income and monthly debts to see both ratios and exactly which loan types you qualify for.</p>
+    </div>
+
+    <div class="calc-grid">
+
+      <div class="panel">
+        <div class="panel-title">Gross Income</div>
+
+        <div class="field">
+          <label>Gross Monthly Income <span class="hint">(before tax, all sources)</span></label>
+          <div class="input-wrap">
+            <span class="input-prefix">$</span>
+            <input type="number" id="grossIncome" value="7500" min="500" max="200000" step="100">
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Proposed Monthly Housing Payment <span class="hint">(PITI: principal, interest, tax, insurance)</span></label>
+          <div class="input-wrap">
+            <span class="input-prefix">$</span>
+            <input type="number" id="housingPayment" value="2100" min="0" max="50000" step="50">
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Other Monthly Debt</div>
+
+        <div class="field">
+          <label>Auto Loan(s)</label>
+          <div class="input-wrap">
+            <span class="input-prefix">$</span>
+            <input type="number" id="autoDebt" value="380" min="0" max="10000" step="10">
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Student Loans</label>
+          <div class="input-wrap">
+            <span class="input-prefix">$</span>
+            <input type="number" id="studentDebt" value="220" min="0" max="10000" step="10">
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Credit Cards / Other Revolving Debt <span class="hint">(minimum payments)</span></label>
+          <div class="input-wrap">
+            <span class="input-prefix">$</span>
+            <input type="number" id="ccDebt" value="150" min="0" max="10000" step="10">
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Other Fixed Obligations <span class="hint">(child support, personal loans, etc.)</span></label>
+          <div class="input-wrap">
+            <span class="input-prefix">$</span>
+            <input type="number" id="otherDebt" value="0" min="0" max="10000" step="10">
+          </div>
+        </div>
+      </div>
+
+      <div class="panel results-panel">
+        <div class="panel-title">Your DTI</div>
+
+        <div class="dti-display">
+          <div class="dti-block">
+            <div class="dti-amount" id="frontEnd">28%</div>
+            <div class="dti-label-big">Front-End DTI (housing only)</div>
+          </div>
+          <div class="dti-block">
+            <div class="dti-amount" id="backEnd">38%</div>
+            <div class="dti-label-big">Back-End DTI (all debt)</div>
+          </div>
+        </div>
+
+        <div class="status-badge" id="statusBadge">Good Standing</div>
+
+        <div class="qual-grid">
+          <div class="qual-card"><div class="qual-name">Conventional (≤36/43%)</div><div class="qual-status" id="qualConv">Check</div></div>
+          <div class="qual-card"><div class="qual-name">FHA (≤31/43%)</div><div class="qual-status" id="qualFha">Check</div></div>
+          <div class="qual-card"><div class="qual-name">VA (≤41% back-end)</div><div class="qual-status" id="qualVa">Check</div></div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="downloadExcel()">⬇ Download DTI Report (Excel)</button>
+          <button class="btn btn-secondary" onclick="window.print()">Print Report</button>
+        </div>
+      </div>
+
+    </div>
+
+    <div id="affiliateBanner" style="display:none; margin:32px 0; background:#fff; border:1px solid #e2e0da; border-left:3px solid #2563a8; border-radius:4px; padding:20px 24px;">
+      <div style="font-size:0.68rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:#8888aa; margin-bottom:10px;">Next step</div>
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;">
+        <div>
+          <div id="affiliateLabel" style="font-family:'DM Serif Display',Georgia,serif; font-size:1.15rem; color:#1a1a2e; margin-bottom:4px;"></div>
+          <div id="affiliateSubtext" style="font-size:0.82rem; color:#4a4a6a;"></div>
+        </div>
+        <a id="affiliateLink" href="#" target="_blank" rel="noopener sponsored"
+           style="display:inline-flex; align-items:center; gap:8px; padding:10px 20px; background:#2563a8; color:#fff; border-radius:3px; font-size:0.82rem; font-weight:600; letter-spacing:0.04em; text-decoration:none; white-space:nowrap; flex-shrink:0;"
+           onclick="trackAffiliateClick(event)">
+          Get started →
+        </a>
+      </div>
+    </div>
+
+    <div class="breakdown">
+      <div class="breakdown-title">Full Breakdown</div>
+      <table id="breakdownTable">
+        <thead><tr><th>Item</th><th>Monthly Amount</th><th>% of Gross Income</th></tr></thead>
+        <tbody id="breakdownBody"></tbody>
+      </table>
+    </div>
+
+    <div class="content-section">
+      <h2>How Lenders Actually Calculate DTI</h2>
+      <p>Front-end DTI counts only your proposed housing payment (principal, interest, property tax, homeowners insurance, and any HOA dues) divided by gross monthly income. Back-end DTI adds every other recurring debt obligation — auto loans, student loans, minimum credit card payments, personal loans, child support — on top of housing, divided by the same gross income figure. Lenders weight back-end DTI more heavily, since it captures your total monthly obligation, not just the new mortgage payment.</p>
+      <p>The three major loan categories set different ceilings. Conventional loans (Fannie Mae/Freddie Mac guidelines) generally cap at 36% back-end for the best terms, though many lenders approve up to 45-50% back-end with strong compensating factors (high credit score, large down payment, significant cash reserves). FHA loans allow a higher ceiling — typically up to 43% back-end, sometimes higher with compensating factors, reflecting the program's design for buyers with thinner credit margins. VA loans use a more flexible 41% back-end guideline but weight residual income (what's left after all expenses) more heavily than DTI alone.</p>
+      <p>Gross income, not take-home pay, is the denominator lenders use — a deliberate standardization, since tax withholding and benefit deductions vary too much person to person to use as a baseline. This means your DTI will always look better on a mortgage application than it might "feel" against your actual paycheck.</p>
+
+      <div class="faq">
+        <div class="faq-item">
+          <div class="faq-q">What's a good debt-to-income ratio?</div>
+          <div class="faq-a">Under 36% back-end DTI is generally considered healthy and qualifies for the best rates across loan types. 36-43% is workable for most loan programs but may mean fewer lender options or slightly higher rates. Above 43% significantly narrows your options to FHA or VA loans with strong compensating factors, or may require paying down debt before qualifying.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">Does DTI include the mortgage I'm applying for?</div>
+          <div class="faq-a">Yes — both front-end and back-end DTI use the proposed new housing payment, not your current rent or existing mortgage (which gets excluded if you're selling that home as part of the purchase). This is why DTI calculations for a home purchase always use a forward-looking payment estimate, not your current housing cost.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">What counts as debt in the back-end calculation?</div>
+          <div class="faq-a">Recurring, reportable debt obligations: auto loans, student loans, minimum credit card payments (not full balance — just the required minimum), personal loans, child support or alimony, and other installment debt. Utilities, insurance (other than homeowners/PMI bundled into housing), groceries, and other living expenses are not counted, even though they're real monthly costs.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">Can I get approved with a DTI above the stated limits?</div>
+          <div class="faq-a">Sometimes — lenders use "compensating factors" (high credit score, large down payment, multiple months of cash reserves, low loan-to-value ratio) to approve borrowers above the standard guideline ceilings, especially through automated underwriting systems that weigh the full risk picture rather than a single hard cutoff. This varies significantly by lender and loan program, so a DTI slightly above guideline doesn't automatically mean disqualification.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h2>Related Calculators</h2>
+      <div class="related">
+        <a href="/tools/early-retirement-fire-calculator" class="related-card">
+          <div class="related-card-title">Early Retirement (FIRE) Calculator</div>
+          <div class="related-card-desc">Your number, your timeline, your real withdrawal rate</div>
+        </a>
+        <a href="/tools/moving-cost-calculator" class="related-card">
+          <div class="related-card-title">Moving Cost Calculator</div>
+          <div class="related-card-desc">Budget a cross-country relocation</div>
+        </a>
+        <a href="/tools/cost-of-living-by-state-calculator" class="related-card">
+          <div class="related-card-title">Cost of Living by State</div>
+          <div class="related-card-desc">Compare income tax and cost of living across states</div>
+        </a>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  <div class="wrap footer-inner">
+    <p class="footer-note">DTI thresholds reflect general 2026 guideline ranges for conventional, FHA, and VA loans. Actual approval depends on the specific lender, credit profile, and compensating factors. Not a substitute for mortgage pre-approval. Consult a licensed loan officer. Updated June 2026.</p>
+    <p class="footer-note" style="text-align:right; max-width:200px;">© 2026 SenecaCommons</p>
+  </div>
+</footer>
+
+<script>
+const inputs = {
+  grossIncome: document.getElementById('grossIncome'),
+  housingPayment: document.getElementById('housingPayment'),
+  autoDebt: document.getElementById('autoDebt'),
+  studentDebt: document.getElementById('studentDebt'),
+  ccDebt: document.getElementById('ccDebt'),
+  otherDebt: document.getElementById('otherDebt'),
+};
+Object.values(inputs).forEach(el => el.addEventListener('input', calculate));
+
+function fmt(n) { return '$' + Math.round(n).toLocaleString('en-US'); }
+function pct(n) { return n.toFixed(1) + '%'; }
+
+function calculate() {
+  const income = +inputs.grossIncome.value || 1;
+  const housing = +inputs.housingPayment.value || 0;
+  const auto = +inputs.autoDebt.value || 0;
+  const student = +inputs.studentDebt.value || 0;
+  const cc = +inputs.ccDebt.value || 0;
+  const other = +inputs.otherDebt.value || 0;
+
+  const totalDebt = housing + auto + student + cc + other;
+  const frontEnd = (housing / income) * 100;
+  const backEnd = (totalDebt / income) * 100;
+
+  document.getElementById('frontEnd').textContent = pct(frontEnd);
+  document.getElementById('backEnd').textContent = pct(backEnd);
+
+  const frontEl = document.getElementById('frontEnd');
+  const backEl = document.getElementById('backEnd');
+  const frontClass = frontEnd <= 28 ? 'good' : frontEnd <= 36 ? 'warn' : 'bad';
+  const backClass = backEnd <= 36 ? 'good' : backEnd <= 43 ? 'warn' : 'bad';
+  frontEl.className = 'dti-amount ' + frontClass;
+  backEl.className = 'dti-amount ' + backClass;
+
+  const badge = document.getElementById('statusBadge');
+  if (backEnd <= 36) { badge.textContent = 'Good Standing'; badge.className = 'status-badge good'; }
+  else if (backEnd <= 43) { badge.textContent = 'Workable — Fewer Options'; badge.className = 'status-badge warn'; }
+  else { badge.textContent = 'High — Limited Options'; badge.className = 'status-badge bad'; }
+
+  const convPass = frontEnd <= 36 && backEnd <= 43;
+  const fhaPass = frontEnd <= 31 && backEnd <= 43;
+  const vaPass = backEnd <= 41;
+  setQual('qualConv', convPass);
+  setQual('qualFha', fhaPass);
+  setQual('qualVa', vaPass);
+
+  const rows = [
+    ['Housing Payment (PITI)', fmt(housing), pct((housing/income)*100)],
+    ['Auto Loan(s)', fmt(auto), pct((auto/income)*100)],
+    ['Student Loans', fmt(student), pct((student/income)*100)],
+    ['Credit Cards / Revolving', fmt(cc), pct((cc/income)*100)],
+    ['Other Fixed Obligations', fmt(other), pct((other/income)*100)],
+    ['TOTAL MONTHLY DEBT', fmt(totalDebt), pct(backEnd)],
+  ];
+  document.getElementById('breakdownBody').innerHTML = rows.map(r =>
+    `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`
+  ).join('');
+
+  window._calcData = { income, housing, auto, student, cc, other, frontEnd, backEnd, rows };
+}
+
+function setQual(id, pass) {
+  const el = document.getElementById(id);
+  el.textContent = pass ? '✓ Likely Qualifies' : '✗ Above Threshold';
+  el.className = 'qual-status ' + (pass ? 'pass' : 'fail');
+}
+
+calculate();
+
+function downloadExcel() {
+  const d = window._calcData;
+  if (!d) return;
+  const script = document.createElement('script');
+  script.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+  script.onload = () => {
+    const wb = XLSX.utils.book_new();
+    const summary = [
+      ['Debt-to-Income Ratio Report', '', ''],
+      ['Generated', new Date().toLocaleDateString('en-US'), ''],
+      ['Gross Monthly Income', d.income, ''],
+      ['Front-End DTI', d.frontEnd.toFixed(1)+'%', ''],
+      ['Back-End DTI', d.backEnd.toFixed(1)+'%', ''],
+      ['', '', ''],
+      ['ITEM', 'MONTHLY', '% OF INCOME'],
+      ...d.rows,
+    ];
+    const ws = XLSX.utils.aoa_to_sheet(summary);
+    ws['!cols'] = [{wch:26},{wch:14},{wch:14}];
+    XLSX.utils.book_append_sheet(wb, ws, 'DTI Report');
+    XLSX.writeFile(wb, 'debt-to-income-ratio.xlsx');
+  };
+  document.head.appendChild(script);
+}
+
+let _affiliate = null;
+function withPageSource(url, page) {
+  try { const u = new URL(url); if (u.searchParams.has('source')) u.searchParams.set('source', 'page-' + page); return u.toString(); }
+  catch (e) { return url; }
+}
+(async function loadAffiliate() {
+  try {
+    const res = await fetch('/affiliates.json');
+    const data = await res.json();
+    const page = 'debt-to-income-ratio-calculator';
+    const candidates = data.slots.filter(s => s.active && s.pages.includes(page));
+    if (!candidates.length) return;
+    const totalWeight = candidates.reduce((s, c) => s + c.weight, 0);
+    let rand = Math.random() * totalWeight;
+    let chosen = candidates[candidates.length - 1];
+    for (const c of candidates) { rand -= c.weight; if (rand <= 0) { chosen = c; break; } }
+    _affiliate = chosen;
+    document.getElementById('affiliateLabel').textContent = chosen.label;
+    document.getElementById('affiliateSubtext').textContent = chosen.subtext;
+    document.getElementById('affiliateLink').href = withPageSource(chosen.url, page);
+    document.getElementById('affiliateBanner').style.display = 'block';
+  } catch (e) {}
+})();
+function trackAffiliateClick(e) {
+  if (!_affiliate) return;
+  const payload = { id: _affiliate.id, program: _affiliate.program, page: 'debt-to-income-ratio-calculator', ts: Date.now(), ua: navigator.userAgent.slice(0, 120) };
+  fetch('/api/click', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload), mode: 'no-cors' }).catch(() => {});
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Debt-to-Income Ratio Calculator",
+  "url": "https://senecacommons.com/tools/debt-to-income-ratio-calculator",
+  "description": "Free debt-to-income ratio calculator showing front-end and back-end DTI with conventional, FHA, and VA loan qualification thresholds.",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Web",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+}
+</script>
+
+</body>
+</html>

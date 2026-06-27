@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GST Calculator – Easy Calculation in One Step</title>
+<meta name="description" content="The simplest way to calculate GST. Type the amount, pick the rate, get your answer instantly. No forms, no setup — just an easy GST calculation.">
+<link rel="canonical" href="https://senecacommons.com/tools/gst-calculator-easy-calculation">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --ink:#1a1a2e; --ink-mid:#4a4a6a; --ink-light:#8888aa; --page:#f7f6f2;
+  --panel:#ffffff; --rule:#e2e0da; --accent:#c84b31; --accent-2:#2563a8;
+  --mono:'JetBrains Mono',monospace; --serif:'DM Serif Display',Georgia,serif;
+  --sans:'Inter',system-ui,sans-serif;
+}
+html{font-size:16px;scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--page);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased;}
+.wrap{max-width:760px;margin:0 auto;padding:0 20px;}
+header{border-bottom:1px solid var(--rule);padding:14px 0;background:var(--panel);}
+.header-inner{display:flex;align-items:center;justify-content:space-between;}
+.logo{font-family:var(--serif);font-size:1.15rem;color:var(--ink);text-decoration:none;letter-spacing:-.01em;}
+.logo span{color:var(--accent);}
+nav a{font-size:.8rem;font-weight:500;color:var(--ink-mid);text-decoration:none;margin-left:20px;letter-spacing:.04em;text-transform:uppercase;}
+nav a:hover{color:var(--accent);}
+.hero{padding:44px 0 28px;text-align:center;}
+.hero-eyebrow{font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;}
+.hero h1{font-family:var(--serif);font-size:clamp(1.7rem,4vw,2.4rem);line-height:1.2;color:var(--ink);margin-bottom:12px;letter-spacing:-.02em;}
+.hero-sub{font-size:.95rem;color:var(--ink-mid);max-width:480px;margin:0 auto;line-height:1.7;}
+.quick-panel{background:var(--panel);border:1px solid var(--rule);border-radius:6px;padding:32px;margin:24px 0;}
+.field{margin-bottom:20px;}
+.field:last-child{margin-bottom:0;}
+label{display:block;font-size:.8rem;font-weight:600;color:var(--ink-mid);margin-bottom:8px;text-align:center;}
+.amount-input-wrap{display:flex;align-items:center;justify-content:center;gap:6px;border:2px solid var(--rule);border-radius:6px;background:var(--page);padding:4px;transition:border-color .15s;max-width:320px;margin:0 auto;}
+.amount-input-wrap:focus-within{border-color:var(--accent-2);background:#fff;}
+.amount-input-wrap .prefix{font-size:1.3rem;font-family:var(--mono);color:var(--ink-light);padding-left:10px;}
+input#easyAmount{border:none;background:transparent;outline:none;font-family:var(--mono);font-size:1.5rem;font-weight:600;color:var(--ink);padding:10px 8px;width:100%;text-align:left;}
+.rate-row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:18px;}
+.rate-btn{padding:9px 16px;border:1px solid var(--rule);background:var(--page);border-radius:20px;font-size:.85rem;font-family:var(--mono);font-weight:600;color:var(--ink-mid);cursor:pointer;transition:all .15s;}
+.rate-btn.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+.toggle-row{display:flex;gap:8px;justify-content:center;margin-top:18px;}
+.toggle-btn{padding:9px 16px;border:1px solid var(--rule);background:var(--page);border-radius:20px;font-size:.8rem;font-weight:600;color:var(--ink-mid);cursor:pointer;transition:all .15s;}
+.toggle-btn.active{background:var(--accent-2);color:#fff;border-color:var(--accent-2);}
+.result-display{text-align:center;margin-top:28px;padding-top:24px;border-top:1px solid var(--rule);}
+.result-amount{font-family:var(--serif);font-size:clamp(2.4rem,7vw,3.6rem);color:var(--ink);letter-spacing:-.03em;line-height:1;}
+.result-sub{font-size:.85rem;color:var(--ink-light);margin-top:8px;}
+.result-split{display:flex;justify-content:center;gap:32px;margin-top:20px;flex-wrap:wrap;}
+.split-item{text-align:center;}
+.split-val{font-family:var(--mono);font-size:1.15rem;font-weight:600;color:var(--ink);}
+.split-label{font-size:.68rem;color:var(--ink-light);text-transform:uppercase;letter-spacing:.06em;margin-top:2px;}
+.content-section{padding:36px 0;border-top:1px solid var(--rule);}
+.content-section h2{font-family:var(--serif);font-size:1.35rem;color:var(--ink);margin-bottom:12px;letter-spacing:-.02em;}
+.content-section p{color:var(--ink-mid);line-height:1.8;margin-bottom:12px;font-size:.9rem;}
+.steps{margin:16px 0;padding-left:0;list-style:none;}
+.steps li{display:flex;gap:12px;margin-bottom:12px;font-size:.9rem;color:var(--ink-mid);line-height:1.6;}
+.steps li b{color:var(--ink);flex-shrink:0;font-family:var(--mono);background:var(--page);border:1px solid var(--rule);border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:.75rem;}
+.faq{margin-top:24px;}
+.faq-item{border-top:1px solid var(--rule);padding:16px 0;}
+.faq-item:last-child{border-bottom:1px solid var(--rule);}
+.faq-q{font-weight:600;font-size:.88rem;color:var(--ink);margin-bottom:6px;}
+.faq-a{font-size:.85rem;color:var(--ink-mid);line-height:1.7;}
+.related{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-top:16px;}
+.related-card{border:1px solid var(--rule);border-radius:4px;padding:16px;text-decoration:none;background:var(--panel);transition:border-color .15s;}
+.related-card:hover{border-color:var(--accent-2);}
+.related-card-title{font-weight:600;font-size:.85rem;color:var(--ink);margin-bottom:4px;}
+.related-card-desc{font-size:.76rem;color:var(--ink-light);}
+footer{border-top:1px solid var(--rule);padding:22px 0;margin-top:32px;}
+.footer-inner{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
+.footer-note{font-size:.7rem;color:var(--ink-light);max-width:480px;line-height:1.6;}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap header-inner">
+    <a href="/" class="logo"><img src="/senecacommons-logo.png" alt="Seneca Commons" style="height:36px;width:auto;display:block;"></a>
+    <nav>
+      <a href="/tools/gst-calculator-india">Full GST Tool</a>
+      <a href="/tools">All Tools</a>
+    </nav>
+  </div>
+</header>
+<main>
+  <div class="wrap">
+    <div class="hero">
+      <div class="hero-eyebrow">Free · No login · One step</div>
+      <h1>GST Calculator — Easy Calculation</h1>
+      <p class="hero-sub">Type the amount, tap a rate, done. No forms to fill, no setup — just the fastest way to work out GST on any amount.</p>
+    </div>
+
+    <div class="quick-panel">
+      <div class="field">
+        <label>Enter Amount</label>
+        <div class="amount-input-wrap">
+          <span class="prefix">₹</span>
+          <input type="number" id="easyAmount" value="1000" min="0" max="100000000" step="1" autofocus>
+        </div>
+      </div>
+      <div class="field">
+        <label>Pick GST Rate</label>
+        <div class="rate-row" id="easyRateRow">
+          <button class="rate-btn" data-rate="0">0%</button>
+          <button class="rate-btn" data-rate="5">5%</button>
+          <button class="rate-btn" data-rate="12">12%</button>
+          <button class="rate-btn active" data-rate="18">18%</button>
+          <button class="rate-btn" data-rate="28">28%</button>
+        </div>
+      </div>
+      <div class="field">
+        <label>Direction</label>
+        <div class="toggle-row">
+          <button class="toggle-btn active" id="easyBtnAdd" onclick="setEasyDirection('add')">Add GST to amount</button>
+          <button class="toggle-btn" id="easyBtnRemove" onclick="setEasyDirection('remove')">Remove GST from amount</button>
+        </div>
+      </div>
+
+      <div class="result-display">
+        <div class="result-amount" id="easyResult">₹1,180</div>
+        <div class="result-sub" id="easyResultSub">total amount including 18% GST</div>
+        <div class="result-split">
+          <div class="split-item">
+            <div class="split-val" id="easyBase">₹1,000</div>
+            <div class="split-label">Base Amount</div>
+          </div>
+          <div class="split-item">
+            <div class="split-val" id="easyGst">₹180</div>
+            <div class="split-label">GST Amount</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h2>How to Calculate GST in 3 Steps</h2>
+      <ol class="steps">
+        <li><b>1</b><span>Type your amount into the box above — this is your starting price, before or after GST depending on what you already know.</span></li>
+        <li><b>2</b><span>Tap the GST rate that applies — 18% covers most goods and services; check your invoice or the HSN/SAC code if you're not sure which rate applies to you.</span></li>
+        <li><b>3</b><span>Pick "Add GST" if your amount is the base price (GST gets added on top), or "Remove GST" if your amount already includes GST (the tax gets extracted out). Your answer updates instantly.</span></li>
+      </ol>
+      <p>That's the whole calculation — no account, no download, no waiting. For a full breakdown including CGST/SGST/IGST split, slab comparison tables, and an Excel export, the <a href="/tools/gst-calculator-india" style="color:var(--accent-2);">full GST calculator</a> covers all of that in more depth.</p>
+
+      <div class="faq">
+        <div class="faq-item">
+          <div class="faq-q">What does "add GST" vs "remove GST" mean?</div>
+          <div class="faq-a">Add GST means your number is the price before tax, and you want to know the final price a customer pays — GST gets added on top. Remove GST means your number is the final price already including tax, and you want to know what the original price was before tax — GST gets pulled back out. Always check which one matches the number you're starting with.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">Which GST rate should I use?</div>
+          <div class="faq-a">18% applies to most goods and services in India. 5% commonly applies to packaged food and footwear under ₹1,000. 12% covers processed food and some services. 28% applies to luxury items and tobacco. 0% applies to fresh produce, milk, and books. If you have an invoice, the rate is usually printed on it directly.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">Is this the same calculation as the full GST calculator?</div>
+          <div class="faq-a">Yes, the underlying math is identical — this page just strips away the CGST/SGST/IGST split and the slab-comparison table to give the fastest possible answer for a quick check. If you need the full split for invoicing or filing, use the full GST calculator linked above.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-section">
+      <h2>Related Calculators</h2>
+      <div class="related">
+        <a href="/tools/gst-calculator-india" class="related-card">
+          <div class="related-card-title">Full GST Calculator</div>
+          <div class="related-card-desc">CGST/SGST/IGST split, slab table, Excel export</div>
+        </a>
+        <a href="/tools/retirement-calculator-india" class="related-card">
+          <div class="related-card-title">Retirement Calculator India</div>
+          <div class="related-card-desc">Corpus, EPF, NPS & monthly SIP target</div>
+        </a>
+        <a href="/tools/salary-budget-calculator-india" class="related-card">
+          <div class="related-card-title">Salary Budget Calculator</div>
+          <div class="related-card-desc">50/30/20 rule, fixed-cost tracking</div>
+        </a>
+      </div>
+    </div>
+  </div>
+</main>
+<footer>
+  <div class="wrap footer-inner">
+    <p class="footer-note">GST calculations use standard slab rates and do not include compensation cess, where applicable. Not tax advice. Consult a chartered accountant or GST practitioner for compliance matters.</p>
+    <p class="footer-note" style="text-align:right;max-width:200px;">© 2026 SenecaCommons</p>
+  </div>
+</footer>
+<script>
+const $e=id=>document.getElementById(id);
+let easyDirection='add', easyRate=18;
+
+function fmtCr(n){
+  if(Math.abs(n)>=1e7)return'₹'+(n/1e7).toFixed(2)+' Cr';
+  if(Math.abs(n)>=1e5)return'₹'+(n/1e5).toFixed(2)+' L';
+  return'₹'+Math.round(Math.abs(n)).toLocaleString('en-IN');
+}
+
+function setEasyDirection(d){
+  easyDirection=d;
+  $e('easyBtnAdd').classList.toggle('active',d==='add');
+  $e('easyBtnRemove').classList.toggle('active',d==='remove');
+  easyCalculate();
+}
+
+document.querySelectorAll('#easyRateRow .rate-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('#easyRateRow .rate-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    easyRate=+btn.dataset.rate;
+    easyCalculate();
+  });
+});
+$e('easyAmount').addEventListener('input',easyCalculate);
+
+function easyCalculate(){
+  const amount=+$e('easyAmount').value||0;
+  const rate=easyRate;
+  let base,gst,total;
+  if(easyDirection==='add'){
+    base=amount; gst=base*rate/100; total=base+gst;
+  } else {
+    total=amount; base=total/(1+rate/100); gst=total-base;
+  }
+  $e('easyResult').textContent=fmtCr(total);
+  $e('easyResultSub').textContent=easyDirection==='add'
+    ? `total amount including ${rate}% GST`
+    : `original base, ${rate}% GST removed`;
+  $e('easyBase').textContent=fmtCr(base);
+  $e('easyGst').textContent=fmtCr(gst);
+}
+easyCalculate();
+
+let _easyAff=null;
+function withPageSource(url,page){
+  try{const u=new URL(url);if(u.searchParams.has('source'))u.searchParams.set('source','page-'+page);return u.toString();}
+  catch(e){return url;}
+}
+(async function(){
+  try{
+    const res=await fetch('/affiliates.json');
+    const data=await res.json();
+    const page='gst-calculator-easy-calculation';
+    const cands=data.slots.filter(s=>s.active&&s.pages.includes(page));
+    if(!cands.length)return;
+  }catch(e){}
+})();
+</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"GST Calculator - Easy Calculation","url":"https://senecacommons.com/tools/gst-calculator-easy-calculation","description":"The simplest GST calculator — enter amount, pick rate, get the answer instantly. No forms required.","applicationCategory":"FinanceApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"INR"}}</script>
+</body>
+</html>
