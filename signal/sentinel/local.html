@@ -30,7 +30,7 @@
   <div class="st-page-head">
     <div class="st-page-eyebrow">Sentinel · Local Layer</div>
     <h1 class="st-page-title">Local Sentinel</h1>
-    <p class="st-page-sub">Ground-truth anomaly detection. You aren't looking for crimes — you're looking for deviations from the norm. Seismic activity is live. Infrastructure and public-safety panels are staged pending a confirmed open data source.</p>
+    <p class="st-page-sub">Ground-truth anomaly detection. You aren't looking for crimes — you're looking for deviations from the norm. Seismic activity is live.</p>
   </div>
 
   <div class="st-grid" style="grid-template-columns: 1fr;">
@@ -47,7 +47,16 @@
 
   </div>
 
-  <p class="st-page-sub" style="margin-top: 24px;">Infrastructure Watch and Public Safety Advisories stay off this page for now. Water pressure, power grid, and municipal advisory data have no confirmed CORS-open public feed. NWS alerts (api.weather.gov) confirmed blocked for direct browser fetch — a proxy would be required, and none is built. Both panels return once a real source clears.</p>
+  <p class="st-page-sub" style="margin-top: 24px;">Infrastructure and public-safety advisories — water pressure, power grid, municipal alerts — sit outside this page's scope for now. Seismic activity above is the live ground-truth signal.</p>
+
+  <div class="st-banner" id="affiliateBanner">
+    <div>
+      <div class="st-banner-eyebrow">Sponsored</div>
+      <div class="st-banner-label" id="affiliateLabel"></div>
+      <div class="st-banner-subtext" id="affiliateSubtext"></div>
+    </div>
+    <a class="st-banner-link" id="affiliateLink" href="#" target="_blank" rel="noopener sponsored" onclick="trackAffiliateClick()">Learn more →</a>
+  </div>
 </main>
 
 <footer class="st-footer">
@@ -105,6 +114,33 @@ async function loadQuakes() {
 
 loadQuakes();
 setInterval(loadQuakes, 5 * 60 * 1000); // refresh every 5 min
+
+let _aff = null;
+(async function () {
+  try {
+    const res = await fetch('/affiliates.json');
+    const data = await res.json();
+    const page = 'local';
+    const cands = data.slots.filter(s => s.active && s.pages.includes(page));
+    if (!cands.length) return;
+    const tw = cands.reduce((s, c) => s + c.weight, 0);
+    let rand = Math.random() * tw, chosen = cands[cands.length - 1];
+    for (const c of cands) { rand -= c.weight; if (rand <= 0) { chosen = c; break; } }
+    _aff = chosen;
+    document.getElementById('affiliateLabel').textContent = chosen.label;
+    document.getElementById('affiliateSubtext').textContent = chosen.subtext;
+    document.getElementById('affiliateLink').href = chosen.url;
+    document.getElementById('affiliateBanner').classList.add('is-visible');
+  } catch (e) {}
+})();
+function trackAffiliateClick() {
+  if (!_aff) return;
+  fetch('/api/click', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id: _aff.id, program: _aff.program, page: 'local', ts: Date.now(), ua: navigator.userAgent.slice(0, 120) }),
+    mode: 'no-cors'
+  }).catch(() => {});
+}
 </script>
 
 </body>

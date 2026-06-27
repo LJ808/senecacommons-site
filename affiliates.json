@@ -71,7 +71,7 @@
       "commission": "80% revenue share (new sale)",
       "weight": 1.0,
       "active": true,
-      "pages": ["implied-probability-calculator", "kelly-criterion-calculator", "kalshi-vs-polymarket", "markets", "triggers", "immiseration"]
+      "pages": ["implied-probability-calculator", "kelly-criterion-calculator", "kalshi-vs-polymarket", "markets", "triggers", "immiseration", "macro", "local", "fear-greed", "signal-sentinel-index"]
     },
     {
       "id": "nordpass",
@@ -83,7 +83,7 @@
       "commission": "52.5% (1mo new), 21% (12mo new), 7% (12mo renewal)",
       "weight": 1.0,
       "active": true,
-      "pages": ["implied-probability-calculator", "kelly-criterion-calculator", "kalshi-vs-polymarket", "markets", "triggers", "immiseration"]
+      "pages": ["implied-probability-calculator", "kelly-criterion-calculator", "kalshi-vs-polymarket", "markets", "triggers", "immiseration", "macro", "local", "fear-greed", "signal-sentinel-index"]
     },
     {
       "id": "klook",
@@ -95,7 +95,7 @@
       "commission": "1.4% revenue share",
       "weight": 1.0,
       "active": true,
-      "pages": ["implied-probability-calculator", "kelly-criterion-calculator", "kalshi-vs-polymarket", "markets", "triggers", "immiseration"]
+      "pages": ["implied-probability-calculator", "kelly-criterion-calculator", "kalshi-vs-polymarket", "markets", "triggers", "immiseration", "macro", "local", "fear-greed", "signal-sentinel-index"]
     },
     {
       "id": "cloveoralcare",

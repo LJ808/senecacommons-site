@@ -101,6 +101,15 @@
   <div class="st-grid" style="grid-template-columns: repeat(2, 1fr);" id="fg-grid">
     <!-- four category panels injected here -->
   </div>
+
+  <div class="st-banner" id="affiliateBanner">
+    <div>
+      <div class="st-banner-eyebrow">Sponsored</div>
+      <div class="st-banner-label" id="affiliateLabel"></div>
+      <div class="st-banner-subtext" id="affiliateSubtext"></div>
+    </div>
+    <a class="st-banner-link" id="affiliateLink" href="#" target="_blank" rel="noopener sponsored" onclick="trackAffiliateClick()">Learn more →</a>
+  </div>
 </main>
 
 <footer class="st-footer">
@@ -211,6 +220,33 @@ loadFearGreed();
 // API itself only refreshes every 5 min via cron — polling faster than that
 // just re-reads the same cached KV value, so match the real cadence.
 setInterval(loadFearGreed, 2 * 60 * 1000);
+
+let _aff = null;
+(async function () {
+  try {
+    const res = await fetch('/affiliates.json');
+    const data = await res.json();
+    const page = 'fear-greed';
+    const cands = data.slots.filter(s => s.active && s.pages.includes(page));
+    if (!cands.length) return;
+    const tw = cands.reduce((s, c) => s + c.weight, 0);
+    let rand = Math.random() * tw, chosen = cands[cands.length - 1];
+    for (const c of cands) { rand -= c.weight; if (rand <= 0) { chosen = c; break; } }
+    _aff = chosen;
+    document.getElementById('affiliateLabel').textContent = chosen.label;
+    document.getElementById('affiliateSubtext').textContent = chosen.subtext;
+    document.getElementById('affiliateLink').href = chosen.url;
+    document.getElementById('affiliateBanner').classList.add('is-visible');
+  } catch (e) {}
+})();
+function trackAffiliateClick() {
+  if (!_aff) return;
+  fetch('/api/click', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id: _aff.id, program: _aff.program, page: 'fear-greed', ts: Date.now(), ua: navigator.userAgent.slice(0, 120) }),
+    mode: 'no-cors'
+  }).catch(() => {});
+}
 </script>
 
 </body>

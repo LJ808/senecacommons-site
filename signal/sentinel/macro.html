@@ -30,7 +30,7 @@
   <div class="st-page-head">
     <div class="st-page-eyebrow">Sentinel · Structural Layer</div>
     <h1 class="st-page-title">Macro PSI</h1>
-    <p class="st-page-sub">Political Stress Indicator framework, per Turchin's structural-demographic theory. Elite overproduction and state fiscal capacity — the two structural pillars that compound toward rupture.</p>
+    <p class="st-page-sub">Live federal debt-to-GDP, plus the elite-overproduction and fiscal-distress framework behind it.</p>
   </div>
 
   <div class="st-panel">
@@ -45,14 +45,22 @@
 
   <div class="st-panel" style="margin-top: 1px;">
     <div class="st-panel-head">
-      <span class="st-panel-title">No live panel here yet</span>
-      <span class="st-panel-status pending">EXPLAINER</span>
+      <span class="st-panel-title">Elite Overproduction &amp; State Legitimacy</span>
+      <span class="st-panel-status pending">CONTEXT</span>
     </div>
     <div class="st-panel-body">
-      <p class="st-page-sub">Three indicators on this page remain unsourced: intra-elite polarization, a state-legitimacy signal, and Turchin's published Crisis DB status.</p>
-      <p class="st-page-sub" style="margin-top: 12px;">Intra-elite polarization and the state-legitimacy signal aren't single feeds — they're synthesis indicators with no defined methodology yet. The Crisis DB status updates on Turchin's own publication schedule, not in real time, so it will run as a manually-refreshed read rather than a live call even once sourced.</p>
-      <p class="st-page-sub" style="margin-top: 12px;">These panels return once real sources clear — not before.</p>
+      <p class="st-page-sub">Political Stress Indicator framework, per Turchin's structural-demographic theory. Elite overproduction and state fiscal capacity — the two structural pillars that compound toward rupture.</p>
+      <p class="st-page-sub" style="margin-top: 12px;">Intra-elite polarization and state legitimacy run as synthesis reads here, not single live feeds — there's no one number for either. Turchin's own Crisis DB updates on his publication schedule, not in real time.</p>
     </div>
+  </div>
+
+  <div class="st-banner" id="affiliateBanner">
+    <div>
+      <div class="st-banner-eyebrow">Sponsored</div>
+      <div class="st-banner-label" id="affiliateLabel"></div>
+      <div class="st-banner-subtext" id="affiliateSubtext"></div>
+    </div>
+    <a class="st-banner-link" id="affiliateLink" href="#" target="_blank" rel="noopener sponsored" onclick="trackAffiliateClick()">Learn more →</a>
   </div>
 </main>
 
@@ -122,6 +130,33 @@ async function loadFred() {
 
 loadFred();
 setInterval(loadFred, 30 * 60 * 1000); // refresh every 30 min — quarterly data, no need to poll often
+
+let _aff = null;
+(async function () {
+  try {
+    const res = await fetch('/affiliates.json');
+    const data = await res.json();
+    const page = 'macro';
+    const cands = data.slots.filter(s => s.active && s.pages.includes(page));
+    if (!cands.length) return;
+    const tw = cands.reduce((s, c) => s + c.weight, 0);
+    let rand = Math.random() * tw, chosen = cands[cands.length - 1];
+    for (const c of cands) { rand -= c.weight; if (rand <= 0) { chosen = c; break; } }
+    _aff = chosen;
+    document.getElementById('affiliateLabel').textContent = chosen.label;
+    document.getElementById('affiliateSubtext').textContent = chosen.subtext;
+    document.getElementById('affiliateLink').href = chosen.url;
+    document.getElementById('affiliateBanner').classList.add('is-visible');
+  } catch (e) {}
+})();
+function trackAffiliateClick() {
+  if (!_aff) return;
+  fetch('/api/click', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id: _aff.id, program: _aff.program, page: 'macro', ts: Date.now(), ua: navigator.userAgent.slice(0, 120) }),
+    mode: 'no-cors'
+  }).catch(() => {});
+}
 </script>
 
 </body>

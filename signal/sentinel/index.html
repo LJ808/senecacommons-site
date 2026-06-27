@@ -103,7 +103,7 @@
   <a href="/signal/sentinel/macro" class="st-card">
     <div class="st-card-tag">Panel 01</div>
     <div class="st-card-title">Macro PSI</div>
-    <div class="st-card-desc">Live federal debt-to-GDP, plus the elite-overproduction and fiscal-distress framework behind it.</div>
+    <div class="st-card-desc">Political Stress Indicator framework, per Turchin's structural-demographic theory. Elite overproduction and state fiscal capacity — the two structural pillars that compound toward rupture.</div>
   </a>
   <a href="/signal/sentinel/immiseration" class="st-card">
     <div class="st-card-tag">Panel 02</div>
@@ -132,6 +132,15 @@
   </a>
 </div>
 
+<div class="st-banner" id="affiliateBanner" style="max-width:1400px;margin:0 auto;">
+  <div>
+    <div class="st-banner-eyebrow">Sponsored</div>
+    <div class="st-banner-label" id="affiliateLabel"></div>
+    <div class="st-banner-subtext" id="affiliateSubtext"></div>
+  </div>
+  <a class="st-banner-link" id="affiliateLink" href="#" target="_blank" rel="noopener sponsored" onclick="trackAffiliateClick()">Learn more →</a>
+</div>
+
 <footer class="st-footer">
   <span>SENTINEL NETWORK — Daily Sit-Rep</span>
   <span>Grounded in The Independent Manifesto</span>
@@ -144,6 +153,33 @@ function tick() {
 }
 tick();
 setInterval(tick, 1000);
+
+let _aff = null;
+(async function () {
+  try {
+    const res = await fetch('/affiliates.json');
+    const data = await res.json();
+    const page = 'signal-sentinel-index';
+    const cands = data.slots.filter(s => s.active && s.pages.includes(page));
+    if (!cands.length) return;
+    const tw = cands.reduce((s, c) => s + c.weight, 0);
+    let rand = Math.random() * tw, chosen = cands[cands.length - 1];
+    for (const c of cands) { rand -= c.weight; if (rand <= 0) { chosen = c; break; } }
+    _aff = chosen;
+    document.getElementById('affiliateLabel').textContent = chosen.label;
+    document.getElementById('affiliateSubtext').textContent = chosen.subtext;
+    document.getElementById('affiliateLink').href = chosen.url;
+    document.getElementById('affiliateBanner').classList.add('is-visible');
+  } catch (e) {}
+})();
+function trackAffiliateClick() {
+  if (!_aff) return;
+  fetch('/api/click', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id: _aff.id, program: _aff.program, page: 'signal-sentinel-index', ts: Date.now(), ua: navigator.userAgent.slice(0, 120) }),
+    mode: 'no-cors'
+  }).catch(() => {});
+}
 </script>
 
 </body>
