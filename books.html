@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Books — Seneca Commons</title>
+<meta name="description" content="The books behind Seneca Commons — James Greathouse's own work, plus the source material the Sentinel framework draws from.">
+<link rel="canonical" href="https://senecacommons.com/books">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --ink:       #1a1a2e;
+  --ink-mid:   #4a4a6a;
+  --ink-light: #8888aa;
+  --page:      #f7f6f2;
+  --panel:     #ffffff;
+  --rule:      #e2e0da;
+  --accent:    #c84b31;
+  --accent-2:  #2563a8;
+  --serif:     'DM Serif Display', Georgia, serif;
+  --sans:      'Inter', system-ui, sans-serif;
+}
+
+html { font-size: 16px; }
+body {
+  font-family: var(--sans);
+  background: var(--page);
+  color: var(--ink);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.wrap { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+
+header {
+  border-bottom: 1px solid var(--rule);
+  padding: 16px 0;
+  background: var(--panel);
+}
+.header-inner { display: flex; align-items: center; justify-content: space-between; }
+.logo {
+  font-family: var(--serif);
+  font-size: 1.2rem;
+  color: var(--ink);
+  text-decoration: none;
+  letter-spacing: -0.01em;
+}
+nav a {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--ink-mid);
+  text-decoration: none;
+  margin-left: 24px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+nav a:hover { color: var(--accent); }
+nav a.active { color: var(--accent); }
+
+.hero {
+  padding: 64px 0 48px;
+  border-bottom: 1px solid var(--rule);
+}
+.hero-eyebrow {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 20px;
+}
+.hero h1 {
+  font-family: var(--serif);
+  font-size: clamp(2.2rem, 4.5vw, 3.2rem);
+  line-height: 1.12;
+  color: var(--ink);
+  max-width: 680px;
+  margin-bottom: 20px;
+  letter-spacing: -0.03em;
+}
+.hero-body {
+  font-size: 1.02rem;
+  color: var(--ink-mid);
+  max-width: 560px;
+  line-height: 1.75;
+}
+
+.section {
+  padding: 48px 0;
+  border-bottom: 1px solid var(--rule);
+}
+.section-eyebrow {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-light);
+  margin-bottom: 8px;
+}
+.section-title {
+  font-family: var(--serif);
+  font-size: 1.6rem;
+  color: var(--ink);
+  margin-bottom: 10px;
+  letter-spacing: -0.02em;
+}
+.section-sub {
+  font-size: 0.88rem;
+  color: var(--ink-mid);
+  max-width: 600px;
+  line-height: 1.7;
+  margin-bottom: 32px;
+}
+
+/* Author's own books — get the card treatment, link to Gumroad */
+.book-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+.book-card {
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 24px;
+  text-decoration: none;
+  display: block;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  position: relative;
+}
+.book-card:hover {
+  border-color: var(--accent-2);
+  box-shadow: 0 2px 12px rgba(37,99,168,0.07);
+}
+.book-tag {
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 10px;
+  display: block;
+}
+.book-name {
+  font-family: var(--serif);
+  font-size: 1.2rem;
+  color: var(--ink);
+  margin-bottom: 8px;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}
+.book-desc {
+  font-size: 0.84rem;
+  color: var(--ink-mid);
+  line-height: 1.65;
+  margin-bottom: 4px;
+}
+.book-arrow {
+  position: absolute;
+  top: 24px;
+  right: 20px;
+  font-size: 1rem;
+  color: var(--ink-light);
+  transition: color 0.15s, transform 0.15s;
+}
+.book-card:hover .book-arrow {
+  color: var(--accent-2);
+  transform: translateX(3px);
+}
+
+/* Recommended reading — plain list, explicitly not links per Jay's instruction */
+.read-list {
+  list-style: none;
+}
+.read-item {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--rule);
+}
+.read-item:last-child { border-bottom: none; }
+.read-title {
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+.read-author {
+  font-size: 0.82rem;
+  color: var(--ink-light);
+  margin-top: 2px;
+}
+.read-note {
+  font-size: 0.82rem;
+  color: var(--ink-mid);
+  line-height: 1.6;
+  margin-top: 8px;
+  max-width: 600px;
+}
+
+footer {
+  border-top: 1px solid var(--rule);
+  padding: 24px 0;
+  margin-top: auto;
+}
+.footer-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+.footer-note { font-size: 0.72rem; color: var(--ink-light); }
+
+@media (max-width: 600px) {
+  .hero { padding: 44px 0 32px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap header-inner">
+    <a href="/" class="logo"><img src="/senecacommons-logo.png" alt="Seneca Commons" style="height:36px;width:auto;display:block;"></a>
+    <nav>
+      <a href="/tools">Tools</a>
+      <a href="/signal">Signal</a>
+      <a href="/books" class="active">Books</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-eyebrow">Source material</div>
+      <h1>The books behind Seneca Commons</h1>
+      <p class="hero-body">James Greathouse's own work, plus the reading that shaped the Sentinel framework — structural-demographic theory, Stoic philosophy, and practical resilience.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-eyebrow">By James Greathouse</div>
+      <div class="section-title">The two books this project is grounded in</div>
+      <p class="section-sub">Sentinel's five indicators of popular immiseration, and its Sentinel Network protocol, come directly from these.</p>
+      <div class="book-cards">
+
+        <a href="https://greathouse15.gumroad.com/" target="_blank" rel="noopener noreferrer" class="book-card">
+          <span class="book-arrow">→</span>
+          <span class="book-tag">2026 Update</span>
+          <div class="book-name">The Independent Manifesto</div>
+          <p class="book-desc">The structural-demographic checklist Sentinel tracks live: wage-productivity decoupling, deaths of despair, declining life expectancy, youth precarity, state fiscal distress. Also the source of the Sentinel Network household emergency-radio protocol.</p>
+        </a>
+
+        <a href="https://greathouse15.gumroad.com/" target="_blank" rel="noopener noreferrer" class="book-card">
+          <span class="book-arrow">→</span>
+          <span class="book-tag">2026 Update</span>
+          <div class="book-name">The Science of Social Collapse</div>
+          <p class="book-desc">The underlying thesis: how societies move from stress to rupture, and what separates resilience from collapse.</p>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="border-bottom: none;">
+    <div class="wrap">
+      <div class="section-eyebrow">Recommended reading</div>
+      <div class="section-title">The shelf behind the framework</div>
+      <p class="section-sub">Not for sale here, not affiliate links — just the books that shaped this project's thinking.</p>
+      <ul class="read-list">
+
+        <li class="read-item">
+          <div class="read-title">Letters from a Stoic</div>
+          <div class="read-author">Lucius Annaeus Seneca</div>
+          <p class="read-note">Stoic philosophy as a practice for facing setbacks without illusion — the temperament Sentinel asks of its reader.</p>
+        </li>
+
+        <li class="read-item">
+          <div class="read-title">Meditations</div>
+          <div class="read-author">Marcus Aurelius</div>
+          <p class="read-note">A working emperor's private notes on duty, mortality, and self-command.</p>
+        </li>
+
+        <li class="read-item">
+          <div class="read-title">The Annals &amp; The Histories</div>
+          <div class="read-author">Tacitus</div>
+          <p class="read-note">The collapse of Roman political legitimacy, recorded by someone who watched it happen.</p>
+        </li>
+
+        <li class="read-item">
+          <div class="read-title">The Fourth Turning Is Here</div>
+          <div class="read-author">Neil Howe</div>
+          <p class="read-note">The generational-cycle theory behind Sentinel's Macro PSI framing — elite overproduction, state fiscal capacity, and the structural math of rupture.</p>
+        </li>
+
+        <li class="read-item">
+          <div class="read-title">The Knowledge: How to Rebuild Our World from Scratch</div>
+          <div class="read-author">Lewis Dartnell</div>
+          <p class="read-note">What it actually takes to rebuild a technological civilization from first principles, if it ever came to that.</p>
+        </li>
+
+        <li class="read-item">
+          <div class="read-title">SAS Survival Handbook, Third Edition</div>
+          <div class="read-author">John "Lofty" Wiseman</div>
+          <p class="read-note">Practical survival skills from a 26-year SAS chief survival instructor — campcraft, navigation, first aid, disaster response.</p>
+        </li>
+
+        <li class="read-item">
+          <div class="read-title">Where There Is No Doctor</div>
+          <div class="read-author">David Werner, Carol Thuman, Jane Maxwell</div>
+          <p class="read-note">The world's most widely used village health care handbook — what to do when professional medical care isn't reachable.</p>
+        </li>
+
+      </ul>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap footer-inner">
+    <p class="footer-note">© 2026 Seneca Commons</p>
+    <p class="footer-note">Free tools. No login required.</p>
+  </div>
+</footer>
+
+</body>
+</html>
