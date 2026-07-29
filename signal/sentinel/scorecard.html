@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Failure-Chain Scorecard — Sentinel — Seneca Commons</title>
+<meta name="description" content="A weekly, programmatically-scored 12-item rubric across five subsystems -- capacity, logistics, labor, fiscal extraction, legitimacy -- summed to one 0-24 composite reading.">
+<link rel="canonical" href="https://senecacommons.com/signal/sentinel/scorecard">
+<link rel="stylesheet" href="/signal/sentinel/sentinel-terminal.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+.st-page-eyebrow.alert { color: var(--status-red); }
+
+.sc-overall {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  padding: 18px 12px;
+}
+.sc-overall-number {
+  font-family: var(--font-mono);
+  font-size: 3.2rem;
+  font-weight: 600;
+  line-height: 1;
+}
+.sc-overall-of {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.sc-overall-band {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.sc-normal { color: var(--status-green); }
+.sc-brittle { color: var(--status-yellow); }
+.sc-forming { color: var(--status-red); }
+.sc-critical { color: var(--status-red); }
+
+.sc-cat-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+.sc-cat-subtotal {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--text-muted);
+}
+.sc-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.sc-item:last-child { border-bottom: none; }
+.sc-item-label {
+  font-size: 12.5px;
+  color: var(--text-primary);
+}
+.sc-item-method {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+.sc-item-score {
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.sc-score-0 { color: var(--status-green); }
+.sc-score-1 { color: var(--status-yellow); }
+.sc-score-2 { color: var(--status-red); }
+
+.sc-methodology {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+.sc-methodology strong { color: var(--text-primary); }
+</style>
+</head>
+<body>
+
+<header class="st-topbar">
+  <a href="/" class="st-back">← Seneca Commons</a>
+  <a href="/signal/sentinel" class="st-logo"><span class="dot"></span>SENTINEL</a>
+  <nav class="st-tabs">
+    <a href="/signal/sentinel/macro" class="st-tab">Macro PSI</a>
+    <a href="/signal/sentinel/immiseration" class="st-tab">Immiseration</a>
+    <a href="/signal/sentinel/markets" class="st-tab">Markets</a>
+    <a href="/signal/sentinel/local" class="st-tab">Local</a>
+    <a href="/signal/sentinel/triggers" class="st-tab">Triggers</a>
+    <a href="/signal/sentinel/fear-greed" class="st-tab">Fear/Greed</a>
+    <a href="/signal/sentinel/scorecard" class="st-tab active">Scorecard</a>
+  </nav>
+  <span class="st-clock" id="st-clock">—</span>
+</header>
+
+<main class="st-page">
+  <div class="st-page-head">
+    <div class="st-page-eyebrow alert">Sentinel · Composite Layer</div>
+    <h1 class="st-page-title">Failure-Chain Scorecard</h1>
+    <p class="st-page-sub">Twelve items across five subsystems -- capacity, logistics, labor, fiscal extraction, legitimacy -- each scored 0/1/2 against a fixed threshold, summed to one 0-24 reading. Five items pull a live FRED series directly; seven use a headline-frequency proxy against BBC Business, BBC Economy, and Al Jazeera, since no free live numeric feed exists for them. Method is labeled per item -- a LIVE-SERIES score and a HEADLINE-PROXY score are not the same strength of evidence. Recomputed weekly.</p>
+  </div>
+
+  <section class="sc-overall">
+    <span class="sc-overall-number" id="sc-overall-number">—</span>
+    <div>
+      <span class="sc-overall-of">/24</span>
+      <div class="sc-overall-band" id="sc-overall-band">Connecting…</div>
+    </div>
+  </section>
+
+  <div class="st-grid" style="grid-template-columns: repeat(2, 1fr);" id="sc-grid">
+    <!-- five category panels injected here -->
+  </div>
+
+  <div class="st-panel" style="margin-top: 1px;">
+    <div class="st-panel-head">
+      <span class="st-panel-title">Methodology</span>
+      <span class="st-panel-status pending">CONTEXT</span>
+    </div>
+    <div class="st-panel-body">
+      <p class="sc-methodology">
+        <strong>LIVE-SERIES</strong> items (5 of 12): credit-to-state channel reads the ICE BofA US High-Yield Index OAS (FRED BAMLH0A0HYM2) against the same 400/500bp stress bands that marked 2008, 2020, and 2022. Financial plumbing reads Federal Reserve discount-window primary credit (FRED WLCFLPCL) against its own trailing 7-week baseline, since it normally sits near zero. Unemployment/hours uses the Sahm Rule real-time recession indicator (FRED SAHMREALTIME) at its own published 0.5pp trigger. Household distress reads credit-card delinquency (FRED DRCCLACBS). Tax base/interest crowding-out reads federal net interest outlays as percent of GDP (FRED FYOIGDA188S).
+      </p>
+      <p class="sc-methodology" style="margin-top: 10px;">
+        <strong>HEADLINE-PROXY</strong> items (7 of 12): government functioning, energy/transport reliability, physical delivery pain, input bottlenecks, coercive policy, social trust, and violence/disruption externalities each count keyword hits for the item's concept across the same three RSS feeds already live on Triggers and Markets. Zero hits scores 0, one or two hits scores 1, three or more scores 2. A real proxy, not a placeholder -- but weaker evidence than a hard series, which is why the method is shown next to every item rather than blended in silently.
+      </p>
+    </div>
+  </div>
+
+  <div class="st-banner" id="affiliateBanner">
+    <div>
+      <div class="st-banner-eyebrow">Sponsored</div>
+      <div class="st-banner-label" id="affiliateLabel"></div>
+      <div class="st-banner-subtext" id="affiliateSubtext"></div>
+    </div>
+    <a class="st-banner-link" id="affiliateLink" href="#" target="_blank" rel="noopener sponsored" onclick="trackAffiliateClick()">Learn more →</a>
+  </div>
+</main>
+
+<footer class="st-footer">
+  <span>SENTINEL NETWORK — Failure-Chain Scorecard</span>
+  <span style="display:flex;gap:14px;align-items:center;">
+    <a href="/books" style="color:inherit;text-decoration:none;">Grounded in The Independent Manifesto</a>
+    <span id="st-updated">Last updated —</span>
+  </span>
+</footer>
+
+<script>
+function tick() {
+  const now = new Date();
+  document.getElementById('st-clock').textContent = now.toUTCString().slice(17, 25) + ' UTC';
+}
+tick();
+setInterval(tick, 1000);
+
+function bandClass(band) {
+  if (band === 'Normal stress') return 'sc-normal';
+  if (band === 'Brittle') return 'sc-brittle';
+  if (band === 'Failure-chain forming') return 'sc-forming';
+  if (band === 'Critical') return 'sc-critical';
+  return '';
+}
+
+function itemDetailLine(item) {
+  const d = item.detail || {};
+  if (d.error) return 'Error: ' + d.error;
+  if (item.method === 'HEADLINE-PROXY') {
+    return (d.hits === undefined ? '—' : d.hits) + ' keyword hit(s) this week';
+  }
+  if (item.id === 'financial_plumbing') {
+    const pct = d.ratioAboveBaseline === undefined ? '—' : (d.ratioAboveBaseline * 100).toFixed(0) + '%';
+    return 'latest ' + (d.latest ?? '—') + ' ' + (d.unit || '') + ' · ' + pct + ' vs 7-wk baseline';
+  }
+  if (d.value === undefined) return d.note || 'no data';
+  return d.value + (d.unit || '') + ' as of ' + (d.asOf || '—');
+}
+
+function renderCategoryPanel(cat) {
+  const rows = (cat.items || []).map(item => {
+    return `<div class="sc-item">
+      <div>
+        <div class="sc-item-label">${item.label}</div>
+        <div class="sc-item-method">${item.method} · ${itemDetailLine(item)}</div>
+      </div>
+      <span class="sc-item-score sc-score-${item.score}">${item.score}</span>
+    </div>`;
+  }).join('');
+
+  return `<section class="st-panel">
+    <div class="st-panel-head">
+      <div class="sc-cat-head" style="width:100%;">
+        <span class="st-panel-title">${cat.label}</span>
+        <span class="sc-cat-subtotal">${cat.subtotal} / ${cat.max}</span>
+      </div>
+    </div>
+    <div class="st-panel-body">
+      ${rows}
+    </div>
+  </section>`;
+}
+
+async function loadScorecard() {
+  const overallNumber = document.getElementById('sc-overall-number');
+  const overallBand = document.getElementById('sc-overall-band');
+  const grid = document.getElementById('sc-grid');
+
+  try {
+    const res = await fetch('https://sentinel-proxy.jay-greathouse.workers.dev/scorecard');
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || ('HTTP ' + res.status));
+
+    if (data.total === null || data.total === undefined) {
+      overallNumber.textContent = '—';
+      overallNumber.className = 'sc-overall-number';
+      overallBand.textContent = data.note || 'Scorecard not yet computed — check back shortly.';
+      grid.innerHTML = '<div class="st-loading" style="grid-column: 1 / -1;">Waiting on the first weekly refresh…</div>';
+      return;
+    }
+
+    overallNumber.textContent = data.total;
+    overallNumber.className = 'sc-overall-number ' + bandClass(data.band);
+    overallBand.textContent = data.band + ' — five subsystems, twelve items, scored weekly.';
+
+    grid.innerHTML = (data.categories || []).map(renderCategoryPanel).join('');
+
+    document.getElementById('st-updated').textContent =
+      'Last updated ' + new Date(data.asOf).toUTCString().slice(0, 25) + ' UTC';
+  } catch (err) {
+    overallBand.textContent = 'Feed unreachable: ' + err.message;
+    grid.innerHTML = '<div class="st-error" style="grid-column: 1 / -1;">Scorecard feed unreachable: ' + err.message + '</div>';
+  }
+}
+
+loadScorecard();
+// Computed weekly via cron -- polling faster than that just re-reads the
+// same cached KV value, so check once per hour rather than every few minutes.
+setInterval(loadScorecard, 60 * 60 * 1000);
+
+let _aff = null;
+(async function () {
+  try {
+    const res = await fetch('/affiliates.json');
+    const data = await res.json();
+    const page = 'scorecard';
+    const cands = data.slots.filter(s => s.active && s.pages.includes(page));
+    if (!cands.length) return;
+    const tw = cands.reduce((s, c) => s + c.weight, 0);
+    let rand = Math.random() * tw, chosen = cands[cands.length - 1];
+    for (const c of cands) { rand -= c.weight; if (rand <= 0) { chosen = c; break; } }
+    _aff = chosen;
+    document.getElementById('affiliateLabel').textContent = chosen.label;
+    document.getElementById('affiliateSubtext').textContent = chosen.subtext;
+    document.getElementById('affiliateLink').href = chosen.url;
+    document.getElementById('affiliateBanner').classList.add('is-visible');
+  } catch (e) {}
+})();
+function trackAffiliateClick() {
+  if (!_aff) return;
+  fetch('/api/click', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id: _aff.id, program: _aff.program, page: 'scorecard', ts: Date.now(), ua: navigator.userAgent.slice(0, 120) }),
+    mode: 'no-cors'
+  }).catch(() => {});
+}
+</script>
+
+</body>
+</html>

@@ -71,7 +71,7 @@
       "commission": "80% revenue share (new sale)",
       "weight": 1.0,
       "active": true,
-      "pages": ["implied-probability-calculator", "kelly-criterion-calculator", "kalshi-vs-polymarket", "markets", "triggers", "immiseration", "macro", "local", "fear-greed", "signal-sentinel-index", "moving-cost-calculator", "cost-of-living-by-state-calculator", "remote-work-salary-adjustment-calculator", "best-cities-to-retire-calculator", "debt-to-income-ratio-calculator", "early-retirement-fire-calculator", "electric-vehicle-cost-savings-calculator"]
+      "pages": ["implied-probability-calculator", "kelly-criterion-calculator", "kalshi-vs-polymarket", "markets", "triggers", "immiseration", "macro", "local", "fear-greed", "signal-sentinel-index", "scorecard", "moving-cost-calculator", "cost-of-living-by-state-calculator", "remote-work-salary-adjustment-calculator", "best-cities-to-retire-calculator", "debt-to-income-ratio-calculator", "early-retirement-fire-calculator", "electric-vehicle-cost-savings-calculator"]
     },
     {
       "id": "nordpass",
@@ -83,7 +83,7 @@
       "commission": "52.5% (1mo new), 21% (12mo new), 7% (12mo renewal)",
       "weight": 1.0,
       "active": true,
-      "pages": ["implied-probability-calculator", "kelly-criterion-calculator", "kalshi-vs-polymarket", "markets", "triggers", "immiseration", "macro", "local", "fear-greed", "signal-sentinel-index", "moving-cost-calculator", "cost-of-living-by-state-calculator", "remote-work-salary-adjustment-calculator", "best-cities-to-retire-calculator", "debt-to-income-ratio-calculator", "early-retirement-fire-calculator", "electric-vehicle-cost-savings-calculator"]
+      "pages": ["implied-probability-calculator", "kelly-criterion-calculator", "kalshi-vs-polymarket", "markets", "triggers", "immiseration", "macro", "local", "fear-greed", "signal-sentinel-index", "scorecard", "moving-cost-calculator", "cost-of-living-by-state-calculator", "remote-work-salary-adjustment-calculator", "best-cities-to-retire-calculator", "debt-to-income-ratio-calculator", "early-retirement-fire-calculator", "electric-vehicle-cost-savings-calculator"]
     },
     {
       "id": "klook",
@@ -95,7 +95,7 @@
       "commission": "1.4% revenue share",
       "weight": 1.0,
       "active": true,
-      "pages": ["implied-probability-calculator", "kelly-criterion-calculator", "kalshi-vs-polymarket", "markets", "triggers", "immiseration", "macro", "local", "fear-greed", "signal-sentinel-index", "moving-cost-calculator", "cost-of-living-by-state-calculator", "remote-work-salary-adjustment-calculator", "best-cities-to-retire-calculator", "debt-to-income-ratio-calculator", "early-retirement-fire-calculator", "electric-vehicle-cost-savings-calculator"]
+      "pages": ["implied-probability-calculator", "kelly-criterion-calculator", "kalshi-vs-polymarket", "markets", "triggers", "immiseration", "macro", "local", "fear-greed", "signal-sentinel-index", "scorecard", "moving-cost-calculator", "cost-of-living-by-state-calculator", "remote-work-salary-adjustment-calculator", "best-cities-to-retire-calculator", "debt-to-income-ratio-calculator", "early-retirement-fire-calculator", "electric-vehicle-cost-savings-calculator"]
     },
     {
       "id": "cloveoralcare",
