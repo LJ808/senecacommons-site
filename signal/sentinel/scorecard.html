@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Failure-Chain Scorecard — Sentinel — Seneca Commons</title>
-<meta name="description" content="A weekly, programmatically-scored 12-item rubric across five subsystems -- capacity, logistics, labor, fiscal extraction, legitimacy -- summed to one 0-24 composite reading.">
+<meta name="description" content="A weekly, programmatically-scored 19-item rubric across eight subsystems -- capacity, logistics, labor, fiscal extraction, legitimacy, structural-demographic stress, price and energy stress, geopolitical fragmentation -- summed to one 0-38 composite reading.">
 <link rel="canonical" href="https://senecacommons.com/signal/sentinel/scorecard">
 <link rel="stylesheet" href="/signal/sentinel/sentinel-terminal.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -109,19 +109,19 @@
   <div class="st-page-head">
     <div class="st-page-eyebrow alert">Sentinel · Composite Layer</div>
     <h1 class="st-page-title">Failure-Chain Scorecard</h1>
-    <p class="st-page-sub">Twelve items across five subsystems -- capacity, logistics, labor, fiscal extraction, legitimacy -- each scored 0/1/2 against a fixed threshold, summed to one 0-24 reading. Five items pull a live FRED series directly; seven use a headline-frequency proxy against BBC Business, BBC Economy, and Al Jazeera, since no free live numeric feed exists for them. Method is labeled per item -- a LIVE-SERIES score and a HEADLINE-PROXY score are not the same strength of evidence. Recomputed weekly.</p>
+    <p class="st-page-sub">Nineteen items across eight subsystems -- capacity, logistics, labor, fiscal extraction, legitimacy, structural-demographic stress, price and energy stress, geopolitical fragmentation -- each scored 0/1/2 against a fixed threshold, summed to one 0-38 reading. Nine items pull a live FRED series directly; ten use a headline-frequency proxy against BBC Business, BBC Economy, and Al Jazeera, since no free live numeric feed exists for them. Method is labeled per item -- a LIVE-SERIES score and a HEADLINE-PROXY score are not the same strength of evidence. Recomputed weekly.</p>
   </div>
 
   <section class="sc-overall">
     <span class="sc-overall-number" id="sc-overall-number">—</span>
     <div>
-      <span class="sc-overall-of">/24</span>
+      <span class="sc-overall-of">/38</span>
       <div class="sc-overall-band" id="sc-overall-band">Connecting…</div>
     </div>
   </section>
 
-  <div class="st-grid" style="grid-template-columns: repeat(2, 1fr);" id="sc-grid">
-    <!-- five category panels injected here -->
+  <div class="st-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));" id="sc-grid">
+    <!-- eight category panels injected here -->
   </div>
 
   <div class="st-panel" style="margin-top: 1px;">
@@ -131,10 +131,13 @@
     </div>
     <div class="st-panel-body">
       <p class="sc-methodology">
-        <strong>LIVE-SERIES</strong> items (5 of 12): credit-to-state channel reads the ICE BofA US High-Yield Index OAS (FRED BAMLH0A0HYM2) against the same 400/500bp stress bands that marked 2008, 2020, and 2022. Financial plumbing reads Federal Reserve discount-window primary credit (FRED WLCFLPCL) against its own trailing 7-week baseline, since it normally sits near zero. Unemployment/hours uses the Sahm Rule real-time recession indicator (FRED SAHMREALTIME) at its own published 0.5pp trigger. Household distress reads credit-card delinquency (FRED DRCCLACBS). Tax base/interest crowding-out reads federal net interest outlays as percent of GDP (FRED FYOIGDA188S).
+        <strong>LIVE-SERIES</strong> items (9 of 19): credit-to-state channel reads the ICE BofA US High-Yield Index OAS (FRED BAMLH0A0HYM2) against the same 400/500bp stress bands that marked 2008, 2020, and 2022. Financial plumbing reads Federal Reserve discount-window primary credit (FRED WLCFLPCL) against its own trailing 7-week baseline, since it normally sits near zero. Unemployment/hours uses the Sahm Rule real-time recession indicator (FRED SAHMREALTIME) at its own published 0.5pp trigger. Household distress reads credit-card delinquency (FRED DRCCLACBS). Tax base/interest crowding-out reads federal net interest outlays as percent of GDP (FRED FYOIGDA188S). Inflation reads CPI year-over-year (FRED CPIAUCSL). Oil/energy price shock reads WTI crude (FRED DCOILWTICO) against its own trailing 29-day baseline. Real wage stagnation reads median real weekly earnings (FRED LES1252881600Q) year-over-year. The Wealth Pump item compares productivity growth (FRED OPHNFB) against real compensation growth (FRED COMPRNFB), both year-over-year -- when compensation runs flat or negative while productivity still grows, the item scores at its ceiling rather than displaying a divide-by-near-zero ratio.
       </p>
       <p class="sc-methodology" style="margin-top: 10px;">
-        <strong>HEADLINE-PROXY</strong> items (7 of 12): government functioning, energy/transport reliability, physical delivery pain, input bottlenecks, coercive policy, social trust, and violence/disruption externalities each count keyword hits for the item's concept across the same three RSS feeds already live on Triggers and Markets. Zero hits scores 0, one or two hits scores 1, three or more scores 2. A real proxy, not a placeholder -- but weaker evidence than a hard series, which is why the method is shown next to every item rather than blended in silently.
+        <strong>HEADLINE-PROXY</strong> items (10 of 19): government functioning, energy/transport reliability, physical delivery pain, input bottlenecks, coercive policy, social trust, violence/disruption externalities, elite fragmentation, US global order retrenchment, and global chokepoint fragility each count keyword hits for the item's concept across the same three RSS feeds already live on Triggers and Markets. Zero hits scores 0, one or two hits scores 1, three or more scores 2. A real proxy, not a placeholder -- but weaker evidence than a hard series, which is why the method is shown next to every item rather than blended in silently.
+      </p>
+      <p class="sc-methodology" style="margin-top: 10px;">
+        The structural-demographic, price/energy, and geopolitical items were added to reflect Peter Turchin's Political Stress Indicator (Mass Mobilization Potential, Elite Mobilization Potential, State Fiscal Distress) and the Wealth Pump mechanism named directly in <a href="/books" style="color:inherit;">The Independent Manifesto</a> and The Science of Social Collapse.
       </p>
     </div>
   </div>
@@ -182,6 +185,19 @@ function itemDetailLine(item) {
   if (item.id === 'financial_plumbing') {
     const pct = d.ratioAboveBaseline === undefined ? '—' : (d.ratioAboveBaseline * 100).toFixed(0) + '%';
     return 'latest ' + (d.latest ?? '—') + ' ' + (d.unit || '') + ' · ' + pct + ' vs 7-wk baseline';
+  }
+  if (item.id === 'oil_energy_shock') {
+    const pct = d.ratioVsBaseline === undefined || d.ratioVsBaseline === null ? '—' : (d.ratioVsBaseline * 100).toFixed(0) + '%';
+    return pct + ' vs 29-day baseline';
+  }
+  if (item.id === 'inflation' || item.id === 'real_wage_stagnation') {
+    return (d.yoyPercent === undefined || d.yoyPercent === null ? '—' : d.yoyPercent) + '% YoY';
+  }
+  if (item.id === 'wealth_pump') {
+    if (d.atCeiling) {
+      return 'productivity ' + (d.productivityYoYPercent ?? '—') + '% YoY vs compensation ' + (d.compensationYoYPercent ?? '—') + '% YoY';
+    }
+    return (d.ratio === undefined || d.ratio === null ? '—' : d.ratio + 'x') + ' · productivity ' + (d.productivityYoYPercent ?? '—') + '% vs compensation ' + (d.compensationYoYPercent ?? '—') + '%';
   }
   if (d.value === undefined) return d.note || 'no data';
   return d.value + (d.unit || '') + ' as of ' + (d.asOf || '—');
@@ -231,7 +247,7 @@ async function loadScorecard() {
 
     overallNumber.textContent = data.total;
     overallNumber.className = 'sc-overall-number ' + bandClass(data.band);
-    overallBand.textContent = data.band + ' — five subsystems, twelve items, scored weekly.';
+    overallBand.textContent = data.band + ' — eight subsystems, nineteen items, scored weekly.';
 
     grid.innerHTML = (data.categories || []).map(renderCategoryPanel).join('');
 
