@@ -327,6 +327,26 @@ body {
 }
 .st-banner-link:hover { opacity: 0.85; }
 
+/* === Explainer bar — persistent context, links to /about === */
+.st-explainer-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 18px;
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 11px;
+  color: var(--text-secondary);
+  text-align: center;
+}
+.st-explainer-bar a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
+}
+.st-explainer-bar a:hover { text-decoration: underline; }
+
 @media (max-width: 900px) {
   .st-tabs { flex-wrap: wrap; }
   .st-grid { grid-template-columns: 1fr !important; }

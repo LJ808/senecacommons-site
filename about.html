@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About — Seneca Commons</title>
+<meta name="description" content="Why one site pairs free financial calculators with Sentinel, a live structural-stress dashboard. What each half is for, and who built it.">
+<link rel="canonical" href="https://senecacommons.com/about">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --ink: #1a1a2e; --ink-mid: #4a4a6a; --ink-light: #8888aa;
+  --page: #f7f6f2; --panel: #ffffff; --rule: #e2e0da;
+  --accent: #c84b31; --accent-2: #2563a8;
+  --serif: 'DM Serif Display', Georgia, serif;
+  --sans: 'Inter', system-ui, sans-serif;
+}
+html { font-size: 16px; }
+body { font-family: var(--sans); background: var(--page); color: var(--ink); line-height: 1.6; -webkit-font-smoothing: antialiased; min-height: 100vh; display: flex; flex-direction: column; }
+.wrap { max-width: 720px; margin: 0 auto; padding: 0 24px; }
+header { border-bottom: 1px solid var(--rule); padding: 16px 0; background: var(--panel); }
+.header-inner { display: flex; align-items: center; justify-content: space-between; max-width: 960px; margin: 0 auto; padding: 0 24px; }
+.logo { font-family: var(--serif); font-size: 1.2rem; color: var(--ink); text-decoration: none; letter-spacing: -0.01em; }
+nav a { font-size: 0.78rem; font-weight: 500; color: var(--ink-mid); text-decoration: none; margin-left: 24px; letter-spacing: 0.05em; text-transform: uppercase; }
+nav a:hover { color: var(--accent); }
+.hero { padding: 56px 0 36px; }
+.hero-eyebrow { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
+.hero h1 { font-family: var(--serif); font-size: clamp(2rem, 4vw, 2.8rem); line-height: 1.15; color: var(--ink); margin-bottom: 20px; letter-spacing: -0.03em; }
+.body-text { font-size: 0.98rem; color: var(--ink-mid); line-height: 1.8; margin-bottom: 20px; }
+.body-text strong { color: var(--ink); }
+.split { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 32px 0; }
+.split-card { background: var(--panel); border: 1px solid var(--rule); border-radius: 4px; padding: 22px; }
+.split-tag { font-size: 0.64rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; display: block; }
+.split-title { font-family: var(--serif); font-size: 1.1rem; color: var(--ink); margin-bottom: 8px; }
+.split-desc { font-size: 0.84rem; color: var(--ink-mid); line-height: 1.6; }
+.split a { color: var(--accent-2); text-decoration: none; font-size: 0.82rem; font-weight: 600; display: inline-block; margin-top: 12px; }
+footer { border-top: 1px solid var(--rule); padding: 24px 0; margin-top: auto; }
+.footer-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; max-width: 960px; margin: 0 auto; padding: 0 24px; }
+.footer-note { font-size: 0.72rem; color: var(--ink-light); }
+@media (max-width: 600px) { .split { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="/" class="logo"><img src="/senecacommons-logo.png" alt="Seneca Commons" style="height:36px;width:auto;display:block;"></a>
+    <nav>
+      <a href="/tools">Tools</a>
+      <a href="/signal">Signal</a>
+      <a href="/books">Books</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="hero wrap">
+    <div class="hero-eyebrow">About</div>
+    <h1>One site, two halves</h1>
+    <p class="body-text">Seneca Commons pairs two things that don't usually sit together: free financial calculators, and Sentinel, a live dashboard tracking the structural indicators that precede social rupture. Same site, different tools, same underlying reason — <strong>clarity</strong>, whether the question is "what will my take-home pay be" or "how fragile does the system look this week."</p>
+    <p class="body-text">The name comes from Seneca, the Stoic philosopher who wrote that <strong>ruin is rapid</strong> — growth builds slowly, collapse arrives fast. "Age of Discord," the phrase on the homepage, names Peter Turchin's term for a period like this one: rising elite competition and falling living standards moving together, the pattern his structural-demographic theory tracks across centuries of historical data.</p>
+
+    <div class="split">
+      <div class="split-card">
+        <span class="split-tag">The calculators</span>
+        <div class="split-title">Tools</div>
+        <p class="split-desc">Free, no login, no paywall. Prediction-market math (implied probability, Kelly sizing) and personal finance (retirement, payroll, salary, SIP), several built for India-specific tax and compliance rules.</p>
+        <a href="/tools">Browse Tools →</a>
+      </div>
+      <div class="split-card">
+        <span class="split-tag">The dashboard</span>
+        <div class="split-title">Sentinel</div>
+        <p class="split-desc">Seven panels, weekly composite score, all built on live public data — FRED, USGS, RSS newswires — grounded in James Greathouse's own structural-demographic framework, not commentary or prediction.</p>
+        <a href="/signal/sentinel">Open Sentinel →</a>
+      </div>
+    </div>
+
+    <p class="body-text">The framework and the sourcing live in <a href="/books" style="color: var(--accent-2); text-decoration: none; font-weight: 600;">Books</a> — the two works this project is grounded in, plus the reading that shaped it.</p>
+  </div>
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <p class="footer-note">© 2026 Seneca Commons</p>
+    <p class="footer-note">Free tools. No login required.</p>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -220,6 +220,30 @@ nav a:hover { color: var(--accent); }
 .btn-light { background: rgba(255,255,255,0.12); color: #fff; border: 1px solid rgba(255,255,255,0.2); }
 .btn-light:hover { background: rgba(255,255,255,0.18); }
 
+.explainer-bar {
+  background: var(--panel);
+  border-bottom: 1px solid var(--rule);
+  padding: 8px 24px;
+  text-align: center;
+  font-size: 0.78rem;
+  color: var(--ink-mid);
+}
+.explainer-bar a { color: var(--accent-2); text-decoration: none; font-weight: 600; }
+.explainer-bar a:hover { text-decoration: underline; }
+
+.what-this-is {
+  padding: 0 0 44px;
+  border-bottom: 1px solid var(--rule);
+}
+.what-this-is p {
+  font-size: 0.92rem;
+  color: var(--ink-mid);
+  max-width: 620px;
+  line-height: 1.8;
+}
+.what-this-is a { color: var(--accent-2); text-decoration: none; font-weight: 600; }
+.what-this-is a:hover { text-decoration: underline; }
+
 footer {
   border-top: 1px solid var(--rule);
   padding: 24px 0;
@@ -247,6 +271,8 @@ footer {
   </div>
 </header>
 
+<div class="explainer-bar">Two products, one site: free calculators, and Sentinel, a live structural-stress dashboard. <a href="/about">What this is →</a></div>
+
 <main>
 
   <section class="hero">
@@ -258,6 +284,12 @@ footer {
         <a href="/tools" class="btn btn-primary">Browse Tools →</a>
         <a href="/signal" class="btn btn-outline">Read Signal</a>
       </div>
+    </div>
+  </section>
+
+  <section class="what-this-is">
+    <div class="wrap">
+      <p>This site pairs two things that don't usually sit together: free financial calculators, and Sentinel, a live dashboard tracking the structural indicators that precede social rupture. "Age of Discord" names historian Peter Turchin's term for a period like this one — rising elite competition and falling living standards moving together. <a href="/about">What this site is, in full →</a></p>
     </div>
   </section>
 
