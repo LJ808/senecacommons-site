@@ -79,6 +79,8 @@
 .sc-score-0 { color: var(--status-green); }
 .sc-score-1 { color: var(--status-yellow); }
 .sc-score-2 { color: var(--status-red); }
+.sc-score-na { color: var(--text-muted); font-weight: 500; }
+.sc-cat-unavailable { font-size: 10px; color: var(--text-muted); margin-left: 6px; }
 
 .sc-methodology {
   font-size: 12px;
@@ -207,20 +209,34 @@ function itemDetailLine(item) {
 
 function renderCategoryPanel(cat) {
   const rows = (cat.items || []).map(item => {
+    // A null score means the item's own fetch failed this week (see
+    // detail.error, already surfaced by itemDetailLine below) -- render a
+    // distinct dash badge, not a colored 0 that reads as a clean result.
+    // Fixed 2026-08-11 alongside the worker.js null-score change.
+    const scoreClass = item.score === null ? 'sc-score-na' : 'sc-score-' + item.score;
+    const scoreText = item.score === null ? '—' : item.score;
     return `<div class="sc-item">
       <div>
         <div class="sc-item-label">${item.label}</div>
         <div class="sc-item-method">${item.method} · ${itemDetailLine(item)}</div>
       </div>
-      <span class="sc-item-score sc-score-${item.score}">${item.score}</span>
+      <span class="sc-item-score ${scoreClass}">${scoreText}</span>
     </div>`;
   }).join('');
+
+  // effectiveMax (from worker.js) drops by 2 for every item that came back
+  // null this week -- shown as "(of N)" so the category max stays honest
+  // instead of implying every item was actually scored.
+  const effectiveMax = cat.effectiveMax === undefined ? cat.max : cat.effectiveMax;
+  const maxLabel = effectiveMax < cat.max
+    ? `${cat.subtotal} / ${effectiveMax}<span class="sc-cat-unavailable">(of ${cat.max})</span>`
+    : `${cat.subtotal} / ${cat.max}`;
 
   return `<section class="st-panel">
     <div class="st-panel-head">
       <div class="sc-cat-head" style="width:100%;">
         <span class="st-panel-title">${cat.label}</span>
-        <span class="sc-cat-subtotal">${cat.subtotal} / ${cat.max}</span>
+        <span class="sc-cat-subtotal">${maxLabel}</span>
       </div>
     </div>
     <div class="st-panel-body">
@@ -249,7 +265,15 @@ async function loadScorecard() {
 
     overallNumber.textContent = data.total;
     overallNumber.className = 'sc-overall-number ' + bandClass(data.band);
-    overallBand.textContent = data.band + ' — eight subsystems, nineteen items, scored weekly.';
+    let bandText = data.band + ' — eight subsystems, nineteen items, scored weekly.';
+    // unavailableCount (from worker.js) counts items whose own fetch failed
+    // this week -- surfaced here so the headline number doesn't read as a
+    // clean week when part of the rubric silently didn't report. Fixed
+    // 2026-08-11 alongside the null-score change.
+    if (data.unavailableCount) {
+      bandText += ` ${data.unavailableCount} item${data.unavailableCount === 1 ? '' : 's'} unavailable this week (data-source error) — excluded from the total, not scored as 0.`;
+    }
+    overallBand.textContent = bandText;
 
     grid.innerHTML = (data.categories || []).map(renderCategoryPanel).join('');
 
