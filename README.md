@@ -32,6 +32,7 @@ Free financial calculators and signal tools for uncertain times.
 **Prediction Markets**
 - [Implied Probability Calculator](https://senecacommons.com/tools/implied-probability-calculator)
 - [Kelly Criterion Calculator](https://senecacommons.com/tools/kelly-criterion-calculator)
+- [prediction-market-math](https://github.com/LJ808/prediction-market-math) — open-source JavaScript library for the same math: Kelly sizing, implied probability, fee-adjusted edge, Kalshi and Polymarket odds conversion
 
 ---
 
