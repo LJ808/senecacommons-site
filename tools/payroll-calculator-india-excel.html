@@ -108,7 +108,7 @@ footer{border-top:1px solid var(--rule);padding:24px 0;margin-top:40px;}
 <main>
   <div class="wrap">
     <div class="hero">
-      <div class="hero-eyebrow">Free · No login · FY 2025–26 tax slabs</div>
+      <div class="hero-eyebrow">Free · No login · FY 2026–27 tax slabs</div>
       <h1>Payroll Calculator India — CTC to In-Hand with Full Statutory Breakdown</h1>
       <p class="hero-sub">Enter your CTC and salary structure. Get exact in-hand salary after EPF, ESI, Professional Tax, HRA, LTA, and income tax — monthly and annual, instantly.</p>
     </div>
@@ -200,7 +200,7 @@ footer{border-top:1px solid var(--rule);padding:24px 0;margin-top:40px;}
           <label>Tax Regime</label>
           <div class="input-wrap">
             <select id="taxRegime">
-              <option value="new" selected>New Regime (FY 2025–26, default)</option>
+              <option value="new" selected>New Regime (FY 2026–27, default)</option>
               <option value="old">Old Regime (with deductions)</option>
             </select>
           </div>
@@ -254,8 +254,8 @@ footer{border-top:1px solid var(--rule);padding:24px 0;margin-top:40px;}
     <div class="content-section">
       <h2>How Indian Payroll Calculation Works</h2>
       <p>Indian payroll converts CTC to in-hand salary through three deduction layers: statutory contributions (EPF, ESI), professional tax, and income tax. Most salaried employees receive 60–75% of CTC as take-home — the gap depends primarily on tax bracket and EPF structure.</p>
-      <p>The salary structure matters as much as the total. A higher Basic percentage increases EPF contributions and HRA exemption potential but also raises income tax liability since Basic salary stays fully taxable. Many mid-level employees negotiate lower Basic and higher Special Allowance to minimize EPF deductions, particularly when they prefer directing their own PF-equivalent into equity mutual funds.</p>
-      <p>For FY 2025–26: the New Tax Regime offers a standard deduction of ₹75,000 and a rebate under Section 87A up to ₹60,000 — making income up to ₹12 lakh effectively tax-free for most salaried individuals. The Old Regime remains valuable primarily for those with large 80C investments, HRA exemption claims, and home loan interest deductions above ₹2 lakh.</p>
+      <p>The salary structure matters as much as the total. A higher Basic percentage increases EPF contributions and HRA exemption potential but also raises income tax liability since Basic salary stays fully taxable. Employees once negotiated lower Basic and higher Special Allowance to minimize EPF deductions. The four Labour Codes, in force since 21 November 2025, weaken that trick: the new wage definition adds excluded allowances back into wages once they exceed 50% of total remuneration, which raises the PF and gratuity base. Ask your payroll team how your employer applies the 50% rule before you restructure your pay.</p>
+      <p>For FY 2026–27: the New Tax Regime offers a standard deduction of ₹75,000 and a rebate under Section 87A (1961 Act numbering) up to ₹60,000 — making income up to ₹12 lakh effectively tax-free for most salaried individuals. The Income-tax Act 2025 renumbers many sections; for example, Section 80C became Section 123. The Old Regime remains valuable primarily for those with large 80C investments, HRA exemption claims, and home loan interest deductions above ₹2 lakh.</p>
       <div class="faq">
         <div class="faq-item">
           <div class="faq-q">Why does in-hand salary differ from what my offer letter shows?</div>
@@ -297,7 +297,7 @@ footer{border-top:1px solid var(--rule);padding:24px 0;margin-top:40px;}
 </main>
 <footer>
   <div class="wrap footer-inner">
-    <p class="footer-note">Calculations use FY 2025–26 tax slabs, New Regime default as per Finance Act 2025. EPF rate 8.25%, ESI employee share 0.75%. Professional Tax rates sourced from state government notifications. Results are indicative. Not tax advice.</p>
+    <p class="footer-note">Calculations use FY 2026–27 tax slabs, New Regime default (Budget 2026 left the slabs, standard deduction and 87A rebate unchanged from FY 2025–26; the Income-tax Act 2025 took effect 1 April 2026). EPF rate 8.25%, ESI employee share 0.75%. Professional Tax rates sourced from state government notifications. Results are indicative. Not tax advice.</p>
     <p class="footer-note" style="text-align:right;max-width:200px;">© 2026 SenecaCommons</p>
   </div>
 </footer>
@@ -312,10 +312,11 @@ const $=id=>document.getElementById(id);
 
 function calcTax(gross,regime){
   if(regime==='new'){
-    const slabs=[[300000,0],[400000,.05],[400000,.10],[400000,.15],[400000,.20],[Infinity,.30]];
-    let tax=0,rem=Math.max(0,gross-75000);
+    const slabs=[[400000,0],[400000,.05],[400000,.10],[400000,.15],[400000,.20],[400000,.25],[Infinity,.30]];
+    const ti=Math.max(0,gross-75000);
+    let tax=0,rem=ti;
     for(const[lim,rate]of slabs){if(rem<=0)break;const c=Math.min(rem,lim);tax+=c*rate;rem-=c;}
-    if(tax<=60000)tax=0;
+    if(ti<=1200000)tax=0;else tax=Math.min(tax,ti-1200000);
     return tax*1.04;
   }else{
     let ti=Math.max(0,gross-50000);let tax=0;
@@ -401,7 +402,7 @@ function downloadExcel(){
   s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
   s.onload=()=>{
     const wb=XLSX.utils.book_new();
-    const data=[['India Payroll Calculator FY 2025-26','','',''],
+    const data=[['India Payroll Calculator FY 2026-27','','',''],
       ['Generated',new Date().toLocaleDateString('en-IN'),'',''],['','','',''],
       ['Component','Monthly (₹)','Annual (₹)','Notes'],
       ...d.rows.map(r=>[r.l,Math.round(r.m),Math.round(r.a),r.n])];
@@ -444,6 +445,6 @@ function trackAffiliateClick(){
 }
 calculate();
 </script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Payroll Calculator India","url":"https://senecacommons.com/tools/payroll-calculator-india-excel","description":"Free Indian payroll calculator. CTC to in-hand with EPF, ESI, Professional Tax, and FY 2025-26 income tax. Download Excel payslip.","applicationCategory":"FinanceApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"INR"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Payroll Calculator India","url":"https://senecacommons.com/tools/payroll-calculator-india-excel","description":"Free Indian payroll calculator. CTC to in-hand with EPF, ESI, Professional Tax, and FY 2026-27 income tax. Download Excel payslip.","applicationCategory":"FinanceApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"INR"}}</script>
 </body>
 </html>

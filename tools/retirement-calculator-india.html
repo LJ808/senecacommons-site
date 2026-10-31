@@ -429,7 +429,7 @@ footer {
   <div class="wrap">
 
     <div class="hero">
-      <div class="hero-eyebrow">Free · No login · Updated for FY 2025–26</div>
+      <div class="hero-eyebrow">Free · No login · Updated for FY 2026–27</div>
       <h1>Retirement Calculator India — Corpus, EPF, NPS & Monthly SIP</h1>
       <p class="hero-sub">Enter your current salary, savings rate, and retirement age. Get your required corpus, monthly SIP target, and an inflation-adjusted projection curve — instantly.</p>
     </div>
@@ -617,7 +617,7 @@ footer {
       <h2>How to Calculate Your Retirement Corpus in India</h2>
       <p>A retirement corpus calculation for India requires four inputs the global calculators miss: EPF contributions, the 7th Pay Commission structure for government employees, India's long-term inflation rate (historically 5.5–7%), and the post-retirement return on a conservative Indian portfolio (Senior Citizen Savings Scheme, debt mutual funds, and annuities).</p>
       <p>The standard formula compounds your current savings and monthly SIP at your expected pre-retirement return, then calculates the corpus needed to sustain inflation-adjusted monthly withdrawals over your expected retirement period. The gap between the two is the number you need to close.</p>
-      <p>For FY 2025–26: EPF employee contribution remains 12% of basic salary (capped at ₹15,000 basic), NPS Tier 1 contribution qualifies for deduction under Section 80CCD(1B) up to ₹50,000 over the Section 80C limit. Both should run in parallel with equity mutual fund SIPs for anyone targeting retirement before 55.</p>
+      <p>For FY 2026–27: EPF employee contribution remains 12% of basic salary (capped at ₹15,000 basic). Under the old regime, an NPS Tier 1 contribution qualifies for deduction under Section 80CCD(1B) (Section 124(3) of the Income-tax Act 2025) up to ₹50,000 beyond the Section 80C limit (Section 123 of the new Act). Both should run in parallel with equity mutual fund SIPs for anyone targeting retirement before 55.</p>
 
       <div class="faq">
         <div class="faq-item">
@@ -626,7 +626,7 @@ footer {
         </div>
         <div class="faq-item">
           <div class="faq-q">Does this calculator include EPF?</div>
-          <div class="faq-a">Include your current EPF balance in the "Current Savings" field. Your monthly EPF contribution (you + employer) should go into "Monthly SIP / Investment." EPF currently earns 8.25% — if your EPF forms a large share of savings, set your pre-retirement return rate closer to 9–10%.</div>
+          <div class="faq-a">Include your current EPF balance in the "Current Savings" field. Your monthly EPF contribution (you + employer) should go into "Monthly SIP / Investment." EPF earned 8.25% for FY 2025–26 — if your EPF forms a large share of savings, set your pre-retirement return rate closer to 9–10%.</div>
         </div>
         <div class="faq-item">
           <div class="faq-q">What return rate should I use for Indian equity mutual funds?</div>
@@ -663,7 +663,7 @@ footer {
 
 <footer>
   <div class="wrap footer-inner">
-    <p class="footer-note">Results are estimates for planning purposes. EPF interest rate (currently 8.25%), tax slabs, and NPS rules change annually. Consult a SEBI-registered financial advisor before major retirement decisions. Updated April 2026 for FY 2025–26.</p>
+    <p class="footer-note">Results are estimates for planning purposes. EPF interest rate (8.25% for FY 2025–26), tax slabs, and NPS rules change annually. Consult a SEBI-registered financial advisor before major retirement decisions. Tax and EPF notes reviewed October 2026 for FY 2026–27; the EPF rate shown covers FY 2025–26.</p>
     <p class="footer-note" style="text-align:right; max-width:200px;">© 2026 SenecaCommons</p>
   </div>
 </footer>
@@ -812,7 +812,7 @@ function calculate() {
     const vsStr = (vs >= 0 ? '+' : '') + fmtLakh(vs);
     const vsClass = vs >= 0 ? 'good' : '';
     return `<tr>
-      <td>${2025 + i + 1}</td>
+      <td>${new Date().getFullYear() + i + 1}</td>
       <td style="font-family:var(--mono)">${r.age}</td>
       <td>${fmtLakh(r.salary)}</td>
       <td>${fmtLakh(r.investment)}</td>
@@ -947,7 +947,7 @@ function downloadExcel() {
     // Year-by-year sheet
     const yby = [['Year','Age','Annual Salary','Annual Investment','Projected Corpus','vs Required']];
     d.rows.forEach((r, i) => {
-      yby.push([2025+i+1, r.age,
+      yby.push([new Date().getFullYear()+i+1, r.age,
         Math.round(r.salary), Math.round(r.investment),
         Math.round(r.corpus), Math.round(r.corpus - r.needed)]);
     });

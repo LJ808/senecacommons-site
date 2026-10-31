@@ -105,7 +105,7 @@ footer{border-top:1px solid var(--rule);padding:24px 0;margin-top:40px;}
 <main>
   <div class="wrap">
     <div class="hero">
-      <div class="hero-eyebrow">Free · No login · FY 2025–26</div>
+      <div class="hero-eyebrow">Free · No login · FY 2026–27</div>
       <h1>Salary Bonus Calculator India — Performance & Statutory Bonus with TDS</h1>
       <p class="hero-sub">Enter your annual salary and bonus amount. Get exact take-home after TDS — performance bonus, statutory bonus under the Payment of Bonus Act, and marginal tax impact shown side by side.</p>
     </div>
@@ -153,7 +153,7 @@ footer{border-top:1px solid var(--rule);padding:24px 0;margin-top:40px;}
           <label>Tax Regime</label>
           <div class="input-wrap">
             <select id="taxRegime">
-              <option value="new" selected>New Regime (FY 2025–26)</option>
+              <option value="new" selected>New Regime (FY 2026–27)</option>
               <option value="old">Old Regime</option>
             </select>
           </div>
@@ -225,7 +225,7 @@ footer{border-top:1px solid var(--rule);padding:24px 0;margin-top:40px;}
     <div class="content-section">
       <h2>How Bonus TDS Gets Calculated in India</h2>
       <p>Performance bonuses in India attract TDS at the marginal income tax rate applicable to the employee's total annual income including the bonus. Employers calculate TDS using one of two methods: the marginal rate method (apply the slab rate applicable to total income directly to the bonus), or the annualised method (add the bonus to the annualised salary, compute full-year tax, subtract tax already deducted on regular salary, deduct the difference from the bonus).</p>
-      <p>The annualised method produces a more accurate TDS figure when bonuses push income across a slab boundary. Under the New Regime for FY 2025–26, the 20% slab begins at ₹12 lakh and the 30% slab at ₹15 lakh. An employee earning ₹11.5 lakh in regular salary who receives a ₹1 lakh bonus crosses the 20% threshold — correct TDS calculation must account for the partial slab crossover, not simply apply 20% to the whole bonus.</p>
+      <p>The annualised method produces a more accurate TDS figure when bonuses push income across a slab boundary. Under the New Regime for FY 2026–27, tax starts above ₹4 lakh of taxable income and the 30% slab begins above ₹24 lakh. Section 87A makes taxable income up to ₹12 lakh tax-free, and marginal relief caps the tax just above that line at the income over ₹12 lakh. An employee with ₹11.5 lakh of taxable income who receives a ₹1 lakh bonus crosses the rebate threshold — correct TDS calculation must account for the rebate loss and the relief zone, not simply apply one slab rate to the whole bonus.</p>
       <p>Statutory bonus under the Payment of Bonus Act applies to employees whose basic salary plus DA does not exceed ₹21,000/month. The Act mandates a minimum of 8.33% and permits a maximum of 20% of basic salary (or ₹7,000/month, whichever is higher) as the computation base. Statutory bonus also attracts income tax — it forms part of gross salary and gets taxed at the applicable slab rate.</p>
       <div class="faq">
         <div class="faq-item">
@@ -264,7 +264,7 @@ footer{border-top:1px solid var(--rule);padding:24px 0;margin-top:40px;}
 </main>
 <footer>
   <div class="wrap footer-inner">
-    <p class="footer-note">Tax calculations use FY 2025–26 slabs. Statutory bonus figures per Payment of Bonus Act 1965, as amended. TDS treatment varies by employer — verify with your payroll team. Not tax advice. Consult a CA for complex bonus structures.</p>
+    <p class="footer-note">Tax calculations use FY 2026–27 slabs (Budget 2026 left the new-regime slabs, standard deduction and 87A rebate unchanged from FY 2025–26). Statutory bonus figures per Payment of Bonus Act 1965, as amended. TDS treatment varies by employer — verify with your payroll team. Not tax advice. Consult a CA for complex bonus structures.</p>
     <p class="footer-note" style="text-align:right;max-width:200px;">© 2026 SenecaCommons</p>
   </div>
 </footer>
@@ -276,10 +276,11 @@ $('basicPct').addEventListener('input',()=>{$('basicPctVal').textContent=$('basi
 
 function calcAnnualTax(income,regime,inv80c){
   if(regime==='new'){
-    const slabs=[[300000,0],[400000,.05],[400000,.10],[400000,.15],[400000,.20],[Infinity,.30]];
-    let tax=0,rem=Math.max(0,income-75000);
+    const slabs=[[400000,0],[400000,.05],[400000,.10],[400000,.15],[400000,.20],[400000,.25],[Infinity,.30]];
+    const ti=Math.max(0,income-75000);
+    let tax=0,rem=ti;
     for(const[lim,rate]of slabs){if(rem<=0)break;const c=Math.min(rem,lim);tax+=c*rate;rem-=c;}
-    if(tax<=60000)tax=0;
+    if(ti<=1200000)tax=0;else tax=Math.min(tax,ti-1200000);
     return tax*1.04;
   }else{
     let ti=Math.max(0,income-50000-Math.min(inv80c,150000));
@@ -293,6 +294,16 @@ function calcAnnualTax(income,regime,inv80c){
 }
 function getMarginalRate(income,regime){
   const ti=regime==='new'?Math.max(0,income-75000):Math.max(0,income-50000);
+  if(regime==='new'){
+    if(ti<=400000)return 0;
+    if(ti<=800000)return 0.05*1.04;
+    if(ti<=1200000)return 0;
+    if(ti<=1270588)return 1.04;
+    if(ti<=1600000)return 0.15*1.04;
+    if(ti<=2000000)return 0.20*1.04;
+    if(ti<=2400000)return 0.25*1.04;
+    return 0.30*1.04;
+  }
   if(ti<=300000)return 0;
   if(ti<=700000)return 0.05*1.04;
   if(ti<=1100000)return 0.10*1.04;
@@ -369,7 +380,7 @@ function downloadExcel(){
   s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
   s.onload=()=>{
     const wb=XLSX.utils.book_new();
-    const data=[['Salary Bonus Calculator India FY 2025-26','',''],
+    const data=[['Salary Bonus Calculator India FY 2026-27','',''],
       ['Generated',new Date().toLocaleDateString('en-IN'),''],['','',''],
       ['Component','Amount (₹)','Notes'],
       ...d.rows.map(r=>[r.l,Math.round(r.v),r.n])];
@@ -413,6 +424,6 @@ function trackAffiliateClick(){
 }
 calculate();
 </script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Salary Bonus Calculator India","url":"https://senecacommons.com/tools/salary-bonus-calculator-india","description":"Free India bonus calculator. Performance bonus and statutory bonus take-home after TDS, FY 2025-26 tax slabs, marginal and annualised TDS methods.","applicationCategory":"FinanceApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"INR"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Salary Bonus Calculator India","url":"https://senecacommons.com/tools/salary-bonus-calculator-india","description":"Free India bonus calculator. Performance bonus and statutory bonus take-home after TDS, FY 2026-27 tax slabs, marginal and annualised TDS methods.","applicationCategory":"FinanceApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"INR"}}</script>
 </body>
 </html>

@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GST Calculator India – CGST, SGST, IGST Split with HSN Rate Lookup</title>
-<meta name="description" content="Calculate GST instantly — inclusive or exclusive, CGST/SGST/IGST split, any rate from 0% to 28%. Free, no login. Excel download.">
+<meta name="description" content="Calculate GST instantly — inclusive or exclusive, CGST/SGST/IGST split, any rate from 0% to 40%. Free, no login. Excel download.">
 <link rel="canonical" href="https://senecacommons.com/tools/gst-calculator-india">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -137,9 +137,8 @@ footer{border-top:1px solid var(--rule);padding:24px 0;margin-top:40px;}
             <button class="rate-btn" data-rate="0.25">0.25%</button>
             <button class="rate-btn" data-rate="3">3%</button>
             <button class="rate-btn" data-rate="5">5%</button>
-            <button class="rate-btn" data-rate="12">12%</button>
             <button class="rate-btn active" data-rate="18">18%</button>
-            <button class="rate-btn" data-rate="28">28%</button>
+            <button class="rate-btn" data-rate="40">40%</button>
           </div>
         </div>
         <div class="field">
@@ -163,10 +162,10 @@ footer{border-top:1px solid var(--rule);padding:24px 0;margin-top:40px;}
           <div style="font-size:.7rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-light);margin-bottom:12px;">Common GST Slabs (HSN Reference)</div>
           <div style="font-size:.78rem;color:var(--ink-mid);line-height:2;">
             0%: Fresh produce, milk, books<br>
-            5%: Packaged food, footwear &lt;₹1000<br>
-            12%: Processed food, business class air<br>
+            5%: Essentials and packaged food (many items moved here from 12%)<br>
             18%: Most goods &amp; services, electronics, IT services<br>
-            28%: Luxury goods, automobiles, tobacco
+            40%: Luxury and sin goods, such as tobacco<br>
+            12% and 28%: retired 22 Sep 2025. Use Custom Rate for older invoices.
           </div>
         </div>
       </div>
@@ -218,7 +217,7 @@ footer{border-top:1px solid var(--rule);padding:24px 0;margin-top:40px;}
       <h2>How GST Gets Calculated</h2>
       <p>GST (Goods and Services Tax) applies as a percentage of the base price, replacing India's earlier patchwork of VAT, service tax, and excise duty with one unified tax. The two calculation directions matter: exclusive GST adds the tax on top of a given base price (Total = Base × (1 + Rate)), while inclusive GST extracts the tax already baked into a given total price (Base = Total ÷ (1 + Rate)).</p>
       <p>For intra-state transactions, GST splits evenly between CGST (Central GST) and SGST (State GST) — each gets exactly half the total GST rate. An 18% intra-state sale breaks into 9% CGST plus 9% SGST, both going to different government accounts despite combining to the same total burden on the buyer. For inter-state transactions, the full rate gets collected as IGST (Integrated GST) instead, which the central government later apportions to the destination state.</p>
-      <p>Rate selection depends on the HSN (Harmonized System of Nomenclature) or SAC (Services Accounting Code) classification of the specific goods or service — not a single nationwide rate. Most goods and services fall under 18%, but essentials like fresh food sit at 0%, processed food and footwear often at 5% or 12%, and luxury or sin goods like tobacco and automobiles at 28%, frequently with an additional compensation cess on top.</p>
+      <p>Rate selection depends on the HSN (Harmonized System of Nomenclature) or SAC (Services Accounting Code) classification of the specific goods or service — not a single nationwide rate. Most goods and services fall under 18%, but essentials like fresh food sit at 0%, many essentials and packaged foods at 5%, and luxury or sin goods like tobacco at 40%. GST 2.0, effective 22 September 2025, replaced the older five-slab structure (5, 12, 18, 28 plus 0) with 5%, 18% and 40%, and moved most goods from the 12% and 28% slabs into the lower two.</p>
       <div class="faq">
         <div class="faq-item">
           <div class="faq-q">What's the difference between GST inclusive and exclusive?</div>
@@ -234,7 +233,7 @@ footer{border-top:1px solid var(--rule);padding:24px 0;margin-top:40px;}
         </div>
         <div class="faq-item">
           <div class="faq-q">Does this calculator handle GST compensation cess?</div>
-          <div class="faq-a">No — this calculator covers standard CGST/SGST/IGST slabs only (0%, 0.25%, 3%, 5%, 12%, 18%, 28%, or any custom rate). Compensation cess applies on top of the base rate for specific items like tobacco, aerated drinks, and certain automobiles, and varies by item rather than following a fixed slab — check the item-specific cess notification separately if it applies to your transaction.</div>
+          <div class="faq-a">No — this calculator covers standard CGST/SGST/IGST slabs only (0%, 0.25%, 3%, 5%, 18%, 40%, or any custom rate). Compensation cess applied on top of the base rate for specific items such as tobacco. The 2025 reform changed cess treatment for many items, and cess varies by item rather than following a fixed slab. Check the item-specific notification separately if it applies to your transaction.</div>
         </div>
       </div>
     </div>
@@ -354,7 +353,7 @@ function calculate(){
   $('splitBase').style.width=basePct+'%';
   $('splitGst').style.width=(100-basePct)+'%';
 
-  const slabs=[0,5,12,18,28];
+  const slabs=[0,5,18,40];
   $('breakdownBody').innerHTML=slabs.map(r=>{
     const s=gstSplit(amount,r,direction);
     const c=supply==='intra'?s.gst/2:s.gst;
