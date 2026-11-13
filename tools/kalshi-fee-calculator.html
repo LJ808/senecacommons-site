@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kalshi Fee Calculator — Fee per Contract and Break-Even | Seneca Commons</title>
+<meta name="description" content="Calculate Kalshi trading fees for any contract price and quantity using the published fee formula, rounded up to the cent. See total cost and break-even win rate. Free, no login.">
+<link rel="canonical" href="https://senecacommons.com/tools/kalshi-fee-calculator">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Kalshi Fee Calculator",
+  "url": "https://senecacommons.com/tools/kalshi-fee-calculator",
+  "description": "Calculate the Kalshi trading fee for any contract price and number of contracts, with break-even win probability.",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --ink: #1a1a2e; --ink-mid: #4a4a6a; --ink-light: #8888aa;
+  --page: #f7f6f2; --panel: #ffffff; --rule: #e2e0da;
+  --accent: #c84b31; --accent-2: #2563a8;
+  --green: #1a7a4a; --green-bg: #f0faf4;
+  --amber: #92600a; --amber-bg: #fdf8ee;
+  --red: #b91c1c; --red-bg: #fef2f2;
+  --serif: 'DM Serif Display', Georgia, serif;
+  --sans: 'Inter', system-ui, sans-serif;
+}
+html { font-size: 16px; }
+body { font-family: var(--sans); background: var(--page); color: var(--ink); line-height: 1.6; -webkit-font-smoothing: antialiased; min-height: 100vh; display: flex; flex-direction: column; }
+.wrap { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+header { border-bottom: 1px solid var(--rule); padding: 16px 0; background: var(--panel); }
+.header-inner { display: flex; align-items: center; justify-content: space-between; }
+.logo { font-family: var(--serif); font-size: 1.2rem; color: var(--ink); text-decoration: none; letter-spacing: -0.01em; }
+.logo em { color: var(--accent); font-style: normal; }
+nav a { font-size: 0.78rem; font-weight: 500; color: var(--ink-mid); text-decoration: none; margin-left: 24px; letter-spacing: 0.05em; text-transform: uppercase; }
+nav a:hover { color: var(--accent); }
+
+.page-hero { padding: 52px 0 36px; border-bottom: 1px solid var(--rule); }
+.page-eyebrow { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+.page-title { font-family: var(--serif); font-size: clamp(2rem, 4vw, 2.8rem); color: var(--ink); margin-bottom: 14px; letter-spacing: -0.02em; }
+.page-sub { font-size: 0.95rem; color: var(--ink-mid); max-width: 560px; line-height: 1.75; }
+
+.tool-section { padding: 48px 0; flex: 1; }
+.tool-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start; }
+
+.calc-panel { background: var(--panel); border: 1px solid var(--rule); border-radius: 4px; padding: 32px; }
+.calc-title { font-family: var(--serif); font-size: 1.2rem; color: var(--ink); margin-bottom: 24px; letter-spacing: -0.01em; }
+
+.field { margin-bottom: 20px; }
+.field label { display: block; font-size: 0.78rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-mid); margin-bottom: 8px; }
+.field-hint { font-size: 0.72rem; color: var(--ink-light); margin-bottom: 6px; display: block; }
+.field-row { display: flex; align-items: center; gap: 8px; }
+.field input[type="number"] {
+  width: 100%; padding: 10px 14px; border: 1px solid var(--rule);
+  border-radius: 3px; font-size: 1rem; font-family: var(--sans);
+  color: var(--ink); background: var(--page);
+  transition: border-color 0.15s;
+  -moz-appearance: textfield;
+}
+.field input[type="number"]::-webkit-outer-spin-button,
+.field input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+.field input[type="number"]:focus { outline: none; border-color: var(--accent-2); background: #fff; }
+.field-unit { font-size: 0.82rem; font-weight: 600; color: var(--ink-light); white-space: nowrap; }
+
+.divider { border: none; border-top: 1px solid var(--rule); margin: 24px 0; }
+
+/* Edge indicator */
+.edge-bar-wrap { margin-top: 10px; }
+.edge-bar-track { height: 6px; background: var(--rule); border-radius: 3px; overflow: hidden; }
+.edge-bar-fill { height: 100%; border-radius: 3px; transition: width 0.2s, background 0.2s; }
+.edge-label { font-size: 0.72rem; color: var(--ink-light); margin-top: 5px; }
+
+/* Results */
+.result-block { display: flex; flex-direction: column; gap: 12px; }
+.result-row { display: flex; justify-content: space-between; align-items: baseline; padding: 14px 16px; border-radius: 3px; }
+.result-row.primary { background: var(--green-bg); border: 1px solid #b8e8cc; }
+.result-row.secondary { background: var(--amber-bg); border: 1px solid #e8d0a0; }
+.result-row.muted { background: var(--page); }
+.result-row.negative { background: var(--red-bg); border: 1px solid #fca5a5; }
+.result-label { font-size: 0.78rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-mid); }
+.result-row.primary .result-label { color: var(--green); }
+.result-row.secondary .result-label { color: var(--amber); }
+.result-row.negative .result-label { color: var(--red); }
+.result-value { font-family: var(--serif); font-size: 1.5rem; color: var(--ink); letter-spacing: -0.02em; }
+.result-row.primary .result-value { color: var(--green); }
+.result-row.secondary .result-value { color: var(--amber); }
+.result-row.negative .result-value { color: var(--red); }
+.result-sub { font-size: 0.72rem; color: var(--ink-light); margin-top: 2px; }
+
+.no-edge-msg { background: var(--red-bg); border: 1px solid #fca5a5; border-radius: 3px; padding: 16px; font-size: 0.85rem; color: var(--red); line-height: 1.6; display: none; }
+
+/* Explainer */
+.explainer { display: flex; flex-direction: column; gap: 24px; }
+.explainer-card { background: var(--panel); border: 1px solid var(--rule); border-radius: 4px; padding: 24px; }
+.explainer-card h3 { font-family: var(--serif); font-size: 1.05rem; color: var(--ink); margin-bottom: 10px; letter-spacing: -0.01em; }
+.explainer-card p { font-size: 0.85rem; color: var(--ink-mid); line-height: 1.7; }
+.explainer-card p + p { margin-top: 8px; }
+.formula { font-family: 'Courier New', monospace; font-size: 0.82rem; background: var(--page); border: 1px solid var(--rule); border-radius: 3px; padding: 10px 14px; margin-top: 10px; color: var(--ink); letter-spacing: 0.02em; line-height: 1.7; }
+.warning-card { background: var(--amber-bg); border: 1px solid #e8d0a0; border-radius: 4px; padding: 20px; }
+.warning-card h3 { font-family: var(--serif); font-size: 1rem; color: var(--amber); margin-bottom: 8px; }
+.warning-card p { font-size: 0.82rem; color: var(--amber); line-height: 1.65; opacity: 0.9; }
+
+/* CTA */
+.cta-strip { border-top: 1px solid var(--rule); background: var(--panel); padding: 32px 0; }
+.cta-inner { display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+.cta-text h3 { font-family: var(--serif); font-size: 1.15rem; color: var(--ink); margin-bottom: 6px; letter-spacing: -0.01em; }
+.cta-text p { font-size: 0.82rem; color: var(--ink-mid); max-width: 440px; line-height: 1.65; }
+.cta-links { display: flex; gap: 12px; flex-wrap: wrap; }
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 18px; border-radius: 3px; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.04em; text-decoration: none; transition: opacity 0.15s; white-space: nowrap; }
+.btn:hover { opacity: 0.82; }
+.btn-primary { background: var(--accent-2); color: #fff; }
+.btn-outline { background: transparent; border: 1px solid var(--rule); color: var(--ink-mid); }
+
+/* Related */
+.related { padding: 40px 0; border-top: 1px solid var(--rule); }
+.related-title { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-light); margin-bottom: 16px; }
+.related-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+.related-card { background: var(--panel); border: 1px solid var(--rule); border-radius: 4px; padding: 20px; text-decoration: none; display: block; transition: border-color 0.15s; position: relative; }
+.related-card:hover { border-color: var(--accent-2); }
+.related-tag { font-size: 0.62rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; display: block; }
+.related-name { font-family: var(--serif); font-size: 1rem; color: var(--ink); letter-spacing: -0.01em; }
+.related-arrow { position: absolute; top: 20px; right: 16px; font-size: 0.9rem; color: var(--ink-light); }
+
+footer { border-top: 1px solid var(--rule); padding: 24px 0; margin-top: auto; }
+.footer-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+.footer-note { font-size: 0.72rem; color: var(--ink-light); }
+
+@media (max-width: 680px) {
+  .tool-layout { grid-template-columns: 1fr; }
+  .cta-inner { flex-direction: column; align-items: flex-start; }
+}
+
+select { width: 100%; padding: 10px 14px; border: 1px solid var(--rule); border-radius: 3px; font-size: 1rem; font-family: var(--sans); color: var(--ink); background: var(--page); }
+select:focus { outline: none; border-color: var(--accent-2); background: #fff; }
+.fee-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin-top: 12px; }
+.fee-table th { text-align: left; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-light); padding: 8px 6px; border-bottom: 1px solid var(--rule); }
+.fee-table td { padding: 7px 6px; border-bottom: 1px solid var(--rule); color: var(--ink-mid); }
+.fee-table tr.hl td { background: var(--amber-bg); color: var(--ink); font-weight: 600; }
+.note { font-size: 0.72rem; color: var(--ink-light); margin-top: 6px; line-height: 1.6; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap header-inner">
+    <a href="/" class="logo"><img src="/senecacommons-logo.png" alt="Seneca Commons" style="height:36px;width:auto;display:block;"></a>
+    <nav>
+      <a href="/tools">Tools</a>
+      <a href="/signal">Signal</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="page-hero">
+    <div class="wrap">
+      <div class="page-eyebrow">Prediction Markets &middot; Free Calculator</div>
+      <h1 class="page-title">Kalshi Fee Calculator</h1>
+      <p class="page-sub">Work out the exact trading fee on a Kalshi order from the contract price and the number of contracts. Uses Kalshi&rsquo;s published fee formula, rounded up to the cent, and shows your break-even win rate with the fee included.</p>
+    </div>
+  </div>
+
+  <div class="tool-section">
+    <div class="wrap">
+      <div class="tool-layout">
+
+        <div class="calc-panel">
+          <div class="calc-title">Your order</div>
+
+          <div class="field">
+            <label for="price">Contract price</label>
+            <span class="field-hint">Price you pay per contract, in cents (1&ndash;99). Buying NO? Enter the NO price.</span>
+            <div class="field-row">
+              <input type="number" id="price" min="1" max="99" step="1" value="50" oninput="calculate()">
+              <span class="field-unit">&cent;</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="contracts">Number of contracts</label>
+            <span class="field-hint">Each contract pays $1 if it wins</span>
+            <div class="field-row">
+              <input type="number" id="contracts" min="1" step="1" value="100" oninput="calculate()">
+              <span class="field-unit">contracts</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="otype">Order type</label>
+            <select id="otype" onchange="calculate()">
+              <option value="taker" selected>Taker (order fills immediately)</option>
+              <option value="maker-standard">Maker, most markets (resting order)</option>
+              <option value="maker-combo">Maker, combo markets (50% of taker fee)</option>
+            </select>
+            <span class="note">Kalshi&rsquo;s fee page lists a maker fee only for combo markets. Most markets list none.</span>
+          </div>
+
+          <div class="field">
+            <label for="mult">Fee multiplier</label>
+            <span class="field-hint">1 for most markets. Change it only if Kalshi lists a different multiplier for your series.</span>
+            <div class="field-row">
+              <input type="number" id="mult" min="0" step="0.05" value="1" oninput="calculate()">
+              <span class="field-unit">&times;</span>
+            </div>
+          </div>
+
+          <hr class="divider">
+
+          <div class="no-edge-msg" id="err-msg">Enter a price between 1 and 99 cents, at least 1 contract, and a non-negative multiplier.</div>
+
+          <div class="result-block" id="results">
+            <div class="result-row primary">
+              <div>
+                <div class="result-label">Trading fee</div>
+                <div class="result-sub">Rounded up to the cent</div>
+              </div>
+              <div class="result-value" id="res-fee">&mdash;</div>
+            </div>
+            <div class="result-row muted">
+              <div>
+                <div class="result-label">Exact formula value</div>
+                <div class="result-sub">Before rounding</div>
+              </div>
+              <div class="result-value" id="res-exact">&mdash;</div>
+            </div>
+            <div class="result-row muted">
+              <div>
+                <div class="result-label">Fee per contract</div>
+                <div class="result-sub">Rounded fee &divide; contracts</div>
+              </div>
+              <div class="result-value" id="res-perc">&mdash;</div>
+            </div>
+            <div class="result-row muted">
+              <div>
+                <div class="result-label">Position cost</div>
+                <div class="result-sub">Price &times; contracts</div>
+              </div>
+              <div class="result-value" id="res-cost">&mdash;</div>
+            </div>
+            <div class="result-row secondary">
+              <div>
+                <div class="result-label">Total cost with fee</div>
+                <div class="result-sub">What leaves your balance</div>
+              </div>
+              <div class="result-value" id="res-total">&mdash;</div>
+            </div>
+            <div class="result-row muted">
+              <div>
+                <div class="result-label">Fee as % of position cost</div>
+                <div class="result-sub">Fee &divide; position cost</div>
+              </div>
+              <div class="result-value" id="res-pct">&mdash;</div>
+            </div>
+            <div class="result-row muted">
+              <div>
+                <div class="result-label">Net profit if it wins</div>
+                <div class="result-sub">Payout minus cost minus this fee</div>
+              </div>
+              <div class="result-value" id="res-win">&mdash;</div>
+            </div>
+            <div class="result-row muted">
+              <div>
+                <div class="result-label">Break-even win probability</div>
+                <div class="result-sub">Price plus fee per contract</div>
+              </div>
+              <div class="result-value" id="res-be">&mdash;</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="explainer">
+          <div class="explainer-card">
+            <h3>The Kalshi fee formula</h3>
+            <p>For most markets Kalshi charges a fee on each trade, set by the contract price and the number of contracts:</p>
+            <div class="formula">fee = round up( 0.07 &times; C &times; P &times; (1 &minus; P) )<br><br>where C = number of contracts<br>      P = price per contract, in dollars</div>
+            <p style="margin-top:10px;">A 50&cent; contract traded 100 times costs $1.75 in fees. A 10&cent; or 90&cent; contract costs $0.63 for the same 100 contracts.</p>
+            <p class="note">Source: <a href="https://kalshi.com/fee-schedule" rel="noopener" style="color:var(--accent-2);">Kalshi fee schedule</a> (general fee formula effective July 7, 2026). Last checked November 12, 2026.</p>
+          </div>
+          <div class="explainer-card">
+            <h3>Fee by price, for your contract count</h3>
+            <table class="fee-table">
+              <thead><tr><th>Price</th><th>Fee</th><th>Per contract</th></tr></thead>
+              <tbody id="table-body"></tbody>
+            </table>
+            <p class="note">The fee peaks at 50&cent; and shrinks toward 1&cent; and 99&cent;, because the formula multiplies price by (1 &minus; price).</p>
+          </div>
+          <div class="warning-card">
+            <h3>Check your confirmation</h3>
+            <p>Kalshi rounds fees per fill and carries rounding across the fills of one order, so the fee on your trade confirmation can differ from this figure by a fraction of a cent. Some series carry different multipliers or extra fees. The number on your confirmation governs.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="related">
+    <div class="wrap">
+      <div class="related-title">Related tools</div>
+      <div class="related-grid">
+        <a href="/tools/prediction-market-ev-calculator" class="related-card">
+          <span class="related-arrow">&rarr;</span>
+          <span class="related-tag">Prediction Markets</span>
+          <div class="related-name">Expected Value Calculator &mdash; fee-adjusted edge</div>
+        </a>
+        <a href="/tools/kelly-criterion-calculator" class="related-card">
+          <span class="related-arrow">&rarr;</span>
+          <span class="related-tag">Prediction Markets</span>
+          <div class="related-name">Kelly Criterion Calculator</div>
+        </a>
+        <a href="/tools/implied-probability-calculator" class="related-card">
+          <span class="related-arrow">&rarr;</span>
+          <span class="related-tag">Prediction Markets</span>
+          <div class="related-name">Implied Probability Calculator</div>
+        </a>
+        <a href="https://github.com/LJ808/prediction-market-math" class="related-card" target="_blank" rel="noopener">
+          <span class="related-arrow">&nearr;</span>
+          <span class="related-tag">Open source</span>
+          <div class="related-name">View the math on GitHub</div>
+        </a>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap footer-inner">
+    <p class="footer-note">&copy; 2026 Seneca Commons</p>
+    <p class="footer-note">Free tools. No login required. Not affiliated with Kalshi. Not financial advice.</p>
+  </div>
+</footer>
+
+<script>
+// BEGIN CORE
+var FEE_RATE = 0.07;           // Kalshi general taker fee rate (fee schedule effective 2026-07-07)
+var ORDER_FACTORS = { taker: 1, 'maker-combo': 0.5, 'maker-standard': 0 };
+
+// Fee in micro-dollars (integer). Dollars = 0.07 * M * C * P * (1 - P), with P = priceCents / 100.
+// Equivalent: 7 * M * C * Pc * (100 - Pc) micro-dollars, which avoids floating-point drift.
+function feeMicro(priceCents, contracts, multiplier) {
+  return Math.round(7 * multiplier * contracts * priceCents * (100 - priceCents));
+}
+
+// Fee for an order. Returns { exact: dollars, rounded: dollars rounded UP to the cent }.
+function orderFee(priceCents, contracts, multiplier, orderType) {
+  var factor = Object.prototype.hasOwnProperty.call(ORDER_FACTORS, orderType) ? ORDER_FACTORS[orderType] : 1;
+  var micro = feeMicro(priceCents, contracts, multiplier) * factor;
+  return { exact: micro / 1e6, rounded: Math.ceil(Math.round(micro) / 10000) / 100 };
+}
+
+// Unrounded fee per contract in dollars (used for sizing).
+function feePerContract(priceCents, multiplier, orderType) {
+  var factor = Object.prototype.hasOwnProperty.call(ORDER_FACTORS, orderType) ? ORDER_FACTORS[orderType] : 1;
+  return FEE_RATE * multiplier * factor * (priceCents / 100) * (1 - priceCents / 100);
+}
+
+// Break-even win probability for a contract bought at priceCents, fee included.
+function breakEven(priceCents, contracts, multiplier, orderType) {
+  return priceCents / 100 + orderFee(priceCents, contracts, multiplier, orderType).rounded / contracts;
+}
+
+// Expected value per contract in dollars: p - P - fee per contract.
+function evPerContract(p, priceCents, contracts, multiplier, orderType) {
+  return p - priceCents / 100 - orderFee(priceCents, contracts, multiplier, orderType).rounded / contracts;
+}
+
+// Fee-adjusted Kelly fraction: cost per contract c = P + fee; payout 1. f* = (p - c) / (1 - c).
+function kellyFeeAdjusted(p, priceCents, multiplier, orderType) {
+  var c = priceCents / 100 + feePerContract(priceCents, multiplier, orderType);
+  if (c >= 1) return 0;
+  var f = (p - c) / (1 - c);
+  return f > 0 ? f : 0;
+}
+// END CORE
+
+function usd(x, d) { return '$' + x.toFixed(d === undefined ? 2 : d); }
+function readInputs() {
+  return {
+    pc: parseFloat(document.getElementById('price').value),
+    n: parseInt(document.getElementById('contracts').value, 10),
+    m: parseFloat(document.getElementById('mult').value),
+    t: document.getElementById('otype').value
+  };
+}
+function calculate() {
+  var i = readInputs();
+  var msg = document.getElementById('err-msg');
+  var res = document.getElementById('results');
+  var ok = i.pc > 0 && i.pc < 100 && i.n >= 1 && isFinite(i.n) && i.m >= 0 && isFinite(i.m);
+  msg.style.display = ok ? 'none' : 'block';
+  res.style.display = ok ? 'flex' : 'none';
+  if (!ok) { document.getElementById('table-body').innerHTML = ''; return; }
+  var f = orderFee(i.pc, i.n, i.m, i.t);
+  var P = i.pc / 100;
+  var cost = P * i.n;
+  var win = (1 - P) * i.n;
+  document.getElementById('res-fee').textContent = usd(f.rounded);
+  document.getElementById('res-exact').textContent = usd(f.exact, 4);
+  document.getElementById('res-perc').textContent = usd(f.rounded / i.n, 4);
+  document.getElementById('res-cost').textContent = usd(cost);
+  document.getElementById('res-total').textContent = usd(cost + f.rounded);
+  document.getElementById('res-pct').textContent = (f.rounded / cost * 100).toFixed(2) + '%';
+  document.getElementById('res-win').textContent = usd(win - f.rounded);
+  document.getElementById('res-be').textContent = (breakEven(i.pc, i.n, i.m, i.t) * 100).toFixed(2) + '%';
+  var rows = '';
+  var marks = [1,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,99];
+  for (var k = 0; k < marks.length; k++) {
+    var pcx = marks[k];
+    var ff = orderFee(pcx, i.n, i.m, i.t).rounded;
+    rows += '<tr' + (Math.round(i.pc) === pcx ? ' class="hl"' : '') + '><td>' + pcx + '&cent;</td><td>' + usd(ff) + '</td><td>' + usd(ff / i.n, 4) + '</td></tr>';
+  }
+  document.getElementById('table-body').innerHTML = rows;
+}
+calculate();
+
+</script>
+</body>
+</html>

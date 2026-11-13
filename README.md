@@ -32,6 +32,8 @@ Free financial calculators and signal tools for uncertain times.
 **Prediction Markets**
 - [Implied Probability Calculator](https://senecacommons.com/tools/implied-probability-calculator)
 - [Kelly Criterion Calculator](https://senecacommons.com/tools/kelly-criterion-calculator)
+- [Kalshi Fee Calculator](https://senecacommons.com/tools/kalshi-fee-calculator) — fee per order from Kalshi's published formula, with total cost and break-even win rate
+- [Prediction Market EV Calculator](https://senecacommons.com/tools/prediction-market-ev-calculator) — edge and expected value after fees, with fee-adjusted Kelly sizing
 - [prediction-market-math](https://github.com/LJ808/prediction-market-math) — open-source JavaScript library for the same math: Kelly sizing, implied probability, fee-adjusted edge, Kalshi and Polymarket odds conversion
 
 ---
