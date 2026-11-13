@@ -348,6 +348,19 @@ select:focus { outline: none; border-color: var(--accent-2); background: #fff; }
     </div>
   </div>
 
+  <!-- CTA (rotating affiliate) -->
+  <div class="cta-strip" id="affiliateBanner" style="display:none;">
+    <div class="wrap cta-inner">
+      <div class="cta-text">
+        <h3 id="affiliateLabel"></h3>
+        <p id="affiliateSubtext"></p>
+      </div>
+      <div class="cta-links">
+        <a id="affiliateLink" href="#" class="btn btn-primary" target="_blank" rel="noopener sponsored" onclick="trackAffiliateClick()">Get started &rarr;</a>
+      </div>
+    </div>
+  </div>
+
   <div class="related">
     <div class="wrap">
       <div class="related-title">Related tools</div>
@@ -491,6 +504,31 @@ function calculate() {
 }
 calculate();
 
+
+let _aff=null;
+(async function(){
+  try{
+    const res=await fetch('/affiliates.json');
+    const data=await res.json();
+    const page='prediction-market-ev-calculator';
+    const cands=data.slots.filter(s=>s.active&&s.pages.includes(page));
+    if(!cands.length)return;
+    const tw=cands.reduce((s,c)=>s+c.weight,0);
+    let rand=Math.random()*tw,chosen=cands[cands.length-1];
+    for(const c of cands){rand-=c.weight;if(rand<=0){chosen=c;break;}}
+    _aff=chosen;
+    document.getElementById('affiliateLabel').textContent=chosen.label;
+    document.getElementById('affiliateSubtext').textContent=chosen.subtext;
+    document.getElementById('affiliateLink').href=chosen.url;
+    document.getElementById('affiliateBanner').style.display='block';
+  }catch(e){}
+})();
+function trackAffiliateClick(){
+  if(!_aff)return;
+  fetch('/api/click',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({id:_aff.id,program:_aff.program,page:'prediction-market-ev-calculator',ts:Date.now(),ua:navigator.userAgent.slice(0,120)}),
+    mode:'no-cors'}).catch(()=>{});
+}
 </script>
 </body>
 </html>
