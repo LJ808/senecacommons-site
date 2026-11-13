@@ -194,21 +194,30 @@ select:focus { outline: none; border-color: var(--accent-2); background: #fff; }
 
           <div class="field">
             <label for="otype">Order type</label>
-            <select id="otype" onchange="calculate()">
+            <select id="otype" onchange="syncOrderType(); calculate()">
               <option value="taker" selected>Taker (order fills immediately)</option>
-              <option value="maker-standard">Maker, most markets (resting order)</option>
-              <option value="maker-combo">Maker, combo markets (50% of taker fee)</option>
+              <option value="maker">Maker (resting order fills)</option>
             </select>
-            <span class="note">Kalshi&rsquo;s fee page lists a maker fee only for combo markets. Most markets list none.</span>
+            <span class="note">Maker fees apply only when a resting order executes, and only for series that list a maker multiplier above 0.</span>
           </div>
 
-          <div class="field">
-            <label for="mult">Fee multiplier</label>
+          <div class="field" id="field-mult">
+            <label for="mult">Taker fee multiplier</label>
             <span class="field-hint">1 for most markets. Change it only if Kalshi lists a different multiplier for your series.</span>
             <div class="field-row">
               <input type="number" id="mult" min="0" step="0.05" value="1" oninput="calculate()">
               <span class="field-unit">&times;</span>
             </div>
+          </div>
+
+          <div class="field" id="field-mmult" style="display:none;">
+            <label for="mmult">Maker fee multiplier</label>
+            <span class="field-hint">Kalshi sets this per series. Check your series in its fee schedule table before you trade.</span>
+            <select id="mmult" onchange="calculate()">
+              <option value="0">0: no maker fee (Kalshi default)</option>
+              <option value="1" selected>1: for example KXCPI, KXFED, KXNFLGAME</option>
+              <option value="2">2: combo markets (KXMVE)</option>
+            </select>
           </div>
 
           <hr class="divider">
@@ -281,7 +290,10 @@ select:focus { outline: none; border-color: var(--accent-2); background: #fff; }
             <p>For most markets Kalshi charges a fee on each trade, set by the contract price and the number of contracts:</p>
             <div class="formula">fee = round up( 0.07 &times; C &times; P &times; (1 &minus; P) )<br><br>where C = number of contracts<br>      P = price per contract, in dollars</div>
             <p style="margin-top:10px;">A 50&cent; contract traded 100 times costs $1.75 in fees. A 10&cent; or 90&cent; contract costs $0.63 for the same 100 contracts.</p>
-            <p class="note">Source: <a href="https://kalshi.com/fee-schedule" rel="noopener" style="color:var(--accent-2);">Kalshi fee schedule</a> (general fee formula effective July 7, 2026). Last checked November 12, 2026.</p>
+            <p style="margin-top:10px;">A resting (maker) order that executes pays a lower rate, scaled by a multiplier M that Kalshi sets for each series:</p>
+            <div class="formula">fee = round up( M &times; 0.0175 &times; C &times; P &times; (1 &minus; P) )</div>
+            <p style="margin-top:10px;">M defaults to 0, so a series pays no maker fee unless Kalshi&rsquo;s table lists one. At 50&cent; and 100 contracts, M = 1 costs $0.44 and M = 2 costs $0.88.</p>
+            <p class="note">Source: <a href="https://kalshi.com/fee-schedule" rel="noopener" style="color:var(--accent-2);">Kalshi fee schedule</a> and its <a href="https://kalshi.com/docs/kalshi-fee-schedule.pdf" rel="noopener" style="color:var(--accent-2);">PDF</a> (formulas effective July 7, 2026). Last checked November 12, 2026.</p>
           </div>
           <div class="explainer-card">
             <h3>Fee by price, for your contract count</h3>
@@ -339,26 +351,30 @@ select:focus { outline: none; border-color: var(--accent-2); background: #fff; }
 
 <script>
 // BEGIN CORE
-var FEE_RATE = 0.07;           // Kalshi general taker fee rate (fee schedule effective 2026-07-07)
-var ORDER_FACTORS = { taker: 1, 'maker-combo': 0.5, 'maker-standard': 0 };
+// Kalshi fee schedule effective 2026-07-07: fee = round up( M * rate * C * P * (1 - P) ).
+// Taker rate 0.07 with M defaulting to 1. Maker rate 0.0175 with M set per series (default 0).
+// Rates are stored in units of 1e-4 so the arithmetic stays in integers.
+var ORDER_RATES = { taker: 700, maker: 175 };
 
-// Fee in micro-dollars (integer). Dollars = 0.07 * M * C * P * (1 - P), with P = priceCents / 100.
-// Equivalent: 7 * M * C * Pc * (100 - Pc) micro-dollars, which avoids floating-point drift.
-function feeMicro(priceCents, contracts, multiplier) {
-  return Math.round(7 * multiplier * contracts * priceCents * (100 - priceCents));
+function rateFor(orderType) {
+  return Object.prototype.hasOwnProperty.call(ORDER_RATES, orderType) ? ORDER_RATES[orderType] : ORDER_RATES.taker;
+}
+
+// Fee in units of 1e-8 dollars (integer). Dollars = rate * M * C * Pc * (100 - Pc) / 1e8,
+// with the rate in 1e-4 units and Pc the price in cents. Integers avoid floating-point drift.
+function feeUnits(priceCents, contracts, multiplier, orderType) {
+  return Math.round(rateFor(orderType) * multiplier * contracts * priceCents * (100 - priceCents));
 }
 
 // Fee for an order. Returns { exact: dollars, rounded: dollars rounded UP to the cent }.
 function orderFee(priceCents, contracts, multiplier, orderType) {
-  var factor = Object.prototype.hasOwnProperty.call(ORDER_FACTORS, orderType) ? ORDER_FACTORS[orderType] : 1;
-  var micro = feeMicro(priceCents, contracts, multiplier) * factor;
-  return { exact: micro / 1e6, rounded: Math.ceil(Math.round(micro) / 10000) / 100 };
+  var units = feeUnits(priceCents, contracts, multiplier, orderType);
+  return { exact: units / 1e8, rounded: Math.ceil(units / 1e6) / 100 };
 }
 
 // Unrounded fee per contract in dollars (used for sizing).
 function feePerContract(priceCents, multiplier, orderType) {
-  var factor = Object.prototype.hasOwnProperty.call(ORDER_FACTORS, orderType) ? ORDER_FACTORS[orderType] : 1;
-  return FEE_RATE * multiplier * factor * (priceCents / 100) * (1 - priceCents / 100);
+  return rateFor(orderType) / 1e4 * multiplier * (priceCents / 100) * (1 - priceCents / 100);
 }
 
 // Break-even win probability for a contract bought at priceCents, fee included.
@@ -380,12 +396,18 @@ function kellyFeeAdjusted(p, priceCents, multiplier, orderType) {
 }
 // END CORE
 
+function syncOrderType() {
+  var maker = document.getElementById('otype').value === 'maker';
+  document.getElementById('field-mult').style.display = maker ? 'none' : '';
+  document.getElementById('field-mmult').style.display = maker ? '' : 'none';
+}
+
 function usd(x, d) { return '$' + x.toFixed(d === undefined ? 2 : d); }
 function readInputs() {
   return {
     pc: parseFloat(document.getElementById('price').value),
     n: parseInt(document.getElementById('contracts').value, 10),
-    m: parseFloat(document.getElementById('mult').value),
+    m: parseFloat(document.getElementById(document.getElementById('otype').value === 'maker' ? 'mmult' : 'mult').value),
     t: document.getElementById('otype').value
   };
 }
